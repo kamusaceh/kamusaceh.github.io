@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -727,7 +726,14 @@
         .captcha-refresh {
             padding: 8px 12px;
         }
-    </style>
+    
+        .admin-nav-btn {
+            font-weight: 700;
+        }
+        nav li:has(.admin-nav-btn) .nav-btn {
+            white-space: nowrap;
+        }
+</style>
 
 <style>
 .password-wrapper{position:relative;width:100%}
@@ -753,7 +759,24 @@
             <li><button class="nav-btn active" onclick="switchTab('kamus', this)">Kamus</button></li>
             <li><button class="nav-btn" onclick="switchTab('tambah', this)">Tambah Kata</button></li>
             <li><button class="nav-btn" onclick="switchTab('riwayat', this)">Riwayat</button></li>
-            <li><button class="nav-btn" id="accountTabBtn" onclick="switchTab('account', this)">Masuk / Daftar</button></li>
+            <li id="superadminNav" style="display:none;">
+                <button class="nav-btn admin-nav-btn" onclick="openSuperadminTab('dashboard')">⚙ Dashboard Admin</button>
+            </li>
+            <li id="superadminPendingNav" style="display:none;">
+                <button class="nav-btn admin-nav-btn" onclick="openSuperadminTab('pending')">⏳ Menunggu</button>
+            </li>
+            <li id="superadminWordsNav" style="display:none;">
+                <button class="nav-btn admin-nav-btn" onclick="openSuperadminTab('words')">📚 Semua Kata</button>
+            </li>
+            <li id="superadminUsersNav" style="display:none;">
+                <button class="nav-btn admin-nav-btn" onclick="openSuperadminTab('users')">👥 Pengguna</button>
+            </li>
+            <li id="superadminHistoryNav" style="display:none;">
+                <button class="nav-btn admin-nav-btn" onclick="openSuperadminTab('history')">🕘 Riwayat Admin</button>
+            </li>
+            <li id="accountNav">
+                <button class="nav-btn" id="accountTabBtn" onclick="switchTab('account', this)">Masuk / Daftar</button>
+            </li>
         </ul>
     </nav>
 
@@ -879,7 +902,10 @@
             <div id="loggedInView" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h2>Profil Kontributor: <span id="profUsername" style="color:var(--primary);"></span></h2>
-                    <button type="button" class="btn-secondary" onclick="handleLogout()">Keluar / Logout</button>
+                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                        <button type="button" id="superadminBtn" class="btn-secondary" style="display:none;" onclick="openSuperadmin()">⚙ Superadmin</button>
+                        <button type="button" class="btn-secondary" onclick="handleLogout()">Keluar / Logout</button>
+                    </div>
                 </div>
 
                 <div class="stats-grid">
@@ -1040,7 +1066,7 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxENpZIWLttw530ZCu4hNMK_8WAPkGeMMM9BOXbdlA8d7fiSSoUdqouOD489lfkPKgh/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbxQge7b_hF8NSOaF86UDPxtPvNvnukanPVmDKMu979EMMYlvS-2SJA5PFLgRW3YKEn2/exec";
         const HOME_LIMIT = 20;
         const RIWAYAT_PAGE_SIZE = 20;
         
@@ -1057,12 +1083,38 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             updateAuthUI();
+            refreshStoredAuthRole();
             generateCaptcha("login");
             generateCaptcha("register");
             loadKamus("");
             addExampleRow('examplesContainer');
             document.getElementById("footerYear").textContent = new Date().getFullYear();
         });
+
+        async function refreshStoredAuthRole() {
+            if (!state.auth || !state.auth.username || state.auth.password === undefined) return;
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({
+                        action: "login",
+                        username: state.auth.username,
+                        password: state.auth.password
+                    })
+                });
+
+                const result = await res.json();
+
+                if (result.status === "success") {
+                    state.auth.role = result.role || state.auth.role || "user";
+                    state.auth.status = result.user_status || state.auth.status || "aktif";
+                    localStorage.setItem("kamus_auth", JSON.stringify(state.auth));
+                    updateAuthUI();
+                }
+            } catch (e) {}
+        }
 
         function footerNav(tabName) {
             switchTab(tabName);
@@ -1099,10 +1151,15 @@
             if (clickedButton) {
                 clickedButton.classList.add('active');
             } else {
-                const navBtnMap = { kamus: 0, tambah: 1, riwayat: 2, account: 3 };
                 const navButtons = document.querySelectorAll('nav .nav-btn');
-                if (navButtons[navBtnMap[tabName]]) {
-                    navButtons[navBtnMap[tabName]].classList.add('active');
+                const byTab = {
+                    kamus: navButtons[0],
+                    tambah: navButtons[1],
+                    riwayat: navButtons[2],
+                    account: document.getElementById("accountTabBtn")
+                };
+                if (byTab[tabName]) {
+                    byTab[tabName].classList.add('active');
                 }
             }
 
@@ -1113,21 +1170,77 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        function openSuperadmin() {
+            if (!state.auth || String(state.auth.role || "").toLowerCase() !== "superadmin") return;
+            window.location.href = "superadmin.html";
+        }
+
         function updateAuthUI() {
             const btn = document.getElementById("accountTabBtn");
+            const accountNav = document.getElementById("accountNav");
             const loggedOutView = document.getElementById("loggedOutView");
             const loggedInView = document.getElementById("loggedInView");
+            const superadminBtn = document.getElementById("superadminBtn");
+
+            const adminNavIds = [
+                "superadminNav",
+                "superadminPendingNav",
+                "superadminWordsNav",
+                "superadminUsersNav",
+                "superadminHistoryNav"
+            ];
+
+            const isSuperAdmin = !!state.auth &&
+                String(state.auth.role || "").toLowerCase() === "superadmin";
 
             if (state.auth) {
-                btn.textContent = "Akun (" + state.auth.username + ")";
-                loggedOutView.style.display = "none";
-                loggedInView.style.display = "block";
-                document.getElementById("profUsername").textContent = state.auth.username;
+                if (btn) btn.textContent = "Akun (" + state.auth.username + ")";
+                if (loggedOutView) loggedOutView.style.display = "none";
+                if (loggedInView) loggedInView.style.display = "block";
+                const prof = document.getElementById("profUsername");
+                if (prof) prof.textContent = state.auth.username;
+
+                // Superadmin mendapat menu khusus dan tidak menampilkan menu Akun.
+                if (accountNav) accountNav.style.display = isSuperAdmin ? "none" : "";
+                adminNavIds.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = isSuperAdmin ? "" : "none";
+                });
+
+                // Tombol lama di profil juga disembunyikan untuk superadmin
+                // karena semua menu admin sudah tersedia di navigasi.
+                if (superadminBtn) superadminBtn.style.display = "none";
+
+                // Bila sedang berada di tab Akun, pindahkan kembali ke Kamus.
+                if (isSuperAdmin) {
+                    const accountTab = document.getElementById("tab-account");
+                    if (accountTab && accountTab.classList.contains("active")) {
+                        switchTab("kamus");
+                    }
+                }
             } else {
-                btn.textContent = "Masuk / Daftar";
-                loggedOutView.style.display = "block";
-                loggedInView.style.display = "none";
+                if (btn) btn.textContent = "Masuk / Daftar";
+                if (accountNav) accountNav.style.display = "";
+                if (loggedOutView) loggedOutView.style.display = "block";
+                if (loggedInView) loggedInView.style.display = "none";
+
+                adminNavIds.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = "none";
+                });
+
+                if (superadminBtn) superadminBtn.style.display = "none";
             }
+        }
+
+        function openSuperadmin() {
+            window.location.href = "superadmin.html#dashboard";
+        }
+
+        function openSuperadminTab(tabName) {
+            const allowed = ["dashboard", "pending", "words", "users", "history"];
+            if (!allowed.includes(tabName)) tabName = "dashboard";
+            window.location.href = "superadmin.html#" + tabName;
         }
 
         function setAuthMode(mode) {
@@ -1270,10 +1383,22 @@
                 });
                 const result = await res.json();
                 if (result.status === "success") {
-                    state.auth = { username: user, password: pass };
+                    state.auth = {
+                        username: user,
+                        password: pass,
+                        role: result.role || "user",
+                        status: result.user_status || "aktif"
+                    };
                     localStorage.setItem("kamus_auth", JSON.stringify(state.auth));
                     updateAuthUI();
-                    loadUserProfile();
+
+                    // Superadmin tetap masuk ke index.html, tetapi langsung
+                    // mendapatkan seluruh menu administrasi di navigasi.
+                    if (String(state.auth.role || "").toLowerCase() === "superadmin") {
+                        switchTab("kamus");
+                    } else {
+                        loadUserProfile();
+                    }
                 } else msgBox.innerHTML = `<span style="color:var(--danger)">${result.message}</span>`;
             } catch (err) { msgBox.innerHTML = `<span style="color:var(--danger)">Gagal terhubung ke server.</span>`; }
         }
