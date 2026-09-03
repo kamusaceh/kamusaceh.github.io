@@ -142,6 +142,82 @@
         .badge { color: white; padding: 3px 8px; border-radius: 0; font-size: 0.72rem; font-weight: 700; display: inline-block; }
         .status-msg { text-align: left; color: var(--muted); padding: 20px 4px; }
 
+        .suggestion-box {
+            padding: 30px 4px;
+            animation: suggestionFadeIn .28s ease-out;
+        }
+        .suggestion-icon {
+            width: 54px;
+            height: 54px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--text);
+            margin-bottom: 14px;
+            font-size: 1.35rem;
+            animation: suggestionFloat 1.8s ease-in-out infinite;
+        }
+        .suggestion-help {
+            color: var(--muted);
+            margin: 6px 0 14px;
+        }
+        .suggestion-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .suggestion-card {
+            display: grid;
+            grid-template-columns: 38px 1fr auto;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+            padding: 12px 14px;
+            text-align: left;
+            background: #fff;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform .15s ease, border-color .15s ease, background .15s ease;
+        }
+        .suggestion-card:hover {
+            border-color: var(--red);
+            background: #fff8f6;
+            transform: translateX(3px);
+        }
+        .suggestion-rank {
+            color: var(--border);
+            font-weight: 800;
+        }
+        .suggestion-main {
+            min-width: 0;
+        }
+        .suggestion-main strong {
+            display: block;
+            color: var(--red);
+            font-size: 1rem;
+        }
+        .suggestion-main small {
+            display: block;
+            margin-top: 2px;
+            color: var(--muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .suggestion-score {
+            color: var(--muted);
+            font-size: .75rem;
+            font-weight: 700;
+        }
+        @keyframes suggestionFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        @keyframes suggestionFadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .not-found-box {
             display: flex;
             flex-direction: column;
@@ -318,6 +394,161 @@
         }
         .duplicate-dialog-view:hover { background:var(--red); border-color:var(--red); }
         .duplicate-dialog-close:hover { background:var(--text); color:#fff; }
+
+
+        /* Desain contoh kalimat */
+        .examples-panel {
+            margin: 22px 0 18px;
+            padding: 22px 22px 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f3f5 100%);
+            border: 1px solid #e7e9ec;
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(17,17,17,.06);
+        }
+        .examples-heading {
+            display:flex;
+            align-items:center;
+            gap:10px;
+            font-size:1.05rem;
+            font-weight:900;
+            margin-bottom:16px;
+        }
+        .examples-heading-icon {
+            width:34px; height:34px;
+            display:grid; place-items:center;
+            border-radius:10px;
+            background:#111; color:#fff;
+            font-size:.95rem;
+            box-shadow:0 6px 14px rgba(17,17,17,.15);
+        }
+        .example-list {
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+        }
+        .example-item {
+            position:relative;
+            display:grid;
+            grid-template-columns:30px 1fr;
+            gap:12px;
+            padding:14px 16px 14px 12px;
+            background:#fff;
+            border:1px solid #e5e7eb;
+            border-radius:14px;
+            box-shadow:0 4px 14px rgba(17,17,17,.045);
+            transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+        }
+        .example-item:hover {
+            transform:translateY(-2px);
+            border-color:#d7dadd;
+            box-shadow:0 9px 22px rgba(17,17,17,.08);
+        }
+        .example-number {
+            width:30px; height:30px;
+            display:grid; place-items:center;
+            border-radius:9px;
+            background:#f1f3f5;
+            color:#666;
+            font-size:.76rem;
+            font-weight:900;
+            font-variant-numeric:tabular-nums;
+        }
+        .example-body { min-width:0; }
+        .example-aceh {
+            font-size:1rem;
+            font-weight:800;
+            line-height:1.45;
+            color:#111;
+        }
+        .example-aceh::before {
+            content:'“';
+            color:var(--red);
+            margin-right:2px;
+        }
+        .example-aceh::after {
+            content:'”';
+            color:var(--red);
+            margin-left:2px;
+        }
+        .example-indo {
+            margin-top:5px;
+            padding-left:12px;
+            color:#737373;
+            font-size:.93rem;
+            font-style:italic;
+            line-height:1.55;
+            border-left:2px solid #dfe2e5;
+        }
+        .example-empty {
+            color:var(--muted);
+            font-style:italic;
+            font-size:.92rem;
+        }
+        .detail-entry-head {
+            padding:20px 22px;
+            margin-bottom:16px;
+            border:1px solid #e7e9ec;
+            border-radius:18px;
+            background:linear-gradient(135deg,#fff 0%,#fafafa 100%);
+            box-shadow:0 8px 24px rgba(17,17,17,.05);
+        }
+        .detail-entry-word {
+            font-size:clamp(1.85rem,4vw,2.3rem);
+            line-height:1.08;
+            font-weight:900;
+            letter-spacing:-.025em;
+        }
+        .detail-entry-type {
+            display:inline-block;
+            margin-left:8px;
+            padding:4px 9px;
+            border-radius:999px;
+            background:#f1f3f5;
+            color:#70757a;
+            font-size:.78rem;
+            font-weight:800;
+            vertical-align:middle;
+            letter-spacing:0;
+        }
+        .detail-entry-meaning {
+            margin-top:10px;
+            font-size:1.08rem;
+            color:#262626;
+            line-height:1.6;
+        }
+        .detail-meta-box {
+            margin-top:14px;
+            padding:14px 16px;
+            border:1px solid #eceef0;
+            border-radius:14px;
+            background:#fff;
+        }
+        .detail-meta-label {
+            display:block;
+            margin-bottom:6px;
+            font-size:.78rem;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:.06em;
+            color:#8a8f94;
+        }
+        .detail-meta-text {
+            color:#555;
+            font-size:.9rem;
+            line-height:1.5;
+        }
+        .action-bar.detail-actions {
+            margin-top:18px;
+            border-radius:12px;
+            overflow:hidden;
+            box-shadow:0 6px 18px rgba(17,17,17,.05);
+        }
+        @media (max-width:620px) {
+            .examples-panel { padding:18px 14px 16px; border-radius:14px; }
+            .example-item { padding:12px 12px 12px 10px; grid-template-columns:28px 1fr; gap:10px; border-radius:12px; }
+            .example-number { width:28px; height:28px; }
+            .detail-entry-head { padding:17px 16px; border-radius:14px; }
+        }
 
         .show-all-wrap { text-align: left; padding: 20px 0 4px; }
         .duplicate-notice {
@@ -809,7 +1040,7 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxcBY8Tvg3tuNnU722-X28CQkMa-dHkaoOpy_MXyM5zuY9F6iTs2OcjVy3D0sle_T0Z/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbxENpZIWLttw530ZCu4hNMK_8WAPkGeMMM9BOXbdlA8d7fiSSoUdqouOD489lfkPKgh/exec";
         const HOME_LIMIT = 20;
         const RIWAYAT_PAGE_SIZE = 20;
         
@@ -1115,6 +1346,8 @@
 
                     if (result.data.length > 0) {
                         renderDictionaryList();
+                    } else if (query.trim() !== "" && Array.isArray(result.suggestions) && result.suggestions.length > 0) {
+                        renderSearchSuggestions(query, result.suggestions);
                     } else {
                         container.innerHTML = `<div class="not-found-box">
                             <div class="not-found-icon">⌕</div>
@@ -1143,6 +1376,42 @@
                 state.currentQuery = query;
                 container.innerHTML = `<div class="status-msg" style="color:var(--danger)">Gagal terhubung ke server.</div>`;
             }
+        }
+
+        function renderSearchSuggestions(query, suggestions) {
+            const container = document.getElementById("dictionaryList");
+            const safeQuery = escapeHtml(query);
+
+            const items = suggestions.map((s, index) => {
+                const score = Math.round((Number(s.score || 0) * 100));
+                const kata = String(s.kata_aceh || "");
+                const arti = String(s.arti_indonesia || "");
+                return `
+                    <button type="button" class="suggestion-card" onclick="gunakanSaranKata(${JSON.stringify(kata)})">
+                        <span class="suggestion-rank">${String(index + 1).padStart(2, '0')}</span>
+                        <span class="suggestion-main">
+                            <strong>${escapeHtml(kata)}</strong>
+                            <small>${escapeHtml(arti)}</small>
+                        </span>
+                        <span class="suggestion-score">${score}% mirip</span>
+                    </button>
+                `;
+            }).join("");
+
+            container.innerHTML = `
+                <div class="suggestion-box">
+                    <div class="suggestion-icon">🔎</div>
+                    <div class="not-found-title">Kata "${safeQuery}" tidak ditemukan</div>
+                    <div class="suggestion-help">Mungkin yang Anda maksud:</div>
+                    <div class="suggestion-list">${items}</div>
+                </div>
+            `;
+        }
+
+        function gunakanSaranKata(kata) {
+            const searchInput = document.getElementById("searchInput");
+            if (searchInput) searchInput.value = kata;
+            loadKamus(kata);
         }
 
         function renderDictionaryList() {
@@ -1187,46 +1456,90 @@
 
             let contohHTML = "";
             let exIndex = 1;
+
             while (item["contoh" + exIndex + "_aceh"]) {
+                const aceh = escapeHtml(item["contoh" + exIndex + "_aceh"]);
+                const indo = escapeHtml(item["contoh" + exIndex + "_indo"] || "");
+
                 contohHTML += `
-                    <div style="margin-bottom:8px;">
-                        <div>• <strong>${escapeHtml(item["contoh" + exIndex + "_aceh"])}</strong></div>
-                        <div style="color:var(--muted); font-style:italic; padding-left:12px;">${escapeHtml(item["contoh" + exIndex + "_indo"])}</div>
+                    <div class="example-item">
+                        <div class="example-number">${String(exIndex).padStart(2, "0")}</div>
+                        <div class="example-body">
+                            <div class="example-aceh">${aceh}</div>
+                            ${indo ? `<div class="example-indo">${indo}</div>` : ""}
+                        </div>
                     </div>
                 `;
                 exIndex++;
             }
 
+            const contohSection = contohHTML
+                ? `
+                    <section class="examples-panel">
+                        <div class="examples-heading">
+                            <span class="examples-heading-icon">Aa</span>
+                            <span>Contoh Kalimat</span>
+                        </div>
+                        <div class="example-list">${contohHTML}</div>
+                    </section>
+                  `
+                : `
+                    <section class="examples-panel">
+                        <div class="examples-heading">
+                            <span class="examples-heading-icon">Aa</span>
+                            <span>Contoh Kalimat</span>
+                        </div>
+                        <div class="example-empty">Belum ada contoh kalimat untuk kata ini.</div>
+                    </section>
+                  `;
+
             let rujukanHTML = "";
             if (item.rujukan && item.rujukan.trim() !== "") {
                 const rujukanList = item.rujukan.split(",").map(r => r.trim()).filter(Boolean);
-                const chips = rujukanList.map(r => `<span class="rujukan-chip" onclick="searchRujukan('${escapeHtml(r)}')">🔗 ${escapeHtml(r)}</span>`).join("");
-                rujukanHTML = `<div style="margin-top:16px;"><strong>Rujukan Kata Lain:</strong><br>${chips}</div>`;
+                const chips = rujukanList.map(r => {
+                    const safeRujukan = escapeHtml(r).replace(/'/g, "&#39;");
+                    return `<span class="rujukan-chip" onclick="searchRujukan('${safeRujukan}')">🔗 ${escapeHtml(r)}</span>`;
+                }).join("");
+                rujukanHTML = `
+                    <div class="detail-meta-box">
+                        <span class="detail-meta-label">Rujukan kata lain</span>
+                        <div>${chips}</div>
+                    </div>`;
             }
 
             let sumberHTML = "";
             if (item.sumber && item.sumber.trim() !== "") {
-                sumberHTML = `<div style="margin-top:14px; font-size:0.9rem; color:var(--muted);">📚 <strong>Sumber / Referensi:</strong> ${escapeHtml(item.sumber)}</div>`;
+                sumberHTML = `
+                    <div class="detail-meta-box">
+                        <span class="detail-meta-label">Sumber / Referensi</span>
+                        <div class="detail-meta-text">📚 ${escapeHtml(item.sumber)}</div>
+                    </div>`;
             }
 
             document.getElementById("detailContent").innerHTML = `
-                <h2 style="font-size:2rem; margin-bottom:4px;">${escapeHtml(item.kata_aceh)} <i style="font-size:1.2rem; color:var(--muted);">(${escapeHtml(item.tipe_kata)})</i></h2>
-                <p style="font-size:1.15rem; margin-bottom:18px;">${escapeHtml(item.arti_indonesia)}</p>
-                ${contohHTML ? `<div style="background:#f8f9fa; padding:14px; border-radius:8px; margin-bottom:16px;"><strong>Contoh Kalimat:</strong><br>${contohHTML}</div>` : ''}
+                <div class="detail-entry-head">
+                    <div class="detail-entry-word">
+                        ${escapeHtml(item.kata_aceh)}
+                        <span class="detail-entry-type">${escapeHtml(item.tipe_kata || "")}</span>
+                    </div>
+                    <div class="detail-entry-meaning">${escapeHtml(item.arti_indonesia)}</div>
+                </div>
+                ${contohSection}
                 ${rujukanHTML}
                 ${sumberHTML}
             `;
 
             const isLoggedIn = !!state.auth;
             document.getElementById("actionContainer").innerHTML = `
-                <div class="action-bar" style="margin-top:20px;">
-                    <button type="button" class="action-btn" onclick="toggleWordHistory('${escapeHtml(item.kata_aceh)}')">📜 Riwayat Kata</button>
+                <div class="action-bar detail-actions">
+                    <button type="button" class="action-btn" onclick="toggleWordHistory('${escapeHtml(item.kata_aceh).replace(/'/g, "&#39;")}')">📜 Riwayat Kata</button>
                     ${isLoggedIn ? `
                         <button type="button" class="action-btn" onclick="openEditModal(${index})">✏️ Ubah</button>
-                        <button type="button" class="action-btn btn-danger" onclick="handleHapusKata('${escapeHtml(item.kata_aceh)}')">🗑️ Hapus</button>
+                        <button type="button" class="action-btn btn-danger" onclick="handleHapusKata('${escapeHtml(item.kata_aceh).replace(/'/g, "&#39;")}')">🗑️ Hapus</button>
                     ` : ''}
                 </div>
             `;
+
             document.getElementById("wordHistoryWrapper").style.display = "none";
             document.getElementById("listView").style.display = "none";
             document.getElementById("detailView").style.display = "block";
