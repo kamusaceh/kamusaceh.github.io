@@ -223,21 +223,66 @@
             .footer-col { padding-left: 0; }
             .footer-bottom { flex-direction: column; text-align: left; align-items: flex-start; }
         }
+
+        .captcha-box {
+            border: 1px solid var(--text);
+            padding: 14px;
+            margin-bottom: 20px;
+            background: #fff;
+        }
+        .captcha-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .captcha-challenge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .captcha-word {
+            display: inline-block;
+            font-family: Georgia, serif;
+            font-size: 1.35rem;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            padding: 8px 12px;
+            border: 2px dashed var(--text);
+            background: #f7f7f7;
+            user-select: none;
+        }
+        .captcha-refresh {
+            padding: 8px 12px;
+        }
     </style>
+
+<style>
+.password-wrapper{position:relative;width:100%}
+.password-wrapper input{padding-right:48px!important}
+.password-toggle{
+    position:absolute;right:10px;top:50%;transform:translateY(-50%);
+    border:0;background:transparent;cursor:pointer;font-size:18px;
+    padding:6px;line-height:1;opacity:.75
+}
+.password-toggle:hover{opacity:1}
+</style>
+
 </head>
 <body>
 
     <header>
         <h1>Kamus Bahsa Acèh</h1>
-        <p>Kamus digital kolaboratif bahasa Acèh</p>
+        <p>Kamus digital kolaboratif bahasa Acèh, disusun dan dirawat bersama para kontributor.</p>
     </header>
 
     <nav>
         <ul>
-            <li><button class="nav-btn active" onclick="switchTab('kamus')">Kamus</button></li>
-            <li><button class="nav-btn" onclick="switchTab('tambah')">Tambah Kata</button></li>
-            <li><button class="nav-btn" onclick="switchTab('riwayat')">Riwayat</button></li>
-            <li><button class="nav-btn" id="accountTabBtn" onclick="switchTab('account')">Masuk / Daftar</button></li>
+            <li><button class="nav-btn active" onclick="switchTab('kamus', this)">Kamus</button></li>
+            <li><button class="nav-btn" onclick="switchTab('tambah', this)">Tambah Kata</button></li>
+            <li><button class="nav-btn" onclick="switchTab('riwayat', this)">Riwayat</button></li>
+            <li><button class="nav-btn" id="accountTabBtn" onclick="switchTab('account', this)">Masuk / Daftar</button></li>
         </ul>
     </nav>
 
@@ -325,7 +370,17 @@
                 <form id="loginForm" onsubmit="handleLogin(event)">
                     <h2>Masuk ke Akun</h2>
                     <div class="form-group"><label>Username</label><input type="text" id="loginUser" required></div>
-                    <div class="form-group"><label>Password</label><input type="password" id="loginPass" required></div>
+                    <div class="form-group"><label>Password</label><div class="password-wrapper"><input type="password" id="loginPass" required><button type="button" class="password-toggle" onclick="togglePassword('loginPass', this)" aria-label="Tampilkan password">👁</button></div></div>
+
+                    <div class="captcha-box">
+                        <div class="captcha-title">CAPTCHA — ketik 1 kata yang tampil</div>
+                        <div class="captcha-challenge">
+                            <span class="captcha-word" id="loginCaptchaWord"></span>
+                            <button type="button" class="btn-secondary captcha-refresh" onclick="generateCaptcha('login')">↻ Ganti Kata</button>
+                        </div>
+                        <input type="text" id="loginCaptchaInput" autocomplete="off" required placeholder="Ketik kata CAPTCHA">
+                    </div>
+
                     <div id="loginMsg" class="form-group"></div>
                     <button type="submit" class="btn">Masuk</button>
                 </form>
@@ -334,6 +389,16 @@
                     <h2>Daftar Akun Baru</h2>
                     <div class="form-group"><label>Username Baru</label><input type="text" id="regUser" required></div>
                     <div class="form-group"><label>Password</label><input type="password" id="regPass" required></div>
+
+                    <div class="captcha-box">
+                        <div class="captcha-title">CAPTCHA — ketik 1 kata yang tampil</div>
+                        <div class="captcha-challenge">
+                            <span class="captcha-word" id="registerCaptchaWord"></span>
+                            <button type="button" class="btn-secondary captcha-refresh" onclick="generateCaptcha('register')">↻ Ganti Kata</button>
+                        </div>
+                        <input type="text" id="registerCaptchaInput" autocomplete="off" required placeholder="Ketik kata CAPTCHA">
+                    </div>
+
                     <div id="regMsg" class="form-group"></div>
                     <button type="submit" class="btn">Daftar Sekarang</button>
                 </form>
@@ -356,11 +421,11 @@
                     </div>
                 </div>
 
-                <h3 style="margin-top:24px; color:var(--primary);">📜 Kata Apa Saja yang Anda Tambahkan</h3>
-                <div id="userWordsContent" style="margin-top: 10px; margin-bottom: 28px;"></div>
+                <h3 style="margin-top:24px; padding-bottom:8px; border-bottom:2px solid var(--text); font-size:1.05rem;">Kata yang Anda tambahkan</h3>
+                <div id="userWordsContent" style="margin-top: 14px; margin-bottom: 32px;"></div>
 
-                <h3 style="margin-top:20px; color:var(--primary);">🕒 Aktivitas Terakhir Anda</h3>
-                <div id="userActivityContent" style="margin-top: 10px;"></div>
+                <h3 style="margin-top:20px; padding-bottom:8px; border-bottom:2px solid var(--text); font-size:1.05rem;">Aktivitas terakhir Anda</h3>
+                <div id="userActivityContent" style="margin-top: 14px;"></div>
             </div>
         </section>
     </main>
@@ -392,8 +457,8 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <span>&copy; <span id="footerYear"></span></span>
-            <span>Bagian dari Basa Aceh Project</span>
+            <span>&copy; <span id="footerYear"></span> Kamus Bahsa Acèh</span>
+            <span>Basa Aceh Project</span>
         </div>
     </footer>
 
@@ -463,29 +528,21 @@
             currentData: [],
             currentQuery: "",
             showAllHome: false,
-            searchTimer: null
+            searchTimer: null,
+            wordHistory: []
         };
 
         document.addEventListener("DOMContentLoaded", () => {
             updateAuthUI();
+            generateCaptcha("login");
+            generateCaptcha("register");
             loadKamus("");
             addExampleRow('examplesContainer');
             document.getElementById("footerYear").textContent = new Date().getFullYear();
         });
 
         function footerNav(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('tab-' + tabName).classList.add('active');
-
-            const navBtnMap = { kamus: 0, tambah: 1, riwayat: 2, account: 3 };
-            const navButtons = document.querySelectorAll('nav .nav-btn');
-            if (navButtons[navBtnMap[tabName]]) navButtons[navBtnMap[tabName]].classList.add('active');
-
-            if (tabName === 'kamus') hideDetail();
-            if (tabName === 'riwayat') loadRiwayat();
-            if (tabName === 'account' && state.auth) loadUserProfile();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            switchTab(tabName);
         }
 
         function formatTanggalIndo(dateString) {
@@ -507,16 +564,30 @@
             return `${namaHari}, ${tgl} ${namaBulan} ${thn} ${jam}:${menit}:${detik}`;
         }
 
-        function switchTab(tabName) {
+        function switchTab(tabName, clickedButton = null) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
 
-            document.getElementById('tab-' + tabName).classList.add('active');
-            event.target.classList.add('active');
+            const targetTab = document.getElementById('tab-' + tabName);
+            if (!targetTab) return;
+
+            targetTab.classList.add('active');
+
+            if (clickedButton) {
+                clickedButton.classList.add('active');
+            } else {
+                const navBtnMap = { kamus: 0, tambah: 1, riwayat: 2, account: 3 };
+                const navButtons = document.querySelectorAll('nav .nav-btn');
+                if (navButtons[navBtnMap[tabName]]) {
+                    navButtons[navBtnMap[tabName]].classList.add('active');
+                }
+            }
 
             if (tabName === 'kamus') hideDetail();
             if (tabName === 'riwayat') loadRiwayat();
             if (tabName === 'account' && state.auth) loadUserProfile();
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function updateAuthUI() {
@@ -541,6 +612,7 @@
             document.getElementById("btnModeRegister").classList.toggle("active", mode === "register");
             document.getElementById("loginForm").style.display = mode === "login" ? "block" : "none";
             document.getElementById("registerForm").style.display = mode === "register" ? "block" : "none";
+            generateCaptcha(mode);
         }
 
         function toggleSumberInput(selectId, containerId) {
@@ -618,11 +690,53 @@
             }
         }
 
+
+        // CAPTCHA: pilih 1 dari 10 kata, lalu pengguna wajib mengetikkannya.
+        const CAPTCHA_WORDS = [
+            "LAPAH", "GALIGAMON", "PEURASEUN", "GAPET",
+            "LAMBIDENG", "PEULANDOK", "GUMPE"
+        ];
+
+        const captchaState = {
+            login: "",
+            register: ""
+        };
+
+        function generateCaptcha(type) {
+            const word = CAPTCHA_WORDS[Math.floor(Math.random() * CAPTCHA_WORDS.length)];
+            captchaState[type] = word;
+
+            const wordEl = document.getElementById(type === "login" ? "loginCaptchaWord" : "registerCaptchaWord");
+            const inputEl = document.getElementById(type === "login" ? "loginCaptchaInput" : "registerCaptchaInput");
+
+            if (wordEl) wordEl.textContent = word;
+            if (inputEl) {
+                inputEl.value = "";
+                inputEl.focus();
+            }
+        }
+
+        function validateCaptcha(type) {
+            const inputEl = document.getElementById(type === "login" ? "loginCaptchaInput" : "registerCaptchaInput");
+            const answer = (inputEl?.value || "").trim().toUpperCase();
+            return answer !== "" && answer === captchaState[type];
+        }
+
+        function refreshCaptchaIfNeeded(type) {
+            if (!captchaState[type]) generateCaptcha(type);
+        }
+
         async function handleLogin(e) {
             e.preventDefault();
             const msgBox = document.getElementById("loginMsg");
             const user = document.getElementById("loginUser").value.trim();
             const pass = document.getElementById("loginPass").value;
+
+            if (!validateCaptcha("login")) {
+                msgBox.innerHTML = `<span style="color:var(--danger)">CAPTCHA salah. Silakan ketik kata yang tampil dengan benar.</span>`;
+                generateCaptcha("login");
+                return;
+            }
 
             msgBox.innerHTML = `<span>Memeriksa...</span>`;
             try {
@@ -647,6 +761,12 @@
             const user = document.getElementById("regUser").value.trim();
             const pass = document.getElementById("regPass").value;
 
+            if (!validateCaptcha("register")) {
+                msgBox.innerHTML = `<span style="color:var(--danger)">CAPTCHA salah. Silakan ketik kata yang tampil dengan benar.</span>`;
+                generateCaptcha("register");
+                return;
+            }
+
             msgBox.innerHTML = `<span>Mendaftarkan...</span>`;
             try {
                 const res = await fetch(API_URL, { 
@@ -669,17 +789,44 @@
             updateAuthUI();
         }
 
+        async function preloadWordHistory() {
+            try {
+                const response = await fetch(`${API_URL}?action=get_riwayat`, {
+                    cache: "no-store"
+                });
+                const result = await response.json();
+                state.wordHistory = result.status === "success" ? (result.data || []) : [];
+            } catch (error) {
+                // Riwayat tidak boleh membuat menu kamus/search gagal.
+                state.wordHistory = [];
+            }
+        }
+
         async function loadKamus(query = "") {
             const container = document.getElementById("dictionaryList");
             container.innerHTML = `<div class="status-msg">Memuat data...</div>`;
+
+            // Riwayat dimuat di background. Jika endpoint riwayat gagal,
+            // Kamus dan menu lainnya tetap berjalan normal.
+            preloadWordHistory();
+
             try {
-                const response = await fetch(`${API_URL}?q=${encodeURIComponent(query)}`);
+                const response = await fetch(`${API_URL}?q=${encodeURIComponent(query)}`, {
+                    cache: "no-store"
+                });
                 const result = await response.json();
-                if (result.status === "success" && result.data.length > 0) {
+
+                if (result.status === "success" && Array.isArray(result.data)) {
                     state.currentData = result.data;
                     state.currentQuery = query;
                     state.showAllHome = false;
-                    renderDictionaryList();
+
+                    if (result.data.length > 0) {
+                        renderDictionaryList();
+                    } else {
+                        container.innerHTML = `<div class="status-msg">Kata tidak ditemukan.</div>`;
+                    }
+
                     if (query.trim() === "") {
                         const badge = document.getElementById("footerWordCount");
                         if (badge) badge.textContent = result.data.length + " kata terkumpul";
@@ -690,6 +837,8 @@
                     container.innerHTML = `<div class="status-msg">Kata tidak ditemukan.</div>`;
                 }
             } catch (error) {
+                state.currentData = [];
+                state.currentQuery = query;
                 container.innerHTML = `<div class="status-msg" style="color:var(--danger)">Gagal terhubung ke server.</div>`;
             }
         }
@@ -797,23 +946,31 @@
             }
         }
 
-        async function loadWordHistory(kataAceh) {
+        function loadWordHistory(kataAceh) {
             const container = document.getElementById("wordHistoryContent");
-            container.innerHTML = `<div class="status-msg">Memuat...</div>`;
-            try {
-                const response = await fetch(`${API_URL}?action=get_riwayat`);
-                const result = await response.json();
-                if (result.status === "success" && result.data.length > 0) {
-                    const filtered = result.data.filter(r => (r.kata_aceh || "").toLowerCase() === kataAceh.toLowerCase());
-                    if (filtered.length > 0) {
-                        container.innerHTML = `
-                            <table>
-                                <thead><tr><th>Waktu</th><th>Pengguna</th><th>Aksi</th></tr></thead>
-                                <tbody>${filtered.map(r => `<tr><td>${formatTanggalIndo(r.timestamp)}</td><td>${escapeHtml(r.username)}</td><td><strong>${escapeHtml(r.aksi)}</strong></td></tr>`).join("")}</tbody>
-                            </table>`;
-                    } else container.innerHTML = `<p style="color:var(--muted)">Belum ada riwayat perubahan kata ini.</p>`;
-                }
-            } catch (err) { container.innerHTML = `<p style="color:var(--danger)">Gagal memuat riwayat.</p>`; }
+
+            const target = String(kataAceh || "").trim().toLowerCase();
+            const filtered = state.wordHistory.filter(r =>
+                String(r.kata_aceh || "").trim().toLowerCase() === target
+            );
+
+            if (filtered.length > 0) {
+                container.innerHTML = `
+                    <table>
+                        <thead><tr><th>Waktu</th><th>Pengguna</th><th>Aksi</th></tr></thead>
+                        <tbody>
+                            ${filtered.map(r => `
+                                <tr>
+                                    <td>${formatTanggalIndo(r.timestamp)}</td>
+                                    <td>${escapeHtml(r.username)}</td>
+                                    <td><strong>${escapeHtml(r.aksi)}</strong></td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>`;
+            } else {
+                container.innerHTML = `<p style="color:var(--muted)">Belum ada riwayat perubahan kata ini.</p>`;
+            }
         }
 
         function hideDetail() {
@@ -879,7 +1036,8 @@
                     document.getElementById("examplesContainer").innerHTML = "";
                     document.getElementById("sumberLainnyaContainer").style.display = "none";
                     addExampleRow('examplesContainer');
-                    loadKamus("");
+                    await loadKamus("");
+                    await preloadWordHistory();
                 } else {
                     msgBox.innerHTML = `<span style="color:var(--danger)">Gagal: ${result.message}</span>`;
                 }
@@ -1020,7 +1178,8 @@
                 if (result.status === "success") {
                     alert("Kata berhasil dihapus!");
                     hideDetail();
-                    loadKamus("");
+                    await loadKamus("");
+                    await preloadWordHistory();
                 } else {
                     alert(result.message);
                 }
@@ -1047,5 +1206,22 @@
             return String(str || "").replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
         }
     </script>
+
+<script>
+function togglePassword(inputId, button) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    if (input.type === "password") {
+        input.type = "text";
+        button.textContent = "🙈";
+        button.setAttribute("aria-label", "Sembunyikan password");
+    } else {
+        input.type = "password";
+        button.textContent = "👁";
+        button.setAttribute("aria-label", "Tampilkan password");
+    }
+}
+</script>
+
 </body>
 </html>
