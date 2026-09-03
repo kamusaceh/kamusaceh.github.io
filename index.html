@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kamus Bahsa Acèh</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --text: #111111;
+            --primary: #111111;
+            --primary-hover: #d52b1e;
+            --border: #d9d9d9;
+            --card-bg: #ffffff;
+            --muted: #767676;
+            --danger: #a11d14;
+            --warning: #d52b1e;
+            --success: #111111;
+            --red: #d52b1e;
+            --grid: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        ::selection { background: var(--red); color: #fff; }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.5; color: var(--text); background-color: var(--bg);
+            max-width: 900px; margin: 0 auto; padding: 0 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header {
+            text-align: left; margin: 40px 0 0; padding-bottom: 20px;
+            border-bottom: 4px solid var(--text);
+        }
+        header h1 {
+            color: var(--text); font-size: clamp(2.2rem, 7vw, 3.6rem); font-weight: 900;
+            letter-spacing: -0.02em; line-height: 1; margin-bottom: 10px;
+        }
+        header p { color: var(--muted); font-size: 0.95rem; max-width: 44ch; }
+
+        nav { margin-top: 0; border-bottom: 1px solid var(--border); }
+        nav ul { display: flex; list-style: none; flex-wrap: wrap; }
+        nav li { counter-increment: navstep; border-right: 1px solid var(--border); }
+        nav li:last-child { border-right: none; }
+        nav button {
+            background: none; border: none; padding: 14px 18px 12px;
+            cursor: pointer; font-weight: 700; font-size: 0.92rem;
+            color: var(--muted); transition: color 0.15s ease;
+            border-bottom: 3px solid transparent; margin-bottom: -1px;
+            font-family: inherit;
+        }
+        nav button::before {
+            content: counter(navstep, decimal-leading-zero) " ";
+            color: var(--border); font-weight: 700; font-variant-numeric: tabular-nums;
+        }
+        nav ul { counter-reset: navstep; }
+        nav button.active::before, nav button:hover::before { color: var(--red); }
+        nav button.active, nav button:hover { color: var(--text); border-bottom-color: var(--red); }
+
+        .tab-content {
+            display: none; background: var(--card-bg); padding: 32px 0 40px;
+            border-radius: 0; border: none; box-shadow: none;
+            margin-bottom: 0;
+        }
+        .tab-content.active { display: block; }
+
+        h2 {
+            font-size: 1.6rem; margin-bottom: 20px; color: var(--text); font-weight: 900;
+            letter-spacing: -0.01em; padding-bottom: 10px; border-bottom: 2px solid var(--text);
+        }
+
+        .search-box {
+            width: 100%; padding: 12px 4px; border: none; border-bottom: 2px solid var(--text);
+            border-radius: 0; font-size: 1.15rem; outline: none; margin-bottom: 28px;
+            background: transparent; font-weight: 500;
+        }
+        .search-box::placeholder { color: var(--muted); font-weight: 400; }
+        .search-box:focus { border-bottom-color: var(--red); }
+
+        .entry-card {
+            border-bottom: 1px solid var(--border); padding: 16px 4px; cursor: pointer;
+            display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: baseline;
+            transition: border-color 0.15s ease;
+        }
+        .entry-card:hover { border-bottom-color: var(--red); }
+        .entry-card:hover .entry-word { color: var(--red); }
+        .entry-num { font-variant-numeric: tabular-nums; color: var(--border); font-weight: 700; font-size: 0.85rem; }
+        .entry-word { font-size: 1.25rem; font-weight: 700; color: var(--text); transition: color 0.15s ease; }
+        .entry-type { font-style: normal; color: var(--muted); font-size: 0.85rem; }
+        .entry-arti { font-size: 0.95rem; color: var(--text); margin-top: 2px; }
+
+        .action-bar { display: flex; gap: 0; margin-bottom: 20px; flex-wrap: wrap; border: 1px solid var(--text); width: fit-content; }
+        .action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 0; border: none; border-right: 1px solid var(--text); background: #ffffff; cursor: pointer; font-size: 0.85rem; font-weight: 700; color: var(--text); }
+        .action-btn:last-child { border-right: none; }
+        .action-btn:hover { background-color: var(--text); color: #fff; }
+        .action-btn.btn-danger { color: var(--danger); }
+        .action-btn.btn-danger:hover { background-color: var(--danger); color: #fff; }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 6px; color: var(--text); }
+        input[type="text"], input[type="password"], select, textarea {
+            width: 100%; padding: 10px 12px; border: 1px solid var(--text); border-radius: 0; font-size: 0.95rem;
+            font-family: inherit; background: #fff;
+        }
+        input[type="text"]:focus, input[type="password"]:focus, select:focus, textarea:focus {
+            outline: 2px solid var(--red); outline-offset: 1px;
+        }
+
+        .btn { background-color: var(--text); color: white; border: 1px solid var(--text); padding: 11px 22px; border-radius: 0; cursor: pointer; font-weight: 700; font-family: inherit; }
+        .btn:hover { background-color: var(--red); border-color: var(--red); }
+        .btn-secondary { background-color: #ffffff; color: var(--text); border: 1px solid var(--text); padding: 8px 16px; border-radius: 0; cursor: pointer; font-size: 0.85rem; font-weight: 700; font-family: inherit; }
+        .btn-secondary:hover { background-color: var(--text); color: #fff; }
+        .btn-danger-sm { background-color: #ffffff; color: var(--danger); border: 1px solid var(--danger); padding: 9px 12px; border-radius: 0; cursor: pointer; font-weight: 700; }
+        .btn-danger-sm:hover { background-color: var(--danger); color: #fff; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; margin-bottom: 28px; background: var(--text); border: 1px solid var(--text); }
+        .stat-card { background: #ffffff; border: none; border-radius: 0; padding: 20px 16px; text-align: left; }
+        .stat-number { font-size: 2.2rem; font-weight: 900; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1; }
+        .stat-label { font-size: 0.85rem; color: var(--muted); margin-top: 6px; }
+
+        .auth-toggle { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 2px solid var(--text); padding-bottom: 0; }
+        .auth-toggle-btn { background: none; border: none; cursor: pointer; font-weight: 700; color: var(--muted); font-size: 0.95rem; padding: 10px 18px 10px 0; margin-right: 14px; font-family: inherit; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+        .auth-toggle-btn.active { color: var(--text); border-bottom-color: var(--red); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.88rem; }
+        th, td { border: none; border-bottom: 1px solid var(--border); padding: 10px 8px; text-align: left; }
+        th { border-bottom: 2px solid var(--text); font-weight: 700; }
+
+        .rujukan-chip {
+            display: inline-block; background-color: #ffffff; color: var(--red);
+            border: 1px solid var(--red); padding: 3px 10px; border-radius: 0;
+            font-size: 0.85rem; font-weight: 700; cursor: pointer; margin-right: 6px; margin-top: 4px;
+        }
+        .rujukan-chip:hover { background-color: var(--red); color: white; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17,17,17,0.6); align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
+        .modal-content { background: white; padding: 28px; border-radius: 0; border-top: 6px solid var(--text); max-width: 650px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; }
+        .close-modal { position: absolute; top: 16px; right: 20px; font-size: 1.5rem; cursor: pointer; font-weight: 700; }
+        .badge { color: white; padding: 3px 8px; border-radius: 0; font-size: 0.72rem; font-weight: 700; display: inline-block; }
+        .status-msg { text-align: left; color: var(--muted); padding: 20px 4px; }
+
+        .show-all-wrap { text-align: left; padding: 20px 0 4px; }
+
+        footer {
+            margin: 60px -20px 0;
+            border-radius: 0;
+            overflow: hidden;
+            background: var(--text);
+            color: #ffffff;
+            position: relative;
+        }
+        footer::before {
+            content: "";
+            display: block;
+            height: 6px;
+            width: 100%;
+            background: var(--red);
+        }
+        .footer-inner {
+            max-width: 900px; margin: 0 auto;
+            padding: 40px 20px 28px;
+            display: grid;
+            grid-template-columns: 1.3fr 1fr 1fr;
+            gap: 0;
+        }
+        .footer-brand {
+            padding-right: 28px; border-right: 1px solid rgba(255,255,255,0.2);
+        }
+        .footer-brand h3 {
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: -0.01em;
+            margin-bottom: 12px;
+        }
+        .footer-brand p {
+            color: rgba(255,255,255,0.72);
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+        .footer-col { padding-left: 28px; }
+        .footer-col h4 {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--red);
+            margin-bottom: 14px;
+        }
+        .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; counter-reset: footstep; }
+        .footer-col li { counter-increment: footstep; }
+        .footer-col button.footer-link {
+            background: none; border: none; color: #ffffff; text-align: left;
+            cursor: pointer; font-size: 0.9rem; font-weight: 600; padding: 0;
+            transition: color 0.15s;
+        }
+        .footer-col button.footer-link::before {
+            content: counter(footstep, decimal-leading-zero) "  ";
+            color: rgba(255,255,255,0.4); font-variant-numeric: tabular-nums; font-weight: 700;
+        }
+        .footer-col button.footer-link:hover { color: var(--red); }
+        .footer-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+        .footer-badge {
+            font-size: 0.75rem; background: transparent; font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.35); padding: 4px 10px; border-radius: 0;
+        }
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.2);
+            max-width: 900px; margin: 0 auto;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.65);
+        }
+        .footer-bottom .heart { color: var(--red); }
+
+        @media (max-width: 620px) {
+            .footer-inner { grid-template-columns: 1fr; }
+            .footer-brand { padding-right: 0; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 20px; margin-bottom: 20px; }
+            .footer-col { padding-left: 0; }
+            .footer-bottom { flex-direction: column; text-align: left; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Kamus Bahsa Acèh</h1>
+        <p>Kamus digital kolaboratif bahasa Acèh, disusun dan dirawat bersama para kontributor.</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><button class="nav-btn active" onclick="switchTab('kamus')">Kamus</button></li>
+            <li><button class="nav-btn" onclick="switchTab('tambah')">Tambah Kata</button></li>
+            <li><button class="nav-btn" onclick="switchTab('riwayat')">Riwayat</button></li>
+            <li><button class="nav-btn" id="accountTabBtn" onclick="switchTab('account')">Masuk / Daftar</button></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- TAB 1: KAMUS -->
+        <section id="tab-kamus" class="tab-content active">
+            <div id="listView">
+                <input type="text" id="searchInput" class="search-box" placeholder="Cari kata Acèh atau arti Indonesia..." oninput="handleSearch()">
+                <div id="dictionaryList"><div class="status-msg">Memuat data kamus...</div></div>
+            </div>
+
+            <div id="detailView" style="display: none;">
+                <button type="button" class="btn-secondary" onclick="hideDetail()" style="margin-bottom: 20px;">&larr; Kembali ke Daftar</button>
+                <div id="detailContent"></div>
+                <div id="actionContainer"></div>
+                <div id="wordHistoryWrapper" style="display: none; margin-top: 15px;">
+                    <div style="font-weight: bold; margin-bottom: 8px;">Riwayat Perubahan Kata Ini</div>
+                    <div id="wordHistoryContent"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: TAMBAH KATA -->
+        <section id="tab-tambah" class="tab-content">
+            <h2>Tambah Kata Baru</h2>
+            <form id="addForm" onsubmit="handleTambahKata(event)">
+                <div class="form-group"><label>Kata Acèh</label><input type="text" id="kata" required placeholder="Contoh: aduen"></div>
+                <div class="form-group">
+                    <label>Jenis Kata</label>
+                    <select id="tipe" required>
+                        <option value="n">n (Kata Benda)</option>
+                        <option value="v">v (Kata Kerja)</option>
+                        <option value="adj">adj (Kata Sifat)</option>
+                        <option value="adv">adv (Kata Keterangan)</option>
+                        <option value="lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Arti Indonesia</label><textarea id="arti" rows="3" required placeholder="Arti dalam bahasa Indonesia..."></textarea></div>
+                
+                <div class="form-group">
+                    <label>Contoh Kalimat & Terjemahan</label>
+                    <div id="examplesContainer"></div>
+                    <button type="button" class="btn btn-secondary" onclick="addExampleRow('examplesContainer')">+ Tambah Contoh Kalimat</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Rujukan Kata Lain (Opsional)</label>
+                    <input type="text" id="rujukan" placeholder="Misal: guree, syedara (bisa lebih dari satu, pisahkan dengan koma)">
+                </div>
+
+                <div class="form-group">
+                    <label>Sumber / Referensi</label>
+                    <select id="sumberSelect" onchange="toggleSumberInput('sumberSelect', 'sumberLainnyaContainer')">
+                        <option value="">-- Pilih Sumber (Opsional) --</option>
+                        <option value="Kamus Aceh - Indonesia (Pusat Bahasa)">Kamus Aceh - Indonesia (Pusat Bahasa)</option>
+                        <option value="Kamus Bahasa Aceh (A.G. Abdul Gani)">Kamus Bahasa Aceh (A.G. Abdul Gani)</option>
+                        <option value="Tutur Lisan / Informan">Tutur Lisan / Informan</option>
+                        <option value="LAINNYA">Lainnya...</option>
+                    </select>
+                </div>
+                <div class="form-group" id="sumberLainnyaContainer" style="display: none;">
+                    <label>Tuliskan Sumber Lainnya</label>
+                    <input type="text" id="sumberLainnya" placeholder="Tuliskan nama pustaka, buku, atau sumber...">
+                </div>
+
+                <div id="addMsg" class="form-group"></div>
+                <button type="submit" class="btn">Simpan Kata Baru</button>
+            </form>
+        </section>
+
+        <!-- TAB 3: RIWAYAT UMUM -->
+        <section id="tab-riwayat" class="tab-content">
+            <h2>Riwayat Semua Perubahan</h2>
+            <div id="riwayatContent"><div class="status-msg">Memuat data...</div></div>
+        </section>
+
+        <!-- TAB 4: AKUN / USER PROFILE -->
+        <section id="tab-account" class="tab-content">
+            <div id="loggedOutView">
+                <div class="auth-toggle">
+                    <button class="auth-toggle-btn active" id="btnModeLogin" onclick="setAuthMode('login')">Masuk</button>
+                    <button class="auth-toggle-btn" id="btnModeRegister" onclick="setAuthMode('register')">Daftar Akun</button>
+                </div>
+
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <h2>Masuk ke Akun</h2>
+                    <div class="form-group"><label>Username</label><input type="text" id="loginUser" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" id="loginPass" required></div>
+                    <div id="loginMsg" class="form-group"></div>
+                    <button type="submit" class="btn">Masuk</button>
+                </form>
+
+                <form id="registerForm" onsubmit="handleRegister(event)" style="display: none;">
+                    <h2>Daftar Akun Baru</h2>
+                    <div class="form-group"><label>Username Baru</label><input type="text" id="regUser" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" id="regPass" required></div>
+                    <div id="regMsg" class="form-group"></div>
+                    <button type="submit" class="btn">Daftar Sekarang</button>
+                </form>
+            </div>
+
+            <div id="loggedInView" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Profil Kontributor: <span id="profUsername" style="color:var(--primary);"></span></h2>
+                    <button type="button" class="btn-secondary" onclick="handleLogout()">Keluar / Logout</button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="statTotalAdd">0 Kata</div>
+                        <div class="stat-label">Jumlah Kata Ditambah</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="statTotalEdit">0 Kali</div>
+                        <div class="stat-label">Jumlah Perubahan (Edit)</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-top:24px; color:var(--primary);">📜 Kata Apa Saja yang Anda Tambahkan</h3>
+                <div id="userWordsContent" style="margin-top: 10px; margin-bottom: 28px;"></div>
+
+                <h3 style="margin-top:20px; color:var(--primary);">🕒 Aktivitas Terakhir Anda</h3>
+                <div id="userActivityContent" style="margin-top: 10px;"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <h3>Kamus Bahsa Acèh</h3>
+                <p>Kamus digital kolaboratif untuk mengumpulkan, merawat, dan mewariskan kata-kata Acèh.</p>
+                <div class="footer-badges">
+                    <span class="footer-badge" id="footerWordCount">— kata</span>
+                    <span class="footer-badge">Acèh · Indonesia</span>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Jelajahi</h4>
+                <ul>
+                    <li><button type="button" class="footer-link" onclick="footerNav('kamus')">Kamus</button></li>
+                    <li><button type="button" class="footer-link" onclick="footerNav('tambah')">Tambah kata</button></li>
+                    <li><button type="button" class="footer-link" onclick="footerNav('riwayat')">Riwayat perubahan</button></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Akun</h4>
+                <ul>
+                    <li><button type="button" class="footer-link" onclick="footerNav('account')">Masuk / daftar</button></li>
+                    <li><button type="button" class="footer-link" onclick="window.scrollTo({top:0, behavior:'smooth'})">Kembali ke atas</button></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; <span id="footerYear"></span> Kamus Bahsa Acèh. Dibuat dengan <span class="heart">♥</span> untuk pelestarian bahasa daerah.</span>
+            <span>Peu na lôn tôlông? Tamah keu bahsa gata!</span>
+        </div>
+    </footer>
+
+    <!-- MODAL EDIT KATA -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEditModal()">&times;</span>
+            <h2>Ubah Kata</h2>
+            <form id="editForm" onsubmit="handleSimpanEdit(event)" style="margin-top:16px;">
+                <input type="hidden" id="editOriginalKata">
+                <div class="form-group"><label>Kata Acèh</label><input type="text" id="editKata" required></div>
+                
+                <div class="form-group">
+                    <label>Jenis Kata</label>
+                    <select id="editTipe" required>
+                        <option value="n">n (Kata Benda)</option>
+                        <option value="v">v (Kata Kerja)</option>
+                        <option value="adj">adj (Kata Sifat)</option>
+                        <option value="adv">adv (Kata Keterangan)</option>
+                        <option value="lainnya">Lainnya</option>
+                    </select>
+                </div>
+
+                <div class="form-group"><label>Arti Indonesia</label><textarea id="editArti" rows="3" required></textarea></div>
+                
+                <div class="form-group">
+                    <label>Contoh Kalimat & Terjemahan</label>
+                    <div id="editExamplesContainer"></div>
+                    <button type="button" class="btn btn-secondary" onclick="addExampleRow('editExamplesContainer')">+ Tambah Contoh Kalimat</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Rujukan Kata Lain (Opsional)</label>
+                    <input type="text" id="editRujukan" placeholder="Pisahkan dengan koma jika lebih dari satu">
+                </div>
+
+                <div class="form-group">
+                    <label>Sumber / Referensi</label>
+                    <select id="editSumberSelect" onchange="toggleSumberInput('editSumberSelect', 'editSumberLainnyaContainer')">
+                        <option value="">-- Pilih Sumber (Opsional) --</option>
+                        <option value="Kamus Aceh - Indonesia (Pusat Bahasa)">Kamus Aceh - Indonesia (Pusat Bahasa)</option>
+                        <option value="Kamus Bahasa Aceh (A.G. Abdul Gani)">Kamus Bahasa Aceh (A.G. Abdul Gani)</option>
+                        <option value="Tutur Lisan / Informan">Tutur Lisan / Informan</option>
+                        <option value="LAINNYA">Lainnya...</option>
+                    </select>
+                </div>
+                <div class="form-group" id="editSumberLainnyaContainer" style="display: none;">
+                    <label>Tuliskan Sumber Lainnya</label>
+                    <input type="text" id="editSumberLainnya" placeholder="Tuliskan nama sumber...">
+                </div>
+
+                <div id="editMsg" class="form-group"></div>
+                <div style="display:flex; gap:10px;">
+                    <button type="submit" class="btn">Simpan Perubahan</button>
+                    <button type="button" class="btn-secondary" onclick="closeEditModal()">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbxfZiFwlf7hkt957h56m6TNr6xmLwTb8PC-tfJtw5JO_RztCwiLJnX2AeYKPz7nXRap/exec";
+        const HOME_LIMIT = 5;
+        
+        let state = {
+            auth: JSON.parse(localStorage.getItem("kamus_auth") || "null"),
+            currentData: [],
+            currentQuery: "",
+            showAllHome: false,
+            searchTimer: null
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            updateAuthUI();
+            loadKamus("");
+            addExampleRow('examplesContainer');
+            document.getElementById("footerYear").textContent = new Date().getFullYear();
+        });
+
+        function footerNav(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+
+            const navBtnMap = { kamus: 0, tambah: 1, riwayat: 2, account: 3 };
+            const navButtons = document.querySelectorAll('nav .nav-btn');
+            if (navButtons[navBtnMap[tabName]]) navButtons[navBtnMap[tabName]].classList.add('active');
+
+            if (tabName === 'kamus') hideDetail();
+            if (tabName === 'riwayat') loadRiwayat();
+            if (tabName === 'account' && state.auth) loadUserProfile();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function formatTanggalIndo(dateString) {
+            if (!dateString) return "-";
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return escapeHtml(dateString);
+
+            const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu"];
+            const bulan = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+
+            const namaHari = hari[date.getDay()];
+            const tgl = String(date.getDate()).padStart(2, '0');
+            const namaBulan = bulan[date.getMonth()];
+            const thn = date.getFullYear();
+            const jam = String(date.getHours()).padStart(2, '0');
+            const menit = String(date.getMinutes()).padStart(2, '0');
+            const detik = String(date.getSeconds()).padStart(2, '0');
+
+            return `${namaHari}, ${tgl} ${namaBulan} ${thn} ${jam}:${menit}:${detik}`;
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'kamus') hideDetail();
+            if (tabName === 'riwayat') loadRiwayat();
+            if (tabName === 'account' && state.auth) loadUserProfile();
+        }
+
+        function updateAuthUI() {
+            const btn = document.getElementById("accountTabBtn");
+            const loggedOutView = document.getElementById("loggedOutView");
+            const loggedInView = document.getElementById("loggedInView");
+
+            if (state.auth) {
+                btn.textContent = "Akun (" + state.auth.username + ")";
+                loggedOutView.style.display = "none";
+                loggedInView.style.display = "block";
+                document.getElementById("profUsername").textContent = state.auth.username;
+            } else {
+                btn.textContent = "Masuk / Daftar";
+                loggedOutView.style.display = "block";
+                loggedInView.style.display = "none";
+            }
+        }
+
+        function setAuthMode(mode) {
+            document.getElementById("btnModeLogin").classList.toggle("active", mode === "login");
+            document.getElementById("btnModeRegister").classList.toggle("active", mode === "register");
+            document.getElementById("loginForm").style.display = mode === "login" ? "block" : "none";
+            document.getElementById("registerForm").style.display = mode === "register" ? "block" : "none";
+        }
+
+        function toggleSumberInput(selectId, containerId) {
+            const selectEl = document.getElementById(selectId);
+            const containerEl = document.getElementById(containerId);
+            if (selectEl.value === "LAINNYA") {
+                containerEl.style.display = "block";
+            } else {
+                containerEl.style.display = "none";
+            }
+        }
+
+        function getValSumber(selectId, lainnyaInputId) {
+            const selectVal = document.getElementById(selectId).value;
+            if (selectVal === "LAINNYA") {
+                return document.getElementById(lainnyaInputId).value.trim();
+            }
+            return selectVal;
+        }
+
+        async function loadUserProfile() {
+            if (!state.auth) return;
+            const userWordsContainer = document.getElementById("userWordsContent");
+            const userActivityContainer = document.getElementById("userActivityContent");
+
+            userWordsContainer.innerHTML = `<p class="status-msg">Memuat kata...</p>`;
+            userActivityContainer.innerHTML = `<p class="status-msg">Memuat aktivitas...</p>`;
+
+            try {
+                const res = await fetch(`${API_URL}?action=get_user_profile&username=${encodeURIComponent(state.auth.username)}`);
+                const result = await res.json();
+
+                if (result.status === "success") {
+                    const prof = result.profile;
+                    document.getElementById("statTotalAdd").textContent = (prof.total_added || 0) + " Kata";
+                    document.getElementById("statTotalEdit").textContent = (prof.total_edited || 0) + " Kali";
+
+                    if (prof.my_added_words && prof.my_added_words.length > 0) {
+                        userWordsContainer.innerHTML = `
+                            <table>
+                                <thead><tr><th style="width: 50px;">No</th><th>Kata Acèh</th><th>Waktu Ditambahkan</th></tr></thead>
+                                <tbody>
+                                    ${prof.my_added_words.map((w, index) => `
+                                        <tr>
+                                            <td>${index + 1}</td>
+                                            <td><strong style="color:var(--primary); font-size:1rem;">${escapeHtml(w.kata)}</strong></td>
+                                            <td>${formatTanggalIndo(w.timestamp)}</td>
+                                        </tr>
+                                    `).join("")}
+                                </tbody>
+                            </table>`;
+                    } else {
+                        userWordsContainer.innerHTML = `<p style="color:var(--muted); font-style:italic;">Belum ada kata yang Anda tambahkan.</p>`;
+                    }
+
+                    if (prof.my_activities && prof.my_activities.length > 0) {
+                        userActivityContainer.innerHTML = `
+                            <table>
+                                <thead><tr><th>Waktu</th><th>Aksi</th><th>Kata Terkait</th></tr></thead>
+                                <tbody>
+                                    ${prof.my_activities.map(a => {
+                                        let badgeColor = "var(--success)";
+                                        if (a.aksi === "UBAH") badgeColor = "var(--warning)";
+                                        if (a.aksi === "HAPUS") badgeColor = "var(--danger)";
+                                        return `<tr><td>${formatTanggalIndo(a.timestamp)}</td><td><span class="badge" style="background:${badgeColor};">${escapeHtml(a.aksi)}</span></td><td><strong>${escapeHtml(a.kata)}</strong></td></tr>`;
+                                    }).join("")}
+                                </tbody>
+                            </table>`;
+                    } else {
+                        userActivityContainer.innerHTML = `<p style="color:var(--muted); font-style:italic;">Belum ada riwayat aktivitas.</p>`;
+                    }
+                }
+            } catch (err) {
+                userWordsContainer.innerHTML = `<p style="color:var(--danger)">Gagal memuat profil.</p>`;
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const msgBox = document.getElementById("loginMsg");
+            const user = document.getElementById("loginUser").value.trim();
+            const pass = document.getElementById("loginPass").value;
+
+            msgBox.innerHTML = `<span>Memeriksa...</span>`;
+            try {
+                const res = await fetch(API_URL, { 
+                    method: "POST", 
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "login", username: user, password: pass }) 
+                });
+                const result = await res.json();
+                if (result.status === "success") {
+                    state.auth = { username: user, password: pass };
+                    localStorage.setItem("kamus_auth", JSON.stringify(state.auth));
+                    updateAuthUI();
+                    loadUserProfile();
+                } else msgBox.innerHTML = `<span style="color:var(--danger)">${result.message}</span>`;
+            } catch (err) { msgBox.innerHTML = `<span style="color:var(--danger)">Gagal terhubung ke server.</span>`; }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const msgBox = document.getElementById("regMsg");
+            const user = document.getElementById("regUser").value.trim();
+            const pass = document.getElementById("regPass").value;
+
+            msgBox.innerHTML = `<span>Mendaftarkan...</span>`;
+            try {
+                const res = await fetch(API_URL, { 
+                    method: "POST", 
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "register", username: user, password: pass }) 
+                });
+                const result = await res.json();
+                if (result.status === "success") {
+                    msgBox.innerHTML = `<span style="color:var(--success)">${result.message}</span>`;
+                    document.getElementById("registerForm").reset();
+                    setTimeout(() => setAuthMode("login"), 1500);
+                } else msgBox.innerHTML = `<span style="color:var(--danger)">${result.message}</span>`;
+            } catch (err) { msgBox.innerHTML = `<span style="color:var(--danger)">Gagal terhubung ke server.</span>`; }
+        }
+
+        function handleLogout() {
+            state.auth = null;
+            localStorage.removeItem("kamus_auth");
+            updateAuthUI();
+        }
+
+        async function loadKamus(query = "") {
+            const container = document.getElementById("dictionaryList");
+            container.innerHTML = `<div class="status-msg">Memuat data...</div>`;
+            try {
+                const response = await fetch(`${API_URL}?q=${encodeURIComponent(query)}`);
+                const result = await response.json();
+                if (result.status === "success" && result.data.length > 0) {
+                    state.currentData = result.data;
+                    state.currentQuery = query;
+                    state.showAllHome = false;
+                    renderDictionaryList();
+                    if (query.trim() === "") {
+                        const badge = document.getElementById("footerWordCount");
+                        if (badge) badge.textContent = result.data.length + " kata terkumpul";
+                    }
+                } else {
+                    state.currentData = [];
+                    state.currentQuery = query;
+                    container.innerHTML = `<div class="status-msg">Kata tidak ditemukan.</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="status-msg" style="color:var(--danger)">Gagal terhubung ke server.</div>`;
+            }
+        }
+
+        function renderDictionaryList() {
+            const container = document.getElementById("dictionaryList");
+            const isHome = state.currentQuery.trim() === "";
+            const shouldLimit = isHome && !state.showAllHome && state.currentData.length > HOME_LIMIT;
+            const dataToShow = shouldLimit ? state.currentData.slice(0, HOME_LIMIT) : state.currentData;
+
+            let html = dataToShow.map((item, i) => {
+                const realIndex = state.currentData.indexOf(item);
+                const num = String(i + 1).padStart(2, "0");
+                return `
+                <div class="entry-card" onclick="showDetail(${realIndex})">
+                    <div class="entry-num">${num}</div>
+                    <div>
+                        <div class="entry-word">${escapeHtml(item.kata_aceh || "")} <span class="entry-type">(${escapeHtml(item.tipe_kata || "")})</span></div>
+                        <div class="entry-arti">${escapeHtml(item.arti_indonesia || "")}</div>
+                    </div>
+                </div>
+            `;
+            }).join("");
+
+            if (shouldLimit) {
+                html += `
+                    <div class="show-all-wrap">
+                        <button type="button" class="btn-secondary" onclick="showAllHomeWords()">Tampilkan Semua Kata (${state.currentData.length})</button>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function showAllHomeWords() {
+            state.showAllHome = true;
+            renderDictionaryList();
+        }
+
+        function showDetail(index) {
+            const item = state.currentData[index];
+            if (!item) return;
+
+            let contohHTML = "";
+            let exIndex = 1;
+            while (item["contoh" + exIndex + "_aceh"]) {
+                contohHTML += `
+                    <div style="margin-bottom:8px;">
+                        <div>• <strong>${escapeHtml(item["contoh" + exIndex + "_aceh"])}</strong></div>
+                        <div style="color:var(--muted); font-style:italic; padding-left:12px;">${escapeHtml(item["contoh" + exIndex + "_indo"])}</div>
+                    </div>
+                `;
+                exIndex++;
+            }
+
+            let rujukanHTML = "";
+            if (item.rujukan && item.rujukan.trim() !== "") {
+                const rujukanList = item.rujukan.split(",").map(r => r.trim()).filter(Boolean);
+                const chips = rujukanList.map(r => `<span class="rujukan-chip" onclick="searchRujukan('${escapeHtml(r)}')">🔗 ${escapeHtml(r)}</span>`).join("");
+                rujukanHTML = `<div style="margin-top:16px;"><strong>Rujukan Kata Lain:</strong><br>${chips}</div>`;
+            }
+
+            let sumberHTML = "";
+            if (item.sumber && item.sumber.trim() !== "") {
+                sumberHTML = `<div style="margin-top:14px; font-size:0.9rem; color:var(--muted);">📚 <strong>Sumber / Referensi:</strong> ${escapeHtml(item.sumber)}</div>`;
+            }
+
+            document.getElementById("detailContent").innerHTML = `
+                <h2 style="font-size:2rem; margin-bottom:4px;">${escapeHtml(item.kata_aceh)} <i style="font-size:1.2rem; color:var(--muted);">(${escapeHtml(item.tipe_kata)})</i></h2>
+                <p style="font-size:1.15rem; margin-bottom:18px;">${escapeHtml(item.arti_indonesia)}</p>
+                ${contohHTML ? `<div style="background:#f8f9fa; padding:14px; border-radius:8px; margin-bottom:16px;"><strong>Contoh Kalimat:</strong><br>${contohHTML}</div>` : ''}
+                ${rujukanHTML}
+                ${sumberHTML}
+            `;
+
+            const isLoggedIn = !!state.auth;
+            document.getElementById("actionContainer").innerHTML = `
+                <div class="action-bar" style="margin-top:20px;">
+                    <button type="button" class="action-btn" onclick="toggleWordHistory('${escapeHtml(item.kata_aceh)}')">📜 Riwayat Kata</button>
+                    ${isLoggedIn ? `
+                        <button type="button" class="action-btn" onclick="openEditModal(${index})">✏️ Ubah</button>
+                        <button type="button" class="action-btn btn-danger" onclick="handleHapusKata('${escapeHtml(item.kata_aceh)}')">🗑️ Hapus</button>
+                    ` : ''}
+                </div>
+            `;
+            document.getElementById("wordHistoryWrapper").style.display = "none";
+            document.getElementById("listView").style.display = "none";
+            document.getElementById("detailView").style.display = "block";
+        }
+
+        function searchRujukan(kata) {
+            hideDetail();
+            document.getElementById("searchInput").value = kata;
+            loadKamus(kata);
+        }
+
+        function toggleWordHistory(kataAceh) {
+            const wrapper = document.getElementById("wordHistoryWrapper");
+            if (wrapper.style.display === "none") {
+                wrapper.style.display = "block";
+                loadWordHistory(kataAceh);
+            } else {
+                wrapper.style.display = "none";
+            }
+        }
+
+        async function loadWordHistory(kataAceh) {
+            const container = document.getElementById("wordHistoryContent");
+            container.innerHTML = `<div class="status-msg">Memuat...</div>`;
+            try {
+                const response = await fetch(`${API_URL}?action=get_riwayat`);
+                const result = await response.json();
+                if (result.status === "success" && result.data.length > 0) {
+                    const filtered = result.data.filter(r => (r.kata_aceh || "").toLowerCase() === kataAceh.toLowerCase());
+                    if (filtered.length > 0) {
+                        container.innerHTML = `
+                            <table>
+                                <thead><tr><th>Waktu</th><th>Pengguna</th><th>Aksi</th></tr></thead>
+                                <tbody>${filtered.map(r => `<tr><td>${formatTanggalIndo(r.timestamp)}</td><td>${escapeHtml(r.username)}</td><td><strong>${escapeHtml(r.aksi)}</strong></td></tr>`).join("")}</tbody>
+                            </table>`;
+                    } else container.innerHTML = `<p style="color:var(--muted)">Belum ada riwayat perubahan kata ini.</p>`;
+                }
+            } catch (err) { container.innerHTML = `<p style="color:var(--danger)">Gagal memuat riwayat.</p>`; }
+        }
+
+        function hideDetail() {
+            document.getElementById("detailView").style.display = "none";
+            document.getElementById("listView").style.display = "block";
+        }
+
+        function handleSearch() {
+            clearTimeout(state.searchTimer);
+            state.searchTimer = setTimeout(() => loadKamus(document.getElementById("searchInput").value.trim()), 300);
+        }
+
+        function addExampleRow(containerId) {
+            const container = document.getElementById(containerId);
+            const row = document.createElement("div");
+            row.style.cssText = "display:grid; grid-template-columns:1fr 1fr auto; gap:8px; margin-bottom:8px;";
+            row.innerHTML = `
+                <input type="text" class="ex-aceh" placeholder="Contoh Acèh">
+                <input type="text" class="ex-indo" placeholder="Terjemahan Indonesia">
+                <button type="button" class="btn-danger-sm" onclick="this.parentElement.remove()">X</button>
+            `;
+            container.appendChild(row);
+        }
+
+        async function handleTambahKata(e) {
+            e.preventDefault();
+            const msgBox = document.getElementById("addMsg");
+            if (!state.auth) {
+                return msgBox.innerHTML = `<span style="color:var(--danger)">Anda harus login untuk menambah kata!</span>`;
+            }
+
+            const payload = {
+                action: "add",
+                auth_user: state.auth.username,
+                auth_pass: state.auth.password,
+                kata_aceh: document.getElementById("kata").value.trim(),
+                tipe_kata: document.getElementById("tipe").value,
+                arti_indonesia: document.getElementById("arti").value.trim(),
+                rujukan: document.getElementById("rujukan").value.trim(),
+                sumber: getValSumber("sumberSelect", "sumberLainnya")
+            };
+
+            const exAceh = document.querySelectorAll("#examplesContainer .ex-aceh");
+            const exIndo = document.querySelectorAll("#examplesContainer .ex-indo");
+            exAceh.forEach((el, idx) => {
+                if (idx < 25) {
+                    payload["contoh" + (idx + 1) + "_aceh"] = el.value.trim();
+                    payload["contoh" + (idx + 1) + "_indo"] = exIndo[idx] ? exIndo[idx].value.trim() : "";
+                }
+            });
+
+            msgBox.innerHTML = "Menyimpan kata baru...";
+            try {
+                const res = await fetch(API_URL, { 
+                    method: "POST", 
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload) 
+                });
+                const result = await res.json();
+                if (result.status === "success") {
+                    msgBox.innerHTML = `<span style="color:var(--success)">Kata berhasil ditambahkan!</span>`;
+                    document.getElementById("addForm").reset();
+                    document.getElementById("examplesContainer").innerHTML = "";
+                    document.getElementById("sumberLainnyaContainer").style.display = "none";
+                    addExampleRow('examplesContainer');
+                    loadKamus("");
+                } else {
+                    msgBox.innerHTML = `<span style="color:var(--danger)">Gagal: ${result.message}</span>`;
+                }
+            } catch (err) { msgBox.innerHTML = `<span style="color:var(--danger)">Terjadi kesalahan koneksi.</span>`; }
+        }
+
+        function openEditModal(index) {
+            const item = state.currentData[index];
+            document.getElementById("editOriginalKata").value = item.kata_aceh;
+            document.getElementById("editKata").value = item.kata_aceh;
+            
+            const selectTipe = document.getElementById("editTipe");
+            const rawTipe = (item.tipe_kata || "").toString().trim().toLowerCase();
+            
+            let matched = false;
+            for (let i = 0; i < selectTipe.options.length; i++) {
+                if (selectTipe.options[i].value.toLowerCase() === rawTipe) {
+                    selectTipe.selectedIndex = i;
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                selectTipe.value = "lainnya";
+            }
+
+            document.getElementById("editArti").value = item.arti_indonesia;
+            document.getElementById("editRujukan").value = item.rujukan || "";
+
+            const sumberVal = item.sumber || "";
+            const selectEl = document.getElementById("editSumberSelect");
+            const optionValues = Array.from(selectEl.options).map(o => o.value);
+
+            if (optionValues.includes(sumberVal)) {
+                selectEl.value = sumberVal;
+                document.getElementById("editSumberLainnyaContainer").style.display = "none";
+                document.getElementById("editSumberLainnya").value = "";
+            } else if (sumberVal) {
+                selectEl.value = "LAINNYA";
+                document.getElementById("editSumberLainnyaContainer").style.display = "block";
+                document.getElementById("editSumberLainnya").value = sumberVal;
+            } else {
+                selectEl.value = "";
+                document.getElementById("editSumberLainnyaContainer").style.display = "none";
+                document.getElementById("editSumberLainnya").value = "";
+            }
+
+            const editExContainer = document.getElementById("editExamplesContainer");
+            editExContainer.innerHTML = "";
+            let exIndex = 1;
+            while (item["contoh" + exIndex + "_aceh"]) {
+                const row = document.createElement("div");
+                row.style.cssText = "display:grid; grid-template-columns:1fr 1fr auto; gap:8px; margin-bottom:8px;";
+                row.innerHTML = `
+                    <input type="text" class="ex-aceh" value="${escapeHtml(item["contoh" + exIndex + "_aceh"])}">
+                    <input type="text" class="ex-indo" value="${escapeHtml(item["contoh" + exIndex + "_indo"])}">
+                    <button type="button" class="btn-danger-sm" onclick="this.parentElement.remove()">X</button>
+                `;
+                editExContainer.appendChild(row);
+                exIndex++;
+            }
+
+            document.getElementById("editModal").style.display = "flex";
+        }
+
+        function closeEditModal() { document.getElementById("editModal").style.display = "none"; }
+
+        async function handleSimpanEdit(e) {
+            e.preventDefault();
+            const msgBox = document.getElementById("editMsg");
+            if (!state.auth) {
+                msgBox.innerHTML = `<span style="color:var(--danger)">Sesi login telah berakhir.</span>`;
+                return;
+            }
+
+            const editedKata = document.getElementById("editKata").value.trim();
+
+            const payload = {
+                action: "edit",
+                auth_user: state.auth.username,
+                auth_pass: state.auth.password,
+                original_kata: document.getElementById("editOriginalKata").value,
+                kata_aceh: editedKata,
+                tipe_kata: document.getElementById("editTipe").value,
+                arti_indonesia: document.getElementById("editArti").value.trim(),
+                rujukan: document.getElementById("editRujukan").value.trim(),
+                sumber: getValSumber("editSumberSelect", "editSumberLainnya")
+            };
+
+            const exAceh = document.querySelectorAll("#editExamplesContainer .ex-aceh");
+            const exIndo = document.querySelectorAll("#editExamplesContainer .ex-indo");
+            exAceh.forEach((el, idx) => {
+                if (idx < 25) {
+                    payload["contoh" + (idx + 1) + "_aceh"] = el.value.trim();
+                    payload["contoh" + (idx + 1) + "_indo"] = exIndo[idx] ? exIndo[idx].value.trim() : "";
+                }
+            });
+
+            msgBox.innerHTML = "Menyimpan perubahan...";
+            try {
+                const res = await fetch(API_URL, { 
+                    method: "POST", 
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload) 
+                });
+                const result = await res.json();
+                if (result.status === "success") {
+                    msgBox.innerHTML = `<span style="color:var(--success)">Perubahan berhasil disimpan!</span>`;
+                    setTimeout(async () => { 
+                        closeEditModal();
+                        await loadKamus(""); 
+                        
+                        const targetIndex = state.currentData.findIndex(
+                            item => (item.kata_aceh || "").toLowerCase().trim() === editedKata.toLowerCase()
+                        );
+                        
+                        if (targetIndex !== -1) {
+                            showDetail(targetIndex);
+                        } else {
+                            hideDetail();
+                        }
+                    }, 600);
+                } else {
+                    msgBox.innerHTML = `<span style="color:var(--danger)">Gagal: ${result.message}</span>`;
+                }
+            } catch (err) { msgBox.innerHTML = `<span style="color:var(--danger)">Terjadi kesalahan koneksi.</span>`; }
+        }
+
+        async function handleHapusKata(kataAceh) {
+            if (!confirm(`Yakin ingin menghapus kata "${kataAceh}"?`)) return;
+            try {
+                const res = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "delete", auth_user: state.auth.username, auth_pass: state.auth.password, kata_aceh: kataAceh })
+                });
+                const result = await res.json();
+                if (result.status === "success") {
+                    alert("Kata berhasil dihapus!");
+                    hideDetail();
+                    loadKamus("");
+                } else {
+                    alert(result.message);
+                }
+            } catch (err) { alert("Gagal menghapus kata."); }
+        }
+
+        async function loadRiwayat() {
+            const container = document.getElementById("riwayatContent");
+            container.innerHTML = `<div class="status-msg">Memuat data...</div>`;
+            try {
+                const res = await fetch(`${API_URL}?action=get_riwayat`);
+                const result = await res.json();
+                if (result.status === "success" && result.data.length > 0) {
+                    container.innerHTML = `
+                        <table>
+                            <thead><tr><th>Waktu</th><th>Pengguna</th><th>Aksi</th><th>Kata</th></tr></thead>
+                            <tbody>${result.data.map(r => `<tr><td>${formatTanggalIndo(r.timestamp)}</td><td>${escapeHtml(r.username)}</td><td><strong>${escapeHtml(r.aksi)}</strong></td><td>${escapeHtml(r.kata_aceh)}</td></tr>`).join("")}</tbody>
+                        </table>`;
+                } else container.innerHTML = `<div class="status-msg">Belum ada riwayat.</div>`;
+            } catch (e) { container.innerHTML = `<div class="status-msg" style="color:var(--danger)">Gagal memuat riwayat.</div>`; }
+        }
+
+        function escapeHtml(str) {
+            return String(str || "").replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+    </script>
+</body>
+</html>
