@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Admin — Kamus Bahsa Acèh</title>
+<style>
+    :root{
+        --bg:#f5f6f8;
+        --panel:#ffffff;
+        --text:#111827;
+        --muted:#6b7280;
+        --line:#e5e7eb;
+        --primary:#111111;
+        --primary-soft:#f1f1f1;
+        --red:#d52b1e;
+        --red-soft:#fff1ef;
+        --green:#167a4a;
+        --green-soft:#ecfdf3;
+        --yellow:#a16207;
+        --yellow-soft:#fff8db;
+        --blue:#1857a7;
+        --blue-soft:#eef5ff;
+        --shadow:0 18px 50px rgba(17,17,17,.08);
+    }
+
+    *{box-sizing:border-box}
+    body{
+        margin:0;
+        font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+        color:var(--text);
+        background:var(--bg);
+    }
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+
+    .layout{
+        min-height:100vh;
+        display:grid;
+        grid-template-columns:250px 1fr;
+    }
+
+    .sidebar{
+        background:#111;
+        color:#fff;
+        padding:24px 18px;
+        position:sticky;
+        top:0;
+        height:100vh;
+        overflow:auto;
+    }
+
+    .brand{
+        padding:8px 10px 24px;
+        border-bottom:1px solid rgba(255,255,255,.12);
+        margin-bottom:18px;
+    }
+    .brand small{
+        display:block;
+        color:rgba(255,255,255,.55);
+        font-size:.72rem;
+        font-weight:800;
+        letter-spacing:.12em;
+        text-transform:uppercase;
+        margin-bottom:6px;
+    }
+    .brand h1{
+        margin:0;
+        font-size:1.35rem;
+        font-weight:900;
+        line-height:1.1;
+    }
+    .brand p{
+        margin:8px 0 0;
+        color:rgba(255,255,255,.62);
+        font-size:.8rem;
+    }
+
+    .side-group-title{
+        color:rgba(255,255,255,.4);
+        font-size:.72rem;
+        font-weight:800;
+        text-transform:uppercase;
+        letter-spacing:.1em;
+        padding:0 10px;
+        margin:18px 0 8px;
+    }
+
+    .side-btn{
+        width:100%;
+        border:0;
+        background:transparent;
+        color:rgba(255,255,255,.72);
+        padding:11px 12px;
+        border-radius:10px;
+        text-align:left;
+        margin:2px 0;
+        font-weight:700;
+        transition:.15s ease;
+    }
+    .side-btn:hover,
+    .side-btn.active{
+        background:#fff;
+        color:#111;
+    }
+
+    .admin-card{
+        margin-top:24px;
+        padding:14px;
+        border:1px solid rgba(255,255,255,.13);
+        border-radius:12px;
+        background:rgba(255,255,255,.04);
+    }
+    .admin-name{font-weight:900}
+    .admin-role{
+        display:inline-block;
+        margin-top:5px;
+        padding:4px 8px;
+        border:1px solid rgba(255,255,255,.25);
+        border-radius:999px;
+        color:#fff;
+        font-size:.72rem;
+        font-weight:800;
+    }
+
+    .main{
+        padding:28px;
+        min-width:0;
+    }
+
+    .topbar{
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:18px;
+        margin-bottom:24px;
+    }
+    .topbar h2{
+        margin:0;
+        font-size:1.8rem;
+        font-weight:900;
+    }
+    .topbar p{
+        margin:5px 0 0;
+        color:var(--muted);
+        font-size:.9rem;
+    }
+
+    .top-actions{
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+    }
+
+    .btn{
+        border:1px solid var(--primary);
+        background:var(--primary);
+        color:#fff;
+        padding:10px 15px;
+        border-radius:10px;
+        font-weight:800;
+    }
+    .btn:hover{background:#333}
+    .btn.secondary{
+        background:#fff;
+        color:var(--text);
+        border-color:var(--line);
+    }
+    .btn.secondary:hover{background:#f7f7f7}
+    .btn.danger{
+        background:var(--red);
+        border-color:var(--red);
+    }
+    .btn.danger:hover{background:#b32117}
+
+    .page{display:none}
+    .page.active{display:block}
+
+    .stats{
+        display:grid;
+        grid-template-columns:repeat(4,minmax(0,1fr));
+        gap:14px;
+        margin-bottom:20px;
+    }
+    .stat{
+        background:var(--panel);
+        border:1px solid var(--line);
+        border-radius:14px;
+        padding:18px;
+        box-shadow:0 6px 20px rgba(0,0,0,.03);
+    }
+    .stat-label{
+        color:var(--muted);
+        font-size:.78rem;
+        font-weight:800;
+        text-transform:uppercase;
+        letter-spacing:.05em;
+    }
+    .stat-value{
+        margin-top:8px;
+        font-size:2rem;
+        font-weight:900;
+    }
+    .stat-foot{
+        margin-top:5px;
+        color:var(--muted);
+        font-size:.78rem;
+    }
+
+    .grid-2{
+        display:grid;
+        grid-template-columns:1.2fr .8fr;
+        gap:16px;
+    }
+
+    .card{
+        background:var(--panel);
+        border:1px solid var(--line);
+        border-radius:14px;
+        box-shadow:0 6px 20px rgba(0,0,0,.03);
+        overflow:hidden;
+    }
+
+    .card-head{
+        padding:17px 18px;
+        border-bottom:1px solid var(--line);
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:12px;
+    }
+    .card-head h3{
+        margin:0;
+        font-size:1rem;
+        font-weight:900;
+    }
+    .card-head p{
+        margin:3px 0 0;
+        color:var(--muted);
+        font-size:.78rem;
+    }
+
+    .card-body{padding:18px}
+
+    .activity-list{
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+    }
+    .activity{
+        display:grid;
+        grid-template-columns:42px 1fr auto;
+        gap:11px;
+        align-items:center;
+        padding:11px;
+        border:1px solid var(--line);
+        border-radius:11px;
+    }
+    .activity-icon{
+        width:42px;
+        height:42px;
+        display:grid;
+        place-items:center;
+        border-radius:10px;
+        background:var(--primary-soft);
+        font-size:1.1rem;
+    }
+    .activity strong{font-size:.86rem}
+    .activity span{
+        display:block;
+        color:var(--muted);
+        font-size:.76rem;
+        margin-top:3px;
+    }
+    .activity-time{
+        color:var(--muted);
+        font-size:.72rem;
+        white-space:nowrap;
+    }
+
+    .quick-grid{
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:10px;
+    }
+    .quick{
+        border:1px solid var(--line);
+        background:#fff;
+        border-radius:11px;
+        padding:14px;
+        text-align:left;
+        font-weight:800;
+    }
+    .quick:hover{
+        border-color:#111;
+        background:#fafafa;
+    }
+    .quick small{
+        display:block;
+        color:var(--muted);
+        margin-top:4px;
+        font-weight:500;
+    }
+
+    .toolbar{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        flex-wrap:wrap;
+        margin-bottom:14px;
+    }
+    .search{
+        flex:1;
+        min-width:230px;
+        padding:11px 13px;
+        border:1px solid var(--line);
+        border-radius:10px;
+        outline:0;
+        background:#fff;
+    }
+    .search:focus{border-color:#111; box-shadow:0 0 0 3px #1111}
+
+    .table-wrap{
+        overflow:auto;
+        border:1px solid var(--line);
+        border-radius:12px;
+    }
+    table{
+        width:100%;
+        border-collapse:collapse;
+        min-width:740px;
+        background:#fff;
+    }
+    th,td{
+        padding:12px 13px;
+        border-bottom:1px solid var(--line);
+        text-align:left;
+        vertical-align:middle;
+        font-size:.83rem;
+    }
+    th{
+        background:#fafafa;
+        font-size:.75rem;
+        text-transform:uppercase;
+        letter-spacing:.04em;
+    }
+    tr:last-child td{border-bottom:0}
+
+    .badge{
+        display:inline-flex;
+        align-items:center;
+        padding:4px 8px;
+        border-radius:999px;
+        font-size:.7rem;
+        font-weight:900;
+    }
+    .badge.green{background:var(--green-soft);color:var(--green)}
+    .badge.red{background:var(--red-soft);color:var(--red)}
+    .badge.yellow{background:var(--yellow-soft);color:var(--yellow)}
+    .badge.blue{background:var(--blue-soft);color:var(--blue)}
+    .badge.gray{background:#f3f4f6;color:#4b5563}
+
+    .row-actions{
+        display:flex;
+        gap:6px;
+        flex-wrap:wrap;
+    }
+    .mini{
+        border:1px solid var(--line);
+        background:#fff;
+        border-radius:8px;
+        padding:7px 9px;
+        font-size:.72rem;
+        font-weight:800;
+    }
+    .mini:hover{border-color:#111}
+    .mini.danger{color:var(--red);border-color:#f2c3be}
+    .mini.danger:hover{background:var(--red-soft)}
+
+    .pagination{
+        display:flex;
+        justify-content:flex-end;
+        align-items:center;
+        gap:6px;
+        margin-top:14px;
+        flex-wrap:wrap;
+    }
+    .page-info{
+        color:var(--muted);
+        font-size:.78rem;
+        margin-right:4px;
+    }
+    .page-btn{
+        min-width:35px;
+        height:35px;
+        border:1px solid var(--line);
+        background:#fff;
+        border-radius:8px;
+        font-weight:800;
+    }
+    .page-btn.active{
+        background:#111;
+        color:#fff;
+        border-color:#111;
+    }
+    .page-btn:disabled{opacity:.4;cursor:not-allowed}
+
+    .form-grid{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:14px;
+    }
+    .form-group{
+        margin-bottom:14px;
+    }
+    .form-group.full{grid-column:1/-1}
+    label{
+        display:block;
+        font-size:.78rem;
+        font-weight:800;
+        margin-bottom:6px;
+    }
+    input,select,textarea{
+        width:100%;
+        border:1px solid var(--line);
+        border-radius:9px;
+        padding:10px 11px;
+        background:#fff;
+        outline:0;
+    }
+    textarea{min-height:120px;resize:vertical}
+    input:focus,select:focus,textarea:focus{
+        border-color:#111;
+        box-shadow:0 0 0 3px #1111;
+    }
+
+    .notice{
+        border:1px solid #f0d4cf;
+        background:var(--red-soft);
+        color:#7c2018;
+        padding:12px 14px;
+        border-radius:10px;
+        font-size:.82rem;
+        margin-bottom:14px;
+    }
+    .success{
+        border-color:#bce8ce;
+        background:var(--green-soft);
+        color:#12633f;
+    }
+
+    .modal{
+        display:none;
+        position:fixed;
+        inset:0;
+        background:rgba(17,17,17,.6);
+        align-items:center;
+        justify-content:center;
+        padding:18px;
+        z-index:100;
+    }
+    .modal.show{display:flex}
+    .modal-card{
+        width:min(520px,100%);
+        background:#fff;
+        border-radius:16px;
+        box-shadow:var(--shadow);
+        overflow:hidden;
+        animation:pop .16s ease-out;
+    }
+    .modal-head{
+        padding:18px 20px;
+        border-bottom:1px solid var(--line);
+        display:flex;
+        justify-content:space-between;
+        gap:12px;
+        align-items:center;
+    }
+    .modal-head h3{margin:0;font-weight:900}
+    .close{
+        border:0;
+        background:#f3f4f6;
+        width:34px;
+        height:34px;
+        border-radius:9px;
+        font-size:1.1rem;
+    }
+    .modal-body{padding:20px}
+    .modal-foot{
+        padding:16px 20px;
+        border-top:1px solid var(--line);
+        display:flex;
+        justify-content:flex-end;
+        gap:8px;
+    }
+
+    .login-screen{
+        min-height:100vh;
+        display:grid;
+        place-items:center;
+        padding:20px;
+        background:
+            radial-gradient(circle at 20% 10%, #fff 0, #fff0 35%),
+            linear-gradient(135deg,#f5f6f8,#eceff2);
+    }
+    .login-card{
+        width:min(420px,100%);
+        background:#fff;
+        border:1px solid var(--line);
+        border-radius:18px;
+        box-shadow:var(--shadow);
+        padding:28px;
+    }
+    .login-card h1{
+        margin:0;
+        font-size:1.6rem;
+        font-weight:900;
+    }
+    .login-card p{
+        color:var(--muted);
+        font-size:.86rem;
+        line-height:1.6;
+        margin:7px 0 22px;
+    }
+    .demo-note{
+        margin-top:13px;
+        padding:10px 12px;
+        border-radius:9px;
+        background:#f7f7f7;
+        font-size:.76rem;
+        color:var(--muted);
+    }
+
+    @keyframes pop{
+        from{opacity:0;transform:translateY(8px) scale(.98)}
+        to{opacity:1;transform:none}
+    }
+
+    @media(max-width:1000px){
+        .layout{grid-template-columns:1fr}
+        .sidebar{
+            position:static;
+            height:auto;
+        }
+        .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+        .grid-2{grid-template-columns:1fr}
+    }
+
+    @media(max-width:650px){
+        .main{padding:16px}
+        .topbar{flex-direction:column}
+        .stats{grid-template-columns:1fr}
+        .form-grid{grid-template-columns:1fr}
+        .form-group.full{grid-column:auto}
+        .quick-grid{grid-template-columns:1fr}
+    }
+</style>
+</head>
+<body>
+
+<!-- LOGIN DEMO -->
+<div id="loginScreen" class="login-screen">
+    <div class="login-card">
+        <h1>⚙ Super Admin</h1>
+        <p>Panel khusus pengelola utama Kamus Bahsa Acèh. Ini masih versi demo dan menggunakan data contoh.</p>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Username</label>
+                <input id="demoUser" type="text" value="superadmin" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input id="demoPass" type="password" value="123456" required>
+            </div>
+
+            <div id="loginMsg"></div>
+
+            <button class="btn" type="submit" style="width:100%;">Masuk ke Panel</button>
+        </form>
+
+        <div class="demo-note">
+            Demo: username <b>superadmin</b> dan password <b>123456</b>.
+            Belum terhubung ke Apps Script.
+        </div>
+    </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp" class="layout" style="display:none;">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <small>Kamus Bahsa Acèh</small>
+            <h1>Super Admin</h1>
+            <p>Panel pengelolaan utama</p>
+        </div>
+
+        <div class="side-group-title">Menu Utama</div>
+        <button class="side-btn active" data-page="dashboard">▦ Dashboard</button>
+        <button class="side-btn" data-page="users">👥 Pengguna</button>
+        <button class="side-btn" data-page="words">📖 Kelola Kata</button>
+        <button class="side-btn" data-page="history">📜 Riwayat</button>
+
+        <div class="side-group-title">Sistem</div>
+        <button class="side-btn" data-page="settings">⚙ Pengaturan</button>
+        <button class="side-btn" id="logoutBtn">↪ Keluar</button>
+
+        <div class="admin-card">
+            <div class="admin-name">superadmin</div>
+            <span class="admin-role">SUPER ADMIN</span>
+        </div>
+    </aside>
+
+    <main class="main">
+
+        <div class="topbar">
+            <div>
+                <h2 id="pageTitle">Dashboard</h2>
+                <p id="pageSubtitle">Ringkasan sistem Kamus Bahsa Acèh.</p>
+            </div>
+            <div class="top-actions">
+                <button class="btn secondary" onclick="refreshDemo()">↻ Refresh</button>
+                <button class="btn" onclick="openAddWordModal()">+ Tambah Kata</button>
+            </div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <section id="page-dashboard" class="page active">
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Total Kata</div>
+                    <div class="stat-value" id="statWords">1.284</div>
+                    <div class="stat-foot">Data kamus aktif</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Pengguna</div>
+                    <div class="stat-value" id="statUsers">37</div>
+                    <div class="stat-foot">Akun terdaftar</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Riwayat</div>
+                    <div class="stat-value">3.721</div>
+                    <div class="stat-foot">Perubahan tercatat</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Status Sistem</div>
+                    <div class="stat-value" style="font-size:1.45rem;">Aktif</div>
+                    <div class="stat-foot"><span class="badge green">ONLINE</span></div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-head">
+                        <div>
+                            <h3>Aktivitas Terbaru</h3>
+                            <p>Perubahan terakhir di kamus</p>
+                        </div>
+                        <button class="btn secondary" onclick="showPage('history')">Lihat semua</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="activity-list" id="dashboardActivities"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head">
+                        <div>
+                            <h3>Aksi Cepat</h3>
+                            <p>Akses pengelolaan</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="quick-grid">
+                            <button class="quick" onclick="showPage('users')">
+                                👥 Kelola Pengguna
+                                <small>Tambah, ubah, nonaktifkan</small>
+                            </button>
+                            <button class="quick" onclick="showPage('words')">
+                                📖 Kelola Kata
+                                <small>Periksa dan moderasi entri</small>
+                            </button>
+                            <button class="quick" onclick="showPage('history')">
+                                📜 Riwayat Sistem
+                                <small>Lihat seluruh aktivitas</small>
+                            </button>
+                            <button class="quick" onclick="openAddWordModal()">
+                                + Tambah Kata
+                                <small>Buat entri kamus baru</small>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- USERS -->
+        <section id="page-users" class="page">
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <h3>Kelola Pengguna</h3>
+                        <p>Demo data pengguna dan peran akun.</p>
+                    </div>
+                    <button class="btn" onclick="openUserModal()">+ Tambah Pengguna</button>
+                </div>
+                <div class="card-body">
+                    <div class="toolbar">
+                        <input id="userSearch" class="search" placeholder="Cari username atau role..." oninput="renderUsers()">
+                        <select id="userFilter" style="max-width:180px;" onchange="renderUsers()">
+                            <option value="">Semua status</option>
+                            <option value="aktif">Aktif</option>
+                            <option value="nonaktif">Nonaktif</option>
+                        </select>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Terdaftar</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination" id="usersPagination"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WORDS -->
+        <section id="page-words" class="page">
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <h3>Kelola Kata</h3>
+                        <p>Moderasi data kamus.</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="toolbar">
+                        <input id="wordSearch" class="search" placeholder="Cari kata, arti, atau pembuat..." oninput="renderWords()">
+                        <select id="wordFilter" style="max-width:180px;" onchange="renderWords()">
+                            <option value="">Semua</option>
+                            <option value="baru">Baru</option>
+                            <option value="ditinjau">Ditinjau</option>
+                        </select>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Kata Acèh</th>
+                                    <th>Arti</th>
+                                    <th>Jenis</th>
+                                    <th>Pembuat</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wordsBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination" id="wordsPagination"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HISTORY -->
+        <section id="page-history" class="page">
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <h3>Riwayat Sistem</h3>
+                        <p>Semua aktivitas penting pada kamus.</p>
+                    </div>
+                    <button class="btn secondary" onclick="exportHistoryDemo()">⇩ Export Demo</button>
+                </div>
+                <div class="card-body">
+                    <div class="toolbar">
+                        <input id="historySearch" class="search" placeholder="Cari kata, pengguna, atau aksi..." oninput="renderHistory()">
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Waktu</th>
+                                    <th>Pengguna</th>
+                                    <th>Aksi</th>
+                                    <th>Kata</th>
+                                    <th>Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination" id="historyPagination"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SETTINGS -->
+        <section id="page-settings" class="page">
+            <div class="card">
+                <div class="card-head">
+                    <div>
+                        <h3>Pengaturan Panel</h3>
+                        <p>Demo pengaturan yang nantinya bisa dihubungkan ke Apps Script.</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="notice">
+                        Mode demo: perubahan di sini hanya berlaku di browser dan belum tersimpan ke Google Sheets.
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nama aplikasi</label>
+                            <input value="Kamus Bahsa Acèh">
+                        </div>
+                        <div class="form-group">
+                            <label>Bahasa tampilan</label>
+                            <select>
+                                <option>Indonesia</option>
+                                <option>Acèh</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Batas riwayat per halaman</label>
+                            <input type="number" value="20" min="5" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Status pendaftaran</label>
+                            <select>
+                                <option>Terbuka</option>
+                                <option>Tutup</option>
+                            </select>
+                        </div>
+                        <div class="form-group full">
+                            <label>Catatan admin</label>
+                            <textarea placeholder="Catatan internal..."></textarea>
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="showToast('Pengaturan demo disimpan.')">Simpan Pengaturan</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<!-- USER MODAL -->
+<div id="userModal" class="modal">
+    <div class="modal-card">
+        <div class="modal-head">
+            <h3 id="userModalTitle">Tambah Pengguna</h3>
+            <button class="close" onclick="closeModal('userModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Username</label>
+                <input id="userModalUsername">
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="userModalRole">
+                    <option value="user">USER</option>
+                    <option value="admin">ADMIN</option>
+                    <option value="superadmin">SUPERADMIN</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="userModalStatus">
+                    <option value="aktif">Aktif</option>
+                    <option value="nonaktif">Nonaktif</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn secondary" onclick="closeModal('userModal')">Batal</button>
+            <button class="btn" onclick="saveUserDemo()">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- WORD MODAL -->
+<div id="wordModal" class="modal">
+    <div class="modal-card">
+        <div class="modal-head">
+            <h3 id="wordModalTitle">Tambah Kata</h3>
+            <button class="close" onclick="closeModal('wordModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Kata Acèh</label>
+                <input id="wordModalWord" placeholder="Contoh: guree">
+            </div>
+            <div class="form-group">
+                <label>Arti Indonesia</label>
+                <textarea id="wordModalMeaning" placeholder="Arti kata..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Jenis Kata</label>
+                <select id="wordModalType">
+                    <option>n</option>
+                    <option>v</option>
+                    <option>adj</option>
+                    <option>adv</option>
+                    <option>lainnya</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn secondary" onclick="closeModal('wordModal')">Batal</button>
+            <button class="btn" onclick="saveWordDemo()">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // DEMO DATA
+    // =========================================
+
+    const users = [
+        {username:"superadmin", role:"superadmin", status:"aktif", registered:"01 Sep 2026"},
+        {username:"ali", role:"admin", status:"aktif", registered:"28 Agu 2026"},
+        {username:"ahmad", role:"user", status:"aktif", registered:"27 Agu 2026"},
+        {username:"cut", role:"user", status:"aktif", registered:"26 Agu 2026"},
+        {username:"zainal", role:"user", status:"nonaktif", registered:"24 Agu 2026"},
+        {username:"putri", role:"user", status:"aktif", registered:"22 Agu 2026"},
+        {username:"maulana", role:"user", status:"aktif", registered:"20 Agu 2026"},
+        {username:"fitri", role:"admin", status:"aktif", registered:"18 Agu 2026"},
+        {username:"rahmat", role:"user", status:"aktif", registered:"16 Agu 2026"},
+        {username:"nur", role:"user", status:"aktif", registered:"15 Agu 2026"}
+    ];
+
+    const words = [
+        {word:"guree", meaning:"guru; pengajar", type:"n", author:"ali", status:"ditinjau"},
+        {word:"gapeueh", meaning:"kata contoh untuk demo", type:"adj", author:"ahmad", status:"baru"},
+        {word:"battèe", meaning:"batu api", type:"n", author:"cut", status:"ditinjau"},
+        {word:"bungong", meaning:"bunga; kembang api", type:"n", author:"fitri", status:"ditinjau"},
+        {word:"gunong", meaning:"gunung api", type:"n", author:"maulana", status:"baru"},
+        {word:"gritan", meaning:"kereta api", type:"n", author:"rahmat", status:"baru"},
+        {word:"kèh", meaning:"korek api", type:"n", author:"ali", status:"ditinjau"},
+        {word:"sidom", meaning:"sejenis semut merah yang sangat beracun", type:"n", author:"nur", status:"ditinjau"},
+        {word:"pudép", meaning:"menghidupkan api", type:"v", author:"ahmad", status:"baru"},
+        {word:"aduen", meaning:"adik laki-laki", type:"n", author:"cut", status:"ditinjau"}
+    ];
+
+    const history = [
+        {time:"03 Sep 2026 19:58", user:"ali", action:"UBAH", word:"guree", note:"Arti diperbaiki"},
+        {time:"03 Sep 2026 19:44", user:"ahmad", action:"TAMBAH", word:"gapeueh", note:"Entri baru"},
+        {time:"03 Sep 2026 19:20", user:"cut", action:"UBAH", word:"battèe", note:"Contoh kalimat diperbarui"},
+        {time:"03 Sep 2026 18:55", user:"fitri", action:"TAMBAH", word:"bungong", note:"Entri baru"},
+        {time:"03 Sep 2026 18:31", user:"maulana", action:"HAPUS", word:"contoh", note:"Entri duplikat"},
+        {time:"03 Sep 2026 18:12", user:"rahmat", action:"TAMBAH", word:"gritan", note:"Entri baru"},
+        {time:"03 Sep 2026 17:58", user:"ali", action:"UBAH", word:"kèh", note:"Sumber diperbaiki"},
+        {time:"03 Sep 2026 17:40", user:"nur", action:"TAMBAH", word:"sidom", note:"Entri baru"},
+        {time:"03 Sep 2026 17:10", user:"ahmad", action:"UBAH", word:"pudép", note:"Arti diperjelas"},
+        {time:"03 Sep 2026 16:48", user:"cut", action:"TAMBAH", word:"aduen", note:"Entri baru"}
+    ];
+
+    let pages = {
+        users:1,
+        words:1,
+        history:1
+    };
+
+    const pageSize = 5;
+
+    // =========================================
+    // DEMO LOGIN
+    // =========================================
+
+    document.getElementById("loginForm").addEventListener("submit", function(e){
+        e.preventDefault();
+
+        const username = document.getElementById("demoUser").value.trim();
+        const password = document.getElementById("demoPass").value;
+        const msg = document.getElementById("loginMsg");
+
+        if(username === "superadmin" && password === "123456"){
+            document.getElementById("loginScreen").style.display = "none";
+            document.getElementById("adminApp").style.display = "grid";
+            renderAll();
+        }else{
+            msg.innerHTML = '<div class="notice">Username atau password demo salah.</div>';
+        }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", function(){
+        document.getElementById("adminApp").style.display = "none";
+        document.getElementById("loginScreen").style.display = "grid";
+    });
+
+    // =========================================
+    // NAVIGATION
+    // =========================================
+
+    const pageMeta = {
+        dashboard:["Dashboard","Ringkasan sistem Kamus Bahsa Acèh."],
+        users:["Pengguna","Kelola akun dan hak akses pengguna."],
+        words:["Kelola Kata","Moderasi dan pengelolaan entri kamus."],
+        history:["Riwayat","Audit seluruh perubahan sistem."],
+        settings:["Pengaturan","Pengaturan panel dan sistem."]
+    };
+
+    document.querySelectorAll(".side-btn[data-page]").forEach(btn=>{
+        btn.addEventListener("click",()=>{
+            showPage(btn.dataset.page);
+        });
+    });
+
+    function showPage(page){
+        document.querySelectorAll(".side-btn").forEach(x=>x.classList.remove("active"));
+        const nav = document.querySelector(`.side-btn[data-page="${page}"]`);
+        if(nav) nav.classList.add("active");
+
+        document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+        document.getElementById("page-"+page).classList.add("active");
+
+        document.getElementById("pageTitle").textContent = pageMeta[page][0];
+        document.getElementById("pageSubtitle").textContent = pageMeta[page][1];
+
+        if(page === "users") renderUsers();
+        if(page === "words") renderWords();
+        if(page === "history") renderHistory();
+
+        window.scrollTo({top:0,behavior:"smooth"});
+    }
+
+    // =========================================
+    // RENDER DASHBOARD
+    // =========================================
+
+    function renderDashboard(){
+        const box = document.getElementById("dashboardActivities");
+
+        box.innerHTML = history.slice(0,5).map(item=>{
+            const icon = item.action === "TAMBAH" ? "＋" : item.action === "UBAH" ? "✎" : "×";
+
+            return `
+                <div class="activity">
+                    <div class="activity-icon">${icon}</div>
+                    <div>
+                        <strong>${escapeHtml(item.action)} — ${escapeHtml(item.word)}</strong>
+                        <span>${escapeHtml(item.user)} · ${escapeHtml(item.note)}</span>
+                    </div>
+                    <div class="activity-time">${escapeHtml(item.time)}</div>
+                </div>
+            `;
+        }).join("");
+    }
+
+    // =========================================
+    // USERS
+    // =========================================
+
+    function renderUsers(){
+        const q = document.getElementById("userSearch").value.trim().toLowerCase();
+        const filter = document.getElementById("userFilter").value;
+
+        const filtered = users.filter(u=>{
+            const matchText =
+                !q ||
+                u.username.toLowerCase().includes(q) ||
+                u.role.toLowerCase().includes(q);
+
+            const matchStatus = !filter || u.status === filter;
+
+            return matchText && matchStatus;
+        });
+
+        const totalPages = Math.max(1,Math.ceil(filtered.length/pageSize));
+        if(pages.users > totalPages) pages.users = totalPages;
+
+        const start = (pages.users-1)*pageSize;
+        const rows = filtered.slice(start,start+pageSize);
+
+        document.getElementById("usersBody").innerHTML = rows.map((u,i)=>`
+            <tr>
+                <td>${start+i+1}</td>
+                <td><strong>${escapeHtml(u.username)}</strong></td>
+                <td>${roleBadge(u.role)}</td>
+                <td>${u.status==="aktif"
+                    ? '<span class="badge green">AKTIF</span>'
+                    : '<span class="badge red">NONAKTIF</span>'}</td>
+                <td>${escapeHtml(u.registered)}</td>
+                <td>
+                    <div class="row-actions">
+                        <button class="mini" onclick="editUserDemo('${escapeAttr(u.username)}')">Ubah</button>
+                        <button class="mini danger" onclick="toggleUserDemo('${escapeAttr(u.username)}')">
+                            ${u.status==="aktif" ? "Nonaktifkan":"Aktifkan"}
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join("");
+
+        renderPagination("usersPagination",pages.users,totalPages,p=>{
+            pages.users=p;
+            renderUsers();
+        });
+    }
+
+    function roleBadge(role){
+        if(role==="superadmin") return '<span class="badge red">SUPERADMIN</span>';
+        if(role==="admin") return '<span class="badge blue">ADMIN</span>';
+        return '<span class="badge gray">USER</span>';
+    }
+
+    function openUserModal(){
+        document.getElementById("userModalTitle").textContent = "Tambah Pengguna";
+        document.getElementById("userModalUsername").value = "";
+        document.getElementById("userModalRole").value = "user";
+        document.getElementById("userModalStatus").value = "aktif";
+        document.getElementById("userModal").classList.add("show");
+    }
+
+    function editUserDemo(username){
+        const u = users.find(x=>x.username===username);
+        if(!u) return;
+
+        document.getElementById("userModalTitle").textContent = "Ubah Pengguna";
+        document.getElementById("userModalUsername").value = u.username;
+        document.getElementById("userModalUsername").readOnly = true;
+        document.getElementById("userModalRole").value = u.role;
+        document.getElementById("userModalStatus").value = u.status;
+        document.getElementById("userModal").classList.add("show");
+    }
+
+    function saveUserDemo(){
+        const username = document.getElementById("userModalUsername").value.trim();
+        const role = document.getElementById("userModalRole").value;
+        const status = document.getElementById("userModalStatus").value;
+
+        if(!username) return;
+
+        const existing = users.find(x=>x.username===username);
+
+        if(existing){
+            existing.role = role;
+            existing.status = status;
+        }else{
+            users.push({
+                username,
+                role,
+                status,
+                registered:"03 Sep 2026"
+            });
+        }
+
+        document.getElementById("userModalUsername").readOnly = false;
+        closeModal("userModal");
+        renderUsers();
+        updateStats();
+        showToast("Data pengguna berhasil disimpan (demo).");
+    }
+
+    function toggleUserDemo(username){
+        const u = users.find(x=>x.username===username);
+        if(!u) return;
+
+        u.status = u.status==="aktif" ? "nonaktif" : "aktif";
+        renderUsers();
+        showToast(`Status ${username} diubah menjadi ${u.status}.`);
+    }
+
+    // =========================================
+    // WORDS
+    // =========================================
+
+    function renderWords(){
+        const q = document.getElementById("wordSearch").value.trim().toLowerCase();
+        const filter = document.getElementById("wordFilter").value;
+
+        const filtered = words.filter(w=>{
+            const matchText =
+                !q ||
+                w.word.toLowerCase().includes(q) ||
+                w.meaning.toLowerCase().includes(q) ||
+                w.author.toLowerCase().includes(q);
+
+            const matchStatus = !filter || w.status === filter;
+
+            return matchText && matchStatus;
+        });
+
+        const totalPages = Math.max(1,Math.ceil(filtered.length/pageSize));
+        if(pages.words > totalPages) pages.words=totalPages;
+
+        const start = (pages.words-1)*pageSize;
+        const rows = filtered.slice(start,start+pageSize);
+
+        document.getElementById("wordsBody").innerHTML = rows.map((w,i)=>`
+            <tr>
+                <td>${start+i+1}</td>
+                <td><strong>${escapeHtml(w.word)}</strong></td>
+                <td>${escapeHtml(w.meaning)}</td>
+                <td><span class="badge gray">${escapeHtml(w.type)}</span></td>
+                <td>${escapeHtml(w.author)}</td>
+                <td>${w.status==="baru"
+                    ? '<span class="badge yellow">BARU</span>'
+                    : '<span class="badge green">DITINJAU</span>'}</td>
+                <td>
+                    <div class="row-actions">
+                        <button class="mini" onclick="editWordDemo('${escapeAttr(w.word)}')">Ubah</button>
+                        <button class="mini danger" onclick="deleteWordDemo('${escapeAttr(w.word)}')">Hapus</button>
+                    </div>
+                </td>
+            </tr>
+        `).join("");
+
+        renderPagination("wordsPagination",pages.words,totalPages,p=>{
+            pages.words=p;
+            renderWords();
+        });
+    }
+
+    function openAddWordModal(){
+        document.getElementById("wordModalTitle").textContent = "Tambah Kata";
+        document.getElementById("wordModalWord").value = "";
+        document.getElementById("wordModalMeaning").value = "";
+        document.getElementById("wordModalType").value = "n";
+        document.getElementById("wordModal").classList.add("show");
+    }
+
+    function editWordDemo(word){
+        const item = words.find(x=>x.word===word);
+        if(!item) return;
+
+        document.getElementById("wordModalTitle").textContent = "Ubah Kata";
+        document.getElementById("wordModalWord").value = item.word;
+        document.getElementById("wordModalMeaning").value = item.meaning;
+        document.getElementById("wordModalType").value = item.type;
+        document.getElementById("wordModal").classList.add("show");
+    }
+
+    function saveWordDemo(){
+        const word = document.getElementById("wordModalWord").value.trim();
+        const meaning = document.getElementById("wordModalMeaning").value.trim();
+        const type = document.getElementById("wordModalType").value;
+
+        if(!word || !meaning){
+            showToast("Kata dan arti wajib diisi.");
+            return;
+        }
+
+        const existing = words.find(x=>x.word.toLowerCase()===word.toLowerCase());
+
+        if(existing){
+            existing.meaning = meaning;
+            existing.type = type;
+            existing.status = "baru";
+            showToast(`Kata "${word}" diperbarui (demo).`);
+        }else{
+            words.unshift({
+                word,
+                meaning,
+                type,
+                author:"superadmin",
+                status:"baru"
+            });
+            showToast(`Kata "${word}" ditambahkan (demo).`);
+        }
+
+        closeModal("wordModal");
+        renderWords();
+        updateStats();
+    }
+
+    function deleteWordDemo(word){
+        const index = words.findIndex(x=>x.word===word);
+        if(index<0) return;
+
+        if(confirm(`Hapus kata "${word}" pada demo?`)){
+            words.splice(index,1);
+            history.unshift({
+                time:"03 Sep 2026 20:05",
+                user:"superadmin",
+                action:"HAPUS",
+                word:word,
+                note:"Dihapus dari panel demo"
+            });
+            renderWords();
+            renderDashboard();
+            updateStats();
+            showToast(`Kata "${word}" dihapus (demo).`);
+        }
+    }
+
+    // =========================================
+    // HISTORY
+    // =========================================
+
+    function renderHistory(){
+        const q = document.getElementById("historySearch").value.trim().toLowerCase();
+
+        const filtered = history.filter(h=>
+            !q ||
+            h.user.toLowerCase().includes(q) ||
+            h.action.toLowerCase().includes(q) ||
+            h.word.toLowerCase().includes(q) ||
+            h.note.toLowerCase().includes(q)
+        );
+
+        const totalPages = Math.max(1,Math.ceil(filtered.length/pageSize));
+        if(pages.history > totalPages) pages.history=totalPages;
+
+        const start = (pages.history-1)*pageSize;
+        const rows = filtered.slice(start,start+pageSize);
+
+        document.getElementById("historyBody").innerHTML = rows.map((h,i)=>`
+            <tr>
+                <td>${start+i+1}</td>
+                <td>${escapeHtml(h.time)}</td>
+                <td><strong>${escapeHtml(h.user)}</strong></td>
+                <td>${actionBadge(h.action)}</td>
+                <td>${escapeHtml(h.word)}</td>
+                <td>${escapeHtml(h.note)}</td>
+            </tr>
+        `).join("");
+
+        renderPagination("historyPagination",pages.history,totalPages,p=>{
+            pages.history=p;
+            renderHistory();
+        });
+    }
+
+    function actionBadge(action){
+        if(action==="TAMBAH") return '<span class="badge green">TAMBAH</span>';
+        if(action==="UBAH") return '<span class="badge yellow">UBAH</span>';
+        return '<span class="badge red">HAPUS</span>';
+    }
+
+    // =========================================
+    // PAGINATION
+    // =========================================
+
+    function renderPagination(target,current,total,onPage){
+        const box = document.getElementById(target);
+        if(total<=1){
+            box.innerHTML = "";
+            return;
+        }
+
+        let html = `
+            <span class="page-info">Halaman ${current} dari ${total}</span>
+            <button class="page-btn" ${current===1?"disabled":""} onclick="void(0)">‹</button>
+        `;
+
+        const pagesToShow = [];
+
+        if(total<=7){
+            for(let i=1;i<=total;i++) pagesToShow.push(i);
+        }else{
+            pagesToShow.push(1);
+            if(current>4) pagesToShow.push("...");
+            for(let i=Math.max(2,current-2);i<=Math.min(total-1,current+2);i++){
+                pagesToShow.push(i);
+            }
+            if(current<total-3) pagesToShow.push("...");
+            pagesToShow.push(total);
+        }
+
+        html = `<span class="page-info">Halaman ${current} dari ${total}</span>
+            <button id="${target}-prev" class="page-btn" ${current===1?"disabled":""}>‹</button>`;
+
+        pagesToShow.forEach(p=>{
+            if(p==="..."){
+                html += `<span style="padding:0 4px;color:var(--muted)">…</span>`;
+            }else{
+                html += `<button class="page-btn ${p===current?"active":""}" data-page="${p}">${p}</button>`;
+            }
+        });
+
+        html += `<button id="${target}-next" class="page-btn" ${current===total?"disabled":""}>›</button>`;
+
+        box.innerHTML = html;
+
+        box.querySelectorAll("[data-page]").forEach(btn=>{
+            btn.addEventListener("click",()=>onPage(Number(btn.dataset.page)));
+        });
+
+        const prev=box.querySelector("#"+target+"-prev");
+        const next=box.querySelector("#"+target+"-next");
+
+        if(prev) prev.addEventListener("click",()=>onPage(current-1));
+        if(next) next.addEventListener("click",()=>onPage(current+1));
+    }
+
+    // =========================================
+    // MODALS / TOAST
+    // =========================================
+
+    function closeModal(id){
+        document.getElementById(id).classList.remove("show");
+
+        if(id==="userModal"){
+            document.getElementById("userModalUsername").readOnly=false;
+        }
+    }
+
+    document.querySelectorAll(".modal").forEach(modal=>{
+        modal.addEventListener("click",e=>{
+            if(e.target===modal) modal.classList.remove("show");
+        });
+    });
+
+    function showToast(message){
+        let toast=document.getElementById("demoToast");
+
+        if(!toast){
+            toast=document.createElement("div");
+            toast.id="demoToast";
+            toast.style.cssText=
+                "position:fixed;right:20px;bottom:20px;z-index:5000;" +
+                "background:#111;color:#fff;padding:12px 15px;border-radius:10px;" +
+                "box-shadow:0 14px 35px rgba(0,0,0,.2);font-size:.84rem;font-weight:700;" +
+                "max-width:360px;";
+            document.body.appendChild(toast);
+        }
+
+        toast.textContent=message;
+        toast.style.opacity="1";
+
+        clearTimeout(window.toastTimer);
+        window.toastTimer=setTimeout(()=>toast.style.opacity="0",2200);
+    }
+
+    // =========================================
+    // UTILS
+    // =========================================
+
+    function refreshDemo(){
+        renderAll();
+        showToast("Data demo diperbarui.");
+    }
+
+    function updateStats(){
+        document.getElementById("statWords").textContent=(1284 + words.length - 10).toLocaleString("id-ID");
+        document.getElementById("statUsers").textContent=users.length;
+    }
+
+    function exportHistoryDemo(){
+        const csv = [
+            ["Waktu","Pengguna","Aksi","Kata","Keterangan"],
+            ...history.map(h=>[h.time,h.user,h.action,h.word,h.note])
+        ].map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+
+        const blob = new Blob([csv],{type:"text/csv;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href=url;
+        a.download="riwayat-demo.csv";
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function escapeHtml(value){
+        return String(value??"").replace(/[&<>"']/g, c=>({
+            "&":"&amp;",
+            "<":"&lt;",
+            ">":"&gt;",
+            '"':"&quot;",
+            "'":"&#39;"
+        }[c]));
+    }
+
+    function escapeAttr(value){
+        return String(value??"").replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+    }
+
+    function renderAll(){
+        renderDashboard();
+        renderUsers();
+        renderWords();
+        renderHistory();
+        updateStats();
+    }
+
+    // ESC untuk menutup modal
+    document.addEventListener("keydown",e=>{
+        if(e.key==="Escape"){
+            document.querySelectorAll(".modal.show").forEach(m=>m.classList.remove("show"));
+        }
+    });
+</script>
+
+</body>
+</html>
