@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -140,8 +141,46 @@
         .close-modal { position: absolute; top: 16px; right: 20px; font-size: 1.5rem; cursor: pointer; font-weight: 700; }
         .badge { color: white; padding: 3px 8px; border-radius: 0; font-size: 0.72rem; font-weight: 700; display: inline-block; }
         .status-msg { text-align: left; color: var(--muted); padding: 20px 4px; }
+        .duplicate-msg {
+            border: 1px solid var(--red);
+            padding: 14px;
+            margin-top: 10px;
+            background: #fff;
+        }
+        .duplicate-msg strong { color: var(--red); }
 
         .show-all-wrap { text-align: left; padding: 20px 0 4px; }
+        .duplicate-notice {
+            display: none;
+            margin-top: 10px;
+            padding: 12px 14px;
+            border: 1px solid var(--warning);
+            background: #fff7f5;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        .duplicate-notice strong { color: var(--warning); }
+        .duplicate-notice .notice-help { margin-top: 6px; color: var(--muted); }
+        .duplicate-notice .notice-action { margin-top: 10px; }
+        .riwayat-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 22px;
+            flex-wrap: wrap;
+        }
+        .riwayat-pagination button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .riwayat-page-info {
+            min-width: 70px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
 
         footer {
             margin: 60px -20px 0;
@@ -309,7 +348,7 @@
         <section id="tab-tambah" class="tab-content">
             <h2>Tambah Kata Baru</h2>
             <form id="addForm" onsubmit="handleTambahKata(event)">
-                <div class="form-group"><label>Kata Acèh</label><input type="text" id="kata" required placeholder="Contoh: aduen"></div>
+                <div class="form-group"><label>Kata Acèh</label><input type="text" id="kata" required placeholder="Contoh: aduen" oninput="handleAddWordInput()"></div>
                 <div class="form-group">
                     <label>Jenis Kata</label>
                     <select id="tipe" required>
@@ -348,6 +387,7 @@
                     <input type="text" id="sumberLainnya" placeholder="Tuliskan nama pustaka, buku, atau sumber...">
                 </div>
 
+                <div id="addDuplicateNotice" class="duplicate-notice"></div>
                 <div id="addMsg" class="form-group"></div>
                 <button type="submit" class="btn">Simpan Kata Baru</button>
             </form>
@@ -520,14 +560,17 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxfZiFwlf7hkt957h56m6TNr6xmLwTb8PC-tfJtw5JO_RztCwiLJnX2AeYKPz7nXRap/exec";
-        const HOME_LIMIT = 5;
+        const API_URL = "https://script.google.com/macros/s/AKfycbxcBY8Tvg3tuNnU722-X28CQkMa-dHkaoOpy_MXyM5zuY9F6iTs2OcjVy3D0sle_T0Z/exec";
+        const HOME_LIMIT = 20;
+        const RIWAYAT_PAGE_SIZE = 20;
         
         let state = {
             auth: JSON.parse(localStorage.getItem("kamus_auth") || "null"),
             currentData: [],
             currentQuery: "",
             showAllHome: false,
+            riwayatData: [],
+            riwayatPage: 1,
             searchTimer: null,
             wordHistory: []
         };
@@ -995,11 +1038,78 @@
             container.appendChild(row);
         }
 
+        function bukaKataDuplikat(kata) {
+            const kataTarget = String(kata || "").trim();
+            if (!kataTarget) return;
+            switchTab("kamus");
+            const searchInput = document.getElementById("searchInput");
+            if (searchInput) searchInput.value = kataTarget;
+            loadKamus(kataTarget);
+        }
+
+        async function checkExistingWord(showEmpty = false) {
+            const notice = document.getElementById("addDuplicateNotice");
+            const kata = document.getElementById("kata").value.trim();
+
+            if (!kata) {
+                notice.style.display = "none";
+                notice.innerHTML = "";
+                return false;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}?q=${encodeURIComponent(kata)}`, { cache: "no-store" });
+                const result = await res.json();
+
+                const target = kata.toLowerCase().trim();
+                const matches = result.status === "success" && Array.isArray(result.data)
+                    ? result.data.filter(item => String(item.kata_aceh || "").toLowerCase().trim() === target)
+                    : [];
+
+                if (matches.length > 0) {
+                    const items = matches.map(item => `
+                        <div style="margin-top:5px;">
+                            <strong>${escapeHtml(item.kata_aceh || kata)}</strong> → ${escapeHtml(item.arti_indonesia || "(tanpa arti)")}
+                        </div>`).join("");
+
+                    notice.innerHTML = `
+                        <strong>⚠️ Kata ini sudah ada di kamus.</strong>
+                        ${items}
+                        <div class="notice-help">Jangan masukkan ulang untuk mengganti isi kata lama. Gunakan pencarian di tab Kamus untuk melihat entri tersebut. Bila ingin memperbaiki isinya, buka entri lalu pilih <b>Ubah</b>.</div>
+                    `;
+                    notice.style.display = "block";
+                    return true;
+                }
+
+                notice.style.display = "none";
+                notice.innerHTML = showEmpty ? `<span style="color:var(--success)">✓ Kata belum ditemukan di kamus dan dapat ditambahkan.</span>` : "";
+                if (showEmpty) notice.style.display = "block";
+                return false;
+            } catch (err) {
+                notice.style.display = "none";
+                notice.innerHTML = "";
+                return false;
+            }
+        }
+
+        let addWordCheckTimer = null;
+        function handleAddWordInput() {
+            clearTimeout(addWordCheckTimer);
+            addWordCheckTimer = setTimeout(() => checkExistingWord(false), 350);
+        }
+
         async function handleTambahKata(e) {
             e.preventDefault();
             const msgBox = document.getElementById("addMsg");
             if (!state.auth) {
                 return msgBox.innerHTML = `<span style="color:var(--danger)">Anda harus login untuk menambah kata!</span>`;
+            }
+
+            const duplicateFound = await checkExistingWord(false);
+            if (duplicateFound) {
+                msgBox.innerHTML = `<span style="color:var(--danger)">Kata tidak disimpan karena kata tersebut sudah ada. Ikuti petunjuk di atas.</span>`;
+                document.getElementById("kata").focus();
+                return;
             }
 
             const payload = {
@@ -1024,24 +1134,37 @@
 
             msgBox.innerHTML = "Menyimpan kata baru...";
             try {
-                const res = await fetch(API_URL, { 
-                    method: "POST", 
+                const res = await fetch(API_URL, {
+                    method: "POST",
                     headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify(payload) 
+                    body: JSON.stringify(payload)
                 });
                 const result = await res.json();
                 if (result.status === "success") {
                     msgBox.innerHTML = `<span style="color:var(--success)">Kata berhasil ditambahkan!</span>`;
                     document.getElementById("addForm").reset();
+                    document.getElementById("addDuplicateNotice").style.display = "none";
+                    document.getElementById("addDuplicateNotice").innerHTML = "";
                     document.getElementById("examplesContainer").innerHTML = "";
                     document.getElementById("sumberLainnyaContainer").style.display = "none";
                     addExampleRow('examplesContainer');
                     await loadKamus("");
                     await preloadWordHistory();
+                } else if (result.status === "duplicate") {
+                    msgBox.innerHTML = `<span style="color:var(--danger)">Kata tidak disimpan karena sudah ada.</span>`;
+                    const notice = document.getElementById("addDuplicateNotice");
+                    notice.innerHTML = `
+                        <strong>⚠️ ${escapeHtml(result.kata_aceh || payload.kata_aceh)} sudah ada di kamus.</strong>
+                        <div style="margin-top:5px;">${escapeHtml(result.arti_indonesia || payload.arti_indonesia)}</div>
+                        <div class="notice-help">Jangan gunakan form tambah untuk mengganti data lama. Cari kata tersebut di tab Kamus, buka detailnya, lalu gunakan <b>Ubah</b> bila ingin memperbaiki isi.</div>
+                    `;
+                    notice.style.display = "block";
                 } else {
-                    msgBox.innerHTML = `<span style="color:var(--danger)">Gagal: ${result.message}</span>`;
+                    msgBox.innerHTML = `<span style="color:var(--danger)">Gagal: ${escapeHtml(result.message || "Terjadi kesalahan.")}</span>`;
                 }
-            } catch (err) { msgBox.innerHTML = `<span style="color:var(--danger)">Terjadi kesalahan koneksi.</span>`; }
+            } catch (err) {
+                msgBox.innerHTML = `<span style="color:var(--danger)">Terjadi kesalahan koneksi.</span>`;
+            }
         }
 
         function openEditModal(index) {
@@ -1186,20 +1309,73 @@
             } catch (err) { alert("Gagal menghapus kata."); }
         }
 
-        async function loadRiwayat() {
+        async function loadRiwayat(page = 1) {
             const container = document.getElementById("riwayatContent");
-            container.innerHTML = `<div class="status-msg">Memuat data...</div>`;
+            const safePage = Math.max(1, Number(page) || 1);
+            state.riwayatPage = safePage;
+            container.innerHTML = `<div class="status-msg">Memuat riwayat...</div>`;
+
             try {
-                const res = await fetch(`${API_URL}?action=get_riwayat`);
+                const res = await fetch(`${API_URL}?action=get_riwayat&page=${safePage}&limit=${RIWAYAT_PAGE_SIZE}`, {
+                    cache: "no-store"
+                });
                 const result = await res.json();
-                if (result.status === "success" && result.data.length > 0) {
-                    container.innerHTML = `
-                        <table>
-                            <thead><tr><th>Waktu</th><th>Pengguna</th><th>Aksi</th><th>Kata</th></tr></thead>
-                            <tbody>${result.data.map(r => `<tr><td>${formatTanggalIndo(r.timestamp)}</td><td>${escapeHtml(r.username)}</td><td><strong>${escapeHtml(r.aksi)}</strong></td><td>${escapeHtml(r.kata_aceh)}</td></tr>`).join("")}</tbody>
-                        </table>`;
-                } else container.innerHTML = `<div class="status-msg">Belum ada riwayat.</div>`;
-            } catch (e) { container.innerHTML = `<div class="status-msg" style="color:var(--danger)">Gagal memuat riwayat.</div>`; }
+
+                if (result.status === "success") {
+                    const rows = Array.isArray(result.data) ? result.data : [];
+                    const pageInfo = result.pagination || {};
+                    state.riwayatTotal = Number(pageInfo.total || 0);
+                    const currentPage = Number(pageInfo.page || safePage);
+                    const totalPages = Math.max(1, Number(pageInfo.total_pages || 1));
+                    state.riwayatPage = currentPage;
+
+                    if (rows.length > 0) {
+                        const startNo = ((currentPage - 1) * RIWAYAT_PAGE_SIZE) + 1;
+                        const endNo = startNo + rows.length - 1;
+
+                        container.innerHTML = `
+                            <div style="margin-bottom:12px; color:var(--muted); font-size:0.88rem;">
+                                Menampilkan ${startNo}–${endNo} dari ${state.riwayatTotal} riwayat
+                            </div>
+                            <table>
+                                <thead><tr><th>Waktu</th><th>Pengguna</th><th>Aksi</th><th>Kata</th></tr></thead>
+                                <tbody>${rows.map(r => `<tr><td>${formatTanggalIndo(r.timestamp)}</td><td>${escapeHtml(r.username)}</td><td><strong>${escapeHtml(r.aksi)}</strong></td><td>${escapeHtml(r.kata_aceh)}</td></tr>`).join("")}</tbody>
+                            </table>
+                            ${renderRiwayatPagination(currentPage, totalPages)}
+                        `;
+                    } else {
+                        container.innerHTML = `<div class="status-msg">Belum ada riwayat.</div>`;
+                    }
+                } else {
+                    container.innerHTML = `<div class="status-msg" style="color:var(--danger)">${escapeHtml(result.message || "Gagal memuat riwayat.")}</div>`;
+                }
+            } catch (e) {
+                container.innerHTML = `<div class="status-msg" style="color:var(--danger)">Gagal memuat riwayat.</div>`;
+            }
+        }
+
+        function renderRiwayatPagination(currentPage, totalPages) {
+            if (totalPages <= 1) return "";
+
+            const buttons = [];
+            if (currentPage > 1) {
+                buttons.push(`<button type="button" class="btn-secondary" onclick="loadRiwayat(${currentPage - 1})">← Sebelumnya</button>`);
+            }
+
+            const maxButtons = 7;
+            let start = Math.max(1, currentPage - 3);
+            let end = Math.min(totalPages, start + maxButtons - 1);
+            start = Math.max(1, end - maxButtons + 1);
+
+            for (let p = start; p <= end; p++) {
+                buttons.push(`<button type="button" class="btn-secondary" style="${p === currentPage ? 'background:var(--text);color:#fff;' : ''}" onclick="loadRiwayat(${p})">${p}</button>`);
+            }
+
+            if (currentPage < totalPages) {
+                buttons.push(`<button type="button" class="btn-secondary" onclick="loadRiwayat(${currentPage + 1})">Berikutnya →</button>`);
+            }
+
+            return `<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:18px;">${buttons.join("")}</div>`;
         }
 
         function escapeHtml(str) {
