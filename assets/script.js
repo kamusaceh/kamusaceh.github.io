@@ -53,7 +53,7 @@ function authHeaders(){
   };
   
  if(CFG.token){
-  h.Authorization="Bearer github"+CFG.token;
+  h.Authorization="Bearer "+CFG.token;
 }
 
   return h;
