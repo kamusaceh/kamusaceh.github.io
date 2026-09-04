@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -228,8 +226,8 @@
             min-height: 260px;
             padding: 34px 20px;
             margin: 10px 0;
-            border: 1px solid var(--border);
-            background: linear-gradient(180deg, #fff 0%, #fafafa 100%);
+            border: 1px solid var(--text);
+            background: #fff;
             position: relative;
             overflow: hidden;
         }
@@ -239,7 +237,7 @@
             display: grid;
             place-items: center;
             border: 2px solid var(--red);
-            border-radius: 50%;
+            border-radius: 0;
             color: var(--red);
             font-size: 2rem;
             font-weight: 900;
@@ -401,10 +399,10 @@
         .examples-panel {
             margin: 22px 0 18px;
             padding: 22px 22px 20px;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f3f5 100%);
-            border: 1px solid #e7e9ec;
-            border-radius: 18px;
-            box-shadow: 0 8px 24px rgba(17,17,17,.06);
+            background: #ffffff;
+            border: 1px solid var(--text);
+            border-radius: 0;
+            box-shadow: none;
         }
         .examples-heading {
             display:flex;
@@ -413,43 +411,48 @@
             font-size:1.05rem;
             font-weight:900;
             margin-bottom:16px;
+            padding-bottom:10px;
+            border-bottom:2px solid var(--text);
         }
         .examples-heading-icon {
             width:34px; height:34px;
             display:grid; place-items:center;
-            border-radius:10px;
-            background:#111; color:#fff;
+            border-radius:0;
+            background:var(--red); color:#fff;
             font-size:.95rem;
-            box-shadow:0 6px 14px rgba(17,17,17,.15);
+            box-shadow:none;
         }
         .example-list {
             display:flex;
             flex-direction:column;
-            gap:10px;
+            gap:0;
         }
         .example-item {
             position:relative;
             display:grid;
             grid-template-columns:30px 1fr;
             gap:12px;
-            padding:14px 16px 14px 12px;
+            padding:14px 4px;
             background:#fff;
-            border:1px solid #e5e7eb;
-            border-radius:14px;
-            box-shadow:0 4px 14px rgba(17,17,17,.045);
-            transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+            border:none;
+            border-bottom:1px solid var(--border);
+            border-radius:0;
+            box-shadow:none;
+            transition:border-color .15s ease;
         }
+        .example-item:last-child { border-bottom:none; }
         .example-item:hover {
-            transform:translateY(-2px);
-            border-color:#d7dadd;
-            box-shadow:0 9px 22px rgba(17,17,17,.08);
+            transform:none;
+            border-color:var(--red);
+            box-shadow:none;
         }
         .example-number {
             width:30px; height:30px;
             display:grid; place-items:center;
-            border-radius:9px;
-            background:#f1f3f5;
-            color:#666;
+            border-radius:0;
+            border:1px solid var(--border);
+            background:#fff;
+            color:var(--muted);
             font-size:.76rem;
             font-weight:900;
             font-variant-numeric:tabular-nums;
@@ -462,12 +465,12 @@
             color:#111;
         }
         .example-aceh::before {
-            content:'“';
+            content:'"';
             color:var(--red);
             margin-right:2px;
         }
         .example-aceh::after {
-            content:'”';
+            content:'"';
             color:var(--red);
             margin-left:2px;
         }
@@ -488,10 +491,11 @@
         .detail-entry-head {
             padding:20px 22px;
             margin-bottom:16px;
-            border:1px solid #e7e9ec;
-            border-radius:18px;
-            background:linear-gradient(135deg,#fff 0%,#fafafa 100%);
-            box-shadow:0 8px 24px rgba(17,17,17,.05);
+            border:1px solid var(--text);
+            border-radius:0;
+            background:#fff;
+            box-shadow:none;
+            border-top:4px solid var(--text);
         }
         .detail-entry-word {
             font-size:clamp(1.85rem,4vw,2.3rem);
@@ -503,9 +507,10 @@
             display:inline-block;
             margin-left:8px;
             padding:4px 9px;
-            border-radius:999px;
-            background:#f1f3f5;
-            color:#70757a;
+            border-radius:0;
+            border:1px solid var(--text);
+            background:#fff;
+            color:var(--text);
             font-size:.78rem;
             font-weight:800;
             vertical-align:middle;
@@ -514,14 +519,14 @@
         .detail-entry-meaning {
             margin-top:10px;
             font-size:1.08rem;
-            color:#262626;
+            color:var(--text);
             line-height:1.6;
         }
         .detail-meta-box {
             margin-top:14px;
             padding:14px 16px;
-            border:1px solid #eceef0;
-            border-radius:14px;
+            border:1px solid var(--border);
+            border-radius:0;
             background:#fff;
         }
         .detail-meta-label {
@@ -531,24 +536,24 @@
             font-weight:900;
             text-transform:uppercase;
             letter-spacing:.06em;
-            color:#8a8f94;
+            color:var(--muted);
         }
         .detail-meta-text {
-            color:#555;
+            color:var(--text);
             font-size:.9rem;
             line-height:1.5;
         }
         .action-bar.detail-actions {
             margin-top:18px;
-            border-radius:12px;
+            border-radius:0;
             overflow:hidden;
-            box-shadow:0 6px 18px rgba(17,17,17,.05);
+            box-shadow:none;
         }
         @media (max-width:620px) {
-            .examples-panel { padding:18px 14px 16px; border-radius:14px; }
-            .example-item { padding:12px 12px 12px 10px; grid-template-columns:28px 1fr; gap:10px; border-radius:12px; }
+            .examples-panel { padding:16px 14px 14px; border-radius:0; }
+            .example-item { padding:12px 4px; grid-template-columns:28px 1fr; gap:10px; border-radius:0; }
             .example-number { width:28px; height:28px; }
-            .detail-entry-head { padding:17px 16px; border-radius:14px; }
+            .detail-entry-head { padding:17px 16px; border-radius:0; }
         }
 
         .show-all-wrap { text-align: left; padding: 20px 0 4px; }
@@ -728,6 +733,51 @@
         .captcha-refresh {
             padding: 8px 12px;
         }
+
+        /* Textarea otomatis menyesuaikan tinggi saat diisi */
+        textarea.autosize {
+            resize: none;
+            overflow: hidden;
+            min-height: 44px;
+        }
+
+        /* Setiap contoh kalimat jadi satu kotak jelas: label nomor + isi + tombol hapus miliknya */
+        .example-row {
+            border: 1px solid var(--border);
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            background: #fff;
+        }
+        .example-row-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .example-row-label {
+            font-size: .72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--muted);
+        }
+        .example-row-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .example-row .btn-danger-sm {
+            padding: 4px 10px;
+            font-size: .78rem;
+        }
+
+        @keyframes exampleRowRestore {
+            0% { background-color: #fff1ee; }
+            100% { background-color: transparent; }
+        }
+        .example-row-restored {
+            animation: exampleRowRestore .7s ease-out;
+        }
     </style>
 
 <style>
@@ -792,7 +842,7 @@
                         <option value="lainnya">Lainnya</option>
                     </select>
                 </div>
-                <div class="form-group"><label>Arti Indonesia</label><textarea id="arti" rows="3" required placeholder="Arti dalam bahasa Indonesia..."></textarea></div>
+                <div class="form-group"><label>Arti Indonesia</label><textarea id="arti" class="autosize" rows="3" required placeholder="Arti dalam bahasa Indonesia..." oninput="autoResizeTextarea(this)"></textarea></div>
                 
                 <div class="form-group">
                     <label>Contoh Kalimat & Terjemahan</label>
@@ -1003,7 +1053,7 @@
                     </select>
                 </div>
 
-                <div class="form-group"><label>Arti Indonesia</label><textarea id="editArti" rows="3" required></textarea></div>
+                <div class="form-group"><label>Arti Indonesia</label><textarea id="editArti" class="autosize" rows="3" required oninput="autoResizeTextarea(this)"></textarea></div>
                 
                 <div class="form-group">
                     <label>Contoh Kalimat & Terjemahan</label>
@@ -1599,16 +1649,65 @@
             state.searchTimer = setTimeout(() => loadKamus(document.getElementById("searchInput").value.trim()), 300);
         }
 
+        function autoResizeTextarea(el) {
+            if (!el) return;
+            el.style.height = "auto";
+            el.style.height = el.scrollHeight + "px";
+        }
+
+        // Riwayat baris contoh kalimat yang dihapus, untuk fitur Undo (Ctrl+Z)
+        let deletedExampleRows = [];
+
+        function removeExampleRow(btn) {
+            const row = btn.closest(".example-row");
+            if (!row) return;
+            const container = row.parentElement;
+            const index = Array.from(container.children).indexOf(row);
+            deletedExampleRows.push({ container, index, row });
+            row.remove();
+            renumberExampleRows(container.id);
+        }
+
+        function undoDeleteExampleRow() {
+            if (deletedExampleRows.length === 0) return false;
+            const { container, index, row } = deletedExampleRows.pop();
+            if (!container || !document.body.contains(container)) return false;
+
+            const referenceNode = container.children[index] || null;
+            container.insertBefore(row, referenceNode);
+            row.querySelectorAll("textarea.autosize").forEach(autoResizeTextarea);
+            renumberExampleRows(container.id);
+
+            row.classList.add("example-row-restored");
+            setTimeout(() => row.classList.remove("example-row-restored"), 700);
+            return true;
+        }
+
+        function renumberExampleRows(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.querySelectorAll(".example-row").forEach((row, i) => {
+                const label = row.querySelector(".example-row-label");
+                if (label) label.textContent = "Contoh Kalimat " + (i + 1);
+            });
+        }
+
         function addExampleRow(containerId) {
             const container = document.getElementById(containerId);
             const row = document.createElement("div");
-            row.style.cssText = "display:grid; grid-template-columns:1fr 1fr auto; gap:8px; margin-bottom:8px;";
+            row.className = "example-row";
             row.innerHTML = `
-                <input type="text" class="ex-aceh" placeholder="Contoh Acèh">
-                <input type="text" class="ex-indo" placeholder="Terjemahan Indonesia">
-                <button type="button" class="btn-danger-sm" onclick="this.parentElement.remove()">X</button>
+                <div class="example-row-head">
+                    <span class="example-row-label">Contoh Kalimat</span>
+                    <button type="button" class="btn-danger-sm" onclick="removeExampleRow(this)">X</button>
+                </div>
+                <div class="example-row-fields">
+                    <textarea class="ex-aceh autosize" rows="1" placeholder="Contoh Acèh" oninput="autoResizeTextarea(this)"></textarea>
+                    <textarea class="ex-indo autosize" rows="1" placeholder="Terjemahan Indonesia" oninput="autoResizeTextarea(this)"></textarea>
+                </div>
             `;
             container.appendChild(row);
+            renumberExampleRows(containerId);
         }
 
         function bukaKataDuplikat(kata) {
@@ -1732,7 +1831,7 @@
             const existingEl = document.getElementById("duplicateDialogExisting");
             if (!dialog || !wordEl || !existingEl) return;
 
-            wordEl.textContent = `“${duplicateDialogWord}”`;
+            wordEl.textContent = `"${duplicateDialogWord}"`;
             existingEl.innerHTML = html || "Kata tersebut sudah ada.";
             dialog.classList.add("show");
             dialog.setAttribute("aria-hidden", "false");
@@ -1808,6 +1907,8 @@
                     msgBox.innerHTML = `<span style="color:var(--success)">✓ Kata berhasil ditambahkan.</span>`;
                     unlockAddForm();
                     document.getElementById("addForm").reset();
+                    document.getElementById("arti").style.height = "auto";
+                    deletedExampleRows = deletedExampleRows.filter(item => item.container !== document.getElementById("examplesContainer"));
                     document.getElementById("addDuplicateNotice").style.display = "none";
                     document.getElementById("addDuplicateNotice").innerHTML = "";
                     document.getElementById("addDuplicateNotice").style.display = "none";
@@ -1862,6 +1963,7 @@
             }
 
             document.getElementById("editArti").value = item.arti_indonesia;
+            autoResizeTextarea(document.getElementById("editArti"));
             document.getElementById("editRujukan").value = item.rujukan || "";
 
             const sumberVal = item.sumber || "";
@@ -1884,19 +1986,28 @@
 
             const editExContainer = document.getElementById("editExamplesContainer");
             editExContainer.innerHTML = "";
+            // Riwayat undo lama untuk kata sebelumnya sudah tidak relevan
+            deletedExampleRows = deletedExampleRows.filter(item => item.container !== editExContainer);
             let exIndex = 1;
             while (item["contoh" + exIndex + "_aceh"]) {
                 const row = document.createElement("div");
-                row.style.cssText = "display:grid; grid-template-columns:1fr 1fr auto; gap:8px; margin-bottom:8px;";
+                row.className = "example-row";
                 row.innerHTML = `
-                    <input type="text" class="ex-aceh" value="${escapeHtml(item["contoh" + exIndex + "_aceh"])}">
-                    <input type="text" class="ex-indo" value="${escapeHtml(item["contoh" + exIndex + "_indo"])}">
-                    <button type="button" class="btn-danger-sm" onclick="this.parentElement.remove()">X</button>
+                    <div class="example-row-head">
+                        <span class="example-row-label">Contoh Kalimat</span>
+                        <button type="button" class="btn-danger-sm" onclick="removeExampleRow(this)">X</button>
+                    </div>
+                    <div class="example-row-fields">
+                        <textarea class="ex-aceh autosize" rows="1" oninput="autoResizeTextarea(this)">${escapeHtml(item["contoh" + exIndex + "_aceh"])}</textarea>
+                        <textarea class="ex-indo autosize" rows="1" oninput="autoResizeTextarea(this)">${escapeHtml(item["contoh" + exIndex + "_indo"])}</textarea>
+                    </div>
                 `;
                 editExContainer.appendChild(row);
                 exIndex++;
             }
 
+            renumberExampleRows("editExamplesContainer");
+            editExContainer.querySelectorAll("textarea.autosize").forEach(autoResizeTextarea);
             document.getElementById("editModal").style.display = "flex";
         }
 
@@ -1971,7 +2082,7 @@
             const wordEl = document.getElementById("deleteDialogWord");
             if (!dialog || !wordEl || !pendingDeleteWord) return;
 
-            wordEl.textContent = `“${pendingDeleteWord}”`;
+            wordEl.textContent = `"${pendingDeleteWord}"`;
             dialog.classList.add("show");
             dialog.setAttribute("aria-hidden", "false");
 
@@ -2048,13 +2159,13 @@
                     showResultDialog(
                         "success",
                         "Berhasil dihapus",
-                        `Kata “${kataYangDihapus}” berhasil dihapus dari kamus.`
+                        `Kata "${kataYangDihapus}" berhasil dihapus dari kamus.`
                     );
                 } else {
                     showResultDialog(
                         "error",
                         "Gagal menghapus",
-                        result.message || `Kata “${kataYangDihapus}” gagal dihapus.`
+                        result.message || `Kata "${kataYangDihapus}" gagal dihapus.`
                     );
                 }
             } catch (err) {
@@ -2073,6 +2184,15 @@
         }
 
         document.addEventListener("keydown", function(e) {
+            const isUndoShortcut = (e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === "z" || e.key === "Z");
+            if (isUndoShortcut) {
+                const restored = undoDeleteExampleRow();
+                if (restored) {
+                    e.preventDefault();
+                    return;
+                }
+            }
+
             const dialog = document.getElementById("deleteDialog");
             const duplicateDialog = document.getElementById("duplicateDialog");
             if (e.key === "Escape" && duplicateDialog && duplicateDialog.classList.contains("show")) {
