@@ -1,0 +1,1 @@
+Database Kamus Basa Aceh.\nindex.json = database utama.\nshards/ = pecahan data.\npending.json = kontribusi menunggu pemeriksaan.\nhistory/ = riwayat perubahan.\n

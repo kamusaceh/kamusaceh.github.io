@@ -1,0 +1,28 @@
+[
+  {
+    "id": "ureueng",
+    "lemma": "ureueng",
+    "variants": [
+      "ureueng"
+    ],
+    "pos": "nomina",
+    "definition": "orang; manusia",
+    "example": "Ureueng Aceh kaya adat.",
+    "translation": "Orang Aceh kaya akan adat.",
+    "ipa": "/urɯɯŋ/",
+    "notes": ""
+  },
+  {
+    "id": "uroe",
+    "lemma": "uroe",
+    "variants": [
+      "uroe"
+    ],
+    "pos": "nomina",
+    "definition": "hari",
+    "example": "Uroe nyoe hana hujan.",
+    "translation": "Hari ini tidak hujan.",
+    "ipa": "/urɔe/",
+    "notes": ""
+  }
+]

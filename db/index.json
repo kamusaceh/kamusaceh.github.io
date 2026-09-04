@@ -1,105 +1,134 @@
-{
-  "count": 10,
-  "entries": [
-    {
-      "id": "lemma_0001",
-      "lemma": "aneuk",
-      "slug": "aneuk",
-      "pron": "/anɯk/",
-      "pos": "n",
-      "def": "anak, keturunan",
-      "shard": "a",
-      "status": "active"
-    },
-    {
-      "id": "lemma_0005",
-      "lemma": "bu",
-      "slug": "bu",
-      "pron": "/bu/",
-      "pos": "n",
-      "def": "nasi, makanan pokok dari beras",
-      "shard": "b",
-      "status": "active"
-    },
-    {
-      "id": "lemma_0008",
-      "lemma": "gunông",
-      "slug": "gunong",
-      "pron": "/gunoŋ/",
-      "pos": "n",
-      "def": "gunung",
-      "shard": "g",
-      "status": "active"
-    },
-    {
-      "id": "lemma_0004",
-      "lemma": "ie",
-      "slug": "ie",
-      "pron": "/iə/",
-      "pos": "n",
-      "def": "air",
-      "shard": "i",
-      "status": "active"
-    },
-    {
-      "id": "lemma_0009",
-      "lemma": "laôt",
-      "slug": "laot",
-      "pron": "/laot/",
-      "pos": "n",
-      "def": "laut",
-      "shard": "l",
-      "status": "active"
-    },
-    {
-      "id": "lemma_0010",
-      "lemma": "leumo",
-      "slug": "leumo",
-      "pron": "/lɯmo/",
-      "pos": "n",
-      "def": "sapi",
-      "shard": "l",
-      "status": "active"
-    },
-    {
-      "id": "lemma_0007",
-      "lemma": "malam",
-      "slug": "malam",
-      "pron": "/malam/",
-      "pos": "n",
-      "def": "waktu setelah matahari terbenam",
-      "shard": "m",
-      "status": "active"
-    },
-    {
-      "id": "lemma_0003",
-      "lemma": "rumoh",
-      "slug": "rumoh",
-      "pron": "/rumoh/",
-      "pos": "n",
-      "def": "rumah, tempat tinggal",
-      "shard": "r",
-      "status": "active"
-    },
-    {
-      "id": "lemma_0002",
-      "lemma": "ureueng",
-      "slug": "ureueng",
-      "pron": "/uɾɯəŋ/",
-      "pos": "n",
-      "def": "orang, manusia",
-      "shard": "u",
-      "status": "active"
-    },
-    {
-      "id": "lemma_0006",
-      "lemma": "uroe",
-      "slug": "uroe",
-      "pron": "/uroə/",
-      "pos": "n",
-      "def": "hari; matahari",
-      "shard": "u",
-      "status": "active"
-    }
-  ]
-}
+[
+  {
+    "id": "aneuk",
+    "lemma": "aneuk",
+    "variants": [
+      "aneuk"
+    ],
+    "pos": "nomina",
+    "definition": "anak; keturunan",
+    "example": "Aneuk nyan ka jak sikula.",
+    "translation": "Anak itu sudah pergi sekolah.",
+    "ipa": "/anɯʔ/",
+    "notes": ""
+  },
+  {
+    "id": "bu",
+    "lemma": "bu",
+    "variants": [
+      "bu"
+    ],
+    "pos": "nomina",
+    "definition": "nasi; makanan pokok",
+    "example": "Bu ka masak.",
+    "translation": "Nasi sudah dimasak.",
+    "ipa": "/bu/",
+    "notes": ""
+  },
+  {
+    "id": "gunong",
+    "lemma": "gunông",
+    "variants": [
+      "gunông",
+      "gunong"
+    ],
+    "pos": "nomina",
+    "definition": "gunung",
+    "example": "Gunông nyan tinggi that.",
+    "translation": "Gunung itu sangat tinggi.",
+    "ipa": "/gunɔŋ/",
+    "notes": ""
+  },
+  {
+    "id": "ie",
+    "lemma": "ie",
+    "variants": [
+      "ie"
+    ],
+    "pos": "nomina",
+    "definition": "air",
+    "example": "Taba ie keu lon.",
+    "translation": "Tolong beri saya air.",
+    "ipa": "/iɛ/",
+    "notes": ""
+  },
+  {
+    "id": "laot",
+    "lemma": "laôt",
+    "variants": [
+      "laôt",
+      "laot"
+    ],
+    "pos": "nomina",
+    "definition": "laut",
+    "example": "Laôt Aceh luas.",
+    "translation": "Laut Aceh luas.",
+    "ipa": "/laɔt/",
+    "notes": ""
+  },
+  {
+    "id": "leumo",
+    "lemma": "leumo",
+    "variants": [
+      "leumo"
+    ],
+    "pos": "nomina",
+    "definition": "sapi",
+    "example": "Leumo nyan di blang.",
+    "translation": "Sapi itu berada di sawah.",
+    "ipa": "/lɯmɔ/",
+    "notes": ""
+  },
+  {
+    "id": "malam",
+    "lemma": "malam",
+    "variants": [
+      "malam"
+    ],
+    "pos": "nomina",
+    "definition": "malam",
+    "example": "Malam nyoe ta jak.",
+    "translation": "Malam ini kita pergi.",
+    "ipa": "/malam/",
+    "notes": ""
+  },
+  {
+    "id": "rumoh",
+    "lemma": "rumoh",
+    "variants": [
+      "rumoh"
+    ],
+    "pos": "nomina",
+    "definition": "rumah; tempat tinggal",
+    "example": "Rumoh jih dekat ngon masjid.",
+    "translation": "Rumahnya dekat dengan masjid.",
+    "ipa": "/rumɔh/",
+    "notes": ""
+  },
+  {
+    "id": "ureueng",
+    "lemma": "ureueng",
+    "variants": [
+      "ureueng"
+    ],
+    "pos": "nomina",
+    "definition": "orang; manusia",
+    "example": "Ureueng Aceh kaya adat.",
+    "translation": "Orang Aceh kaya akan adat.",
+    "ipa": "/urɯɯŋ/",
+    "notes": ""
+  },
+  {
+    "id": "uroe",
+    "lemma": "uroe",
+    "variants": [
+      "uroe"
+    ],
+    "pos": "nomina",
+    "definition": "hari",
+    "example": "Uroe nyoe hana hujan.",
+    "translation": "Hari ini tidak hujan.",
+    "ipa": "/urɔe/",
+    "notes": ""
+  }
+]

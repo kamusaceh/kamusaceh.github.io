@@ -1,0 +1,29 @@
+[
+  {
+    "id": "laot",
+    "lemma": "laôt",
+    "variants": [
+      "laôt",
+      "laot"
+    ],
+    "pos": "nomina",
+    "definition": "laut",
+    "example": "Laôt Aceh luas.",
+    "translation": "Laut Aceh luas.",
+    "ipa": "/laɔt/",
+    "notes": ""
+  },
+  {
+    "id": "leumo",
+    "lemma": "leumo",
+    "variants": [
+      "leumo"
+    ],
+    "pos": "nomina",
+    "definition": "sapi",
+    "example": "Leumo nyan di blang.",
+    "translation": "Sapi itu berada di sawah.",
+    "ipa": "/lɯmɔ/",
+    "notes": ""
+  }
+]
