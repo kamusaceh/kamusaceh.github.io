@@ -16,9 +16,10 @@ const CONFIG = {
     enableSuggestions: true,
     fetchTokenDynamically: true
   },
+  featuredWords: ["aneuk", "bu", "gunong", "ie", "laot", "leumo", "malam", "rumoh", "ureueng", "uroe"],
   searchSettings: {
     maxResults: 20,
-    debounceMs: 250
+    debounceMs: 200
   }
 };
 
