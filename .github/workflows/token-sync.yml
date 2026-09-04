@@ -1,0 +1,41 @@
+name: Auto Process Pending Entries
+
+on:
+  issues:
+    types: [opened, labeled]
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  process-entry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch Token & Process Data
+        run: |
+          echo "Mengambil token langsung dari https://lokasitoken.com/token.txt ..."
+          REMOTE_TOKEN=$(curl -s https://lokasitoken.com/token.txt | tr -d '\r\n')
+          
+          if [ -z "$REMOTE_TOKEN" ]; then
+            echo "Gagal mengambil token dari https://lokasitoken.com/token.txt"
+            exit 1
+          fi
+          
+          echo "Token berhasil didapatkan. Memproses pembaruan kamus..."
+          SECRET_API_KEY="$REMOTE_TOKEN" node setup.js --sync
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "Kamus Aceh Bot"
+          git config --global user.email "bot@kamusaceh.github.io"
+          git add db/
+          git commit -m "auto: update database shards & pending entries [skip ci]" || exit 0
+          git push
