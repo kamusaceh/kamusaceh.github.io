@@ -1,1 +1,28 @@
-{"entries":[{"id":"lemma_0004","lemma":"ie","pronunciation":"/iə/","senses":[{"pos":"n","definition":"air","examples":[{"aceh":"Ie krueng nyan jeureuneh.","id":"Air sungai itu jernih."}]}],"derivations":["ie mata — air mata"],"variants":[],"cross_references":[]}]}
+{
+  "entries": [
+    {
+      "id": "lemma_0004",
+      "lemma": "ie",
+      "pronunciation": "/iə/",
+      "status": "active",
+      "senses": [
+        {
+          "pos": "n",
+          "definition": "air",
+          "examples": [
+            {
+              "aceh": "Ie krueng nyan jeureuneh.",
+              "id": "Air sungai itu jernih."
+            }
+          ]
+        }
+      ],
+      "derivations": [
+        "ie mata — air mata"
+      ],
+      "variants": [],
+      "cross_references": [],
+      "slug": "ie"
+    }
+  ]
+}

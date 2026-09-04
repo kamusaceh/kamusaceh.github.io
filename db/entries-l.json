@@ -1,1 +1,50 @@
-{"entries":[{"id":"lemma_0009","lemma":"laôt","pronunciation":"/laot/","senses":[{"pos":"n","definition":"laut","examples":[{"aceh":"Ureueng gampông lôn jak meulaôt.","id":"Orang kampung saya pergi melaut."}]}],"derivations":["meulaôt — mencari ikan di laut"],"variants":[],"cross_references":[]},{"id":"lemma_0010","lemma":"leumo","pronunciation":"/lɯmo/","senses":[{"pos":"n","definition":"sapi","examples":[{"aceh":"Leumo nyan geupiara lam kandang.","id":"Sapi itu dipelihara dalam kandang."}]}],"derivations":[],"variants":[],"cross_references":[]}]}
+{
+  "entries": [
+    {
+      "id": "lemma_0009",
+      "lemma": "laôt",
+      "pronunciation": "/laot/",
+      "status": "active",
+      "senses": [
+        {
+          "pos": "n",
+          "definition": "laut",
+          "examples": [
+            {
+              "aceh": "Ureueng gampông lôn jak meulaôt.",
+              "id": "Orang kampung saya pergi melaut."
+            }
+          ]
+        }
+      ],
+      "derivations": [
+        "meulaôt — mencari ikan di laut"
+      ],
+      "variants": [],
+      "cross_references": [],
+      "slug": "laot"
+    },
+    {
+      "id": "lemma_0010",
+      "lemma": "leumo",
+      "pronunciation": "/lɯmo/",
+      "status": "active",
+      "senses": [
+        {
+          "pos": "n",
+          "definition": "sapi",
+          "examples": [
+            {
+              "aceh": "Leumo nyan geupiara lam kandang.",
+              "id": "Sapi itu dipelihara dalam kandang."
+            }
+          ]
+        }
+      ],
+      "derivations": [],
+      "variants": [],
+      "cross_references": [],
+      "slug": "leumo"
+    }
+  ]
+}

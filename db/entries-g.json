@@ -1,1 +1,28 @@
-{"entries":[{"id":"lemma_0008","lemma":"gunông","pronunciation":"/gunoŋ/","senses":[{"pos":"n","definition":"gunung","examples":[{"aceh":"Gunông Seulawah leumah dari sinoe.","id":"Gunung Seulawah terlihat dari sini."}]}],"derivations":[],"variants":["gunong"],"cross_references":[]}]}
+{
+  "entries": [
+    {
+      "id": "lemma_0008",
+      "lemma": "gunông",
+      "pronunciation": "/gunoŋ/",
+      "status": "active",
+      "senses": [
+        {
+          "pos": "n",
+          "definition": "gunung",
+          "examples": [
+            {
+              "aceh": "Gunông Seulawah leumah dari sinoe.",
+              "id": "Gunung Seulawah terlihat dari sini."
+            }
+          ]
+        }
+      ],
+      "derivations": [],
+      "variants": [
+        "gunong"
+      ],
+      "cross_references": [],
+      "slug": "gunong"
+    }
+  ]
+}

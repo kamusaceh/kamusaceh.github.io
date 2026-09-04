@@ -1,1 +1,105 @@
-{"count":10,"entries":[{"id":"lemma_0001","lemma":"aneuk","slug":"aneuk","pron":"/anɯk/","pos":"n","def":"anak, keturunan","shard":"a"},{"id":"lemma_0005","lemma":"bu","slug":"bu","pron":"/bu/","pos":"n","def":"nasi, makanan pokok dari beras","shard":"b"},{"id":"lemma_0008","lemma":"gunông","slug":"gunong","pron":"/gunoŋ/","pos":"n","def":"gunung","shard":"g"},{"id":"lemma_0004","lemma":"ie","slug":"ie","pron":"/iə/","pos":"n","def":"air","shard":"i"},{"id":"lemma_0009","lemma":"laôt","slug":"laot","pron":"/laot/","pos":"n","def":"laut","shard":"l"},{"id":"lemma_0010","lemma":"leumo","slug":"leumo","pron":"/lɯmo/","pos":"n","def":"sapi","shard":"l"},{"id":"lemma_0007","lemma":"malam","slug":"malam","pron":"/malam/","pos":"n","def":"waktu setelah matahari terbenam","shard":"m"},{"id":"lemma_0003","lemma":"rumoh","slug":"rumoh","pron":"/rumoh/","pos":"n","def":"rumah, tempat tinggal","shard":"r"},{"id":"lemma_0002","lemma":"ureueng","slug":"ureueng","pron":"/uʀɯːəŋ/","pos":"n","def":"orang, manusia","shard":"u"},{"id":"lemma_0006","lemma":"uroe","slug":"uroe","pron":"/uroə/","pos":"n","def":"hari; matahari","shard":"u"}]}
+{
+  "count": 10,
+  "entries": [
+    {
+      "id": "lemma_0001",
+      "lemma": "aneuk",
+      "slug": "aneuk",
+      "pron": "/anɯk/",
+      "pos": "n",
+      "def": "anak, keturunan",
+      "shard": "a",
+      "status": "active"
+    },
+    {
+      "id": "lemma_0005",
+      "lemma": "bu",
+      "slug": "bu",
+      "pron": "/bu/",
+      "pos": "n",
+      "def": "nasi, makanan pokok dari beras",
+      "shard": "b",
+      "status": "active"
+    },
+    {
+      "id": "lemma_0008",
+      "lemma": "gunông",
+      "slug": "gunong",
+      "pron": "/gunoŋ/",
+      "pos": "n",
+      "def": "gunung",
+      "shard": "g",
+      "status": "active"
+    },
+    {
+      "id": "lemma_0004",
+      "lemma": "ie",
+      "slug": "ie",
+      "pron": "/iə/",
+      "pos": "n",
+      "def": "air",
+      "shard": "i",
+      "status": "active"
+    },
+    {
+      "id": "lemma_0009",
+      "lemma": "laôt",
+      "slug": "laot",
+      "pron": "/laot/",
+      "pos": "n",
+      "def": "laut",
+      "shard": "l",
+      "status": "active"
+    },
+    {
+      "id": "lemma_0010",
+      "lemma": "leumo",
+      "slug": "leumo",
+      "pron": "/lɯmo/",
+      "pos": "n",
+      "def": "sapi",
+      "shard": "l",
+      "status": "active"
+    },
+    {
+      "id": "lemma_0007",
+      "lemma": "malam",
+      "slug": "malam",
+      "pron": "/malam/",
+      "pos": "n",
+      "def": "waktu setelah matahari terbenam",
+      "shard": "m",
+      "status": "active"
+    },
+    {
+      "id": "lemma_0003",
+      "lemma": "rumoh",
+      "slug": "rumoh",
+      "pron": "/rumoh/",
+      "pos": "n",
+      "def": "rumah, tempat tinggal",
+      "shard": "r",
+      "status": "active"
+    },
+    {
+      "id": "lemma_0002",
+      "lemma": "ureueng",
+      "slug": "ureueng",
+      "pron": "/uɾɯəŋ/",
+      "pos": "n",
+      "def": "orang, manusia",
+      "shard": "u",
+      "status": "active"
+    },
+    {
+      "id": "lemma_0006",
+      "lemma": "uroe",
+      "slug": "uroe",
+      "pron": "/uroə/",
+      "pos": "n",
+      "def": "hari; matahari",
+      "shard": "u",
+      "status": "active"
+    }
+  ]
+}
