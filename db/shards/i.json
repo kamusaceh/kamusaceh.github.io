@@ -1,15 +1,9 @@
-[
-  {
-    "id": "ie",
-    "lemma": "ie",
-    "variants": [
-      "ie"
-    ],
-    "pos": "nomina",
-    "definition": "air",
-    "example": "Taba ie keu lon.",
-    "translation": "Tolong beri saya air.",
-    "ipa": "/iɛ/",
-    "notes": ""
+{
+  "ie": {
+    "ejaan": "i-e",
+    "kelas": "nomina",
+    "arti_id": "air",
+    "arti_en": "water",
+    "contoh": "Jienep ie krueng jernih teupat."
   }
-]
+}

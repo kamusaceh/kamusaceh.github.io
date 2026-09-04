@@ -1,15 +1,9 @@
-[
-  {
-    "id": "rumoh",
-    "lemma": "rumoh",
-    "variants": [
-      "rumoh"
-    ],
-    "pos": "nomina",
-    "definition": "rumah; tempat tinggal",
-    "example": "Rumoh jih dekat ngon masjid.",
-    "translation": "Rumahnya dekat dengan masjid.",
-    "ipa": "/rumɔh/",
-    "notes": ""
+{
+  "rumoh": {
+    "ejaan": "ru-moh",
+    "kelas": "nomina",
+    "arti_id": "rumah",
+    "arti_en": "house / home",
+    "contoh": "Rumoh Aceh geubeutoy keunom."
   }
-]
+}

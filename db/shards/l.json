@@ -1,29 +1,16 @@
-[
-  {
-    "id": "laot",
-    "lemma": "laôt",
-    "variants": [
-      "laôt",
-      "laot"
-    ],
-    "pos": "nomina",
-    "definition": "laut",
-    "example": "Laôt Aceh luas.",
-    "translation": "Laut Aceh luas.",
-    "ipa": "/laɔt/",
-    "notes": ""
+{
+  "laot": {
+    "ejaan": "la-ot",
+    "kelas": "nomina",
+    "arti_id": "laut",
+    "arti_en": "sea / ocean",
+    "contoh": "Panglima Laot geupeugah haba."
   },
-  {
-    "id": "leumo",
-    "lemma": "leumo",
-    "variants": [
-      "leumo"
-    ],
-    "pos": "nomina",
-    "definition": "sapi",
-    "example": "Leumo nyan di blang.",
-    "translation": "Sapi itu berada di sawah.",
-    "ipa": "/lɯmɔ/",
-    "notes": ""
+  "leumo": {
+    "ejaan": "leu-mo",
+    "kelas": "nomina",
+    "arti_id": "lembu / sapi",
+    "arti_en": "cow / cattle",
+    "contoh": "Leumo geumanoe bak krueng."
   }
-]
+}

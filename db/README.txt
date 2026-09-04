@@ -1,1 +1,6 @@
-Database Kamus Basa Aceh.\nindex.json = database utama.\nshards/ = pecahan data.\npending.json = kontribusi menunggu pemeriksaan.\nhistory/ = riwayat perubahan.\n
+STRUKTUR DATABASE KAMUS ACEH
+============================
+- index.json   : Pemetaan Cepat Kata -> Shard
+- shards/*.json: Berkas Rincian Kata per Huruf Depan
+- pending.json : Antrean Usulan Kata Baru
+- users.json   : Daftar Kontributor / Admin

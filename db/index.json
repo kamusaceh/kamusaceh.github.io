@@ -1,134 +1,52 @@
-[
-  {
-    "id": "aneuk",
-    "lemma": "aneuk",
-    "variants": [
-      "aneuk"
-    ],
-    "pos": "nomina",
-    "definition": "anak; keturunan",
-    "example": "Aneuk nyan ka jak sikula.",
-    "translation": "Anak itu sudah pergi sekolah.",
-    "ipa": "/anɯʔ/",
-    "notes": ""
+{
+  "aneuk": {
+    "shard": "a",
+    "kelas": "n",
+    "arti": "anak"
   },
-  {
-    "id": "bu",
-    "lemma": "bu",
-    "variants": [
-      "bu"
-    ],
-    "pos": "nomina",
-    "definition": "nasi; makanan pokok",
-    "example": "Bu ka masak.",
-    "translation": "Nasi sudah dimasak.",
-    "ipa": "/bu/",
-    "notes": ""
+  "bu": {
+    "shard": "b",
+    "kelas": "n",
+    "arti": "nasi"
   },
-  {
-    "id": "gunong",
-    "lemma": "gunông",
-    "variants": [
-      "gunông",
-      "gunong"
-    ],
-    "pos": "nomina",
-    "definition": "gunung",
-    "example": "Gunông nyan tinggi that.",
-    "translation": "Gunung itu sangat tinggi.",
-    "ipa": "/gunɔŋ/",
-    "notes": ""
+  "gunong": {
+    "shard": "g",
+    "kelas": "n",
+    "arti": "gunung"
   },
-  {
-    "id": "ie",
-    "lemma": "ie",
-    "variants": [
-      "ie"
-    ],
-    "pos": "nomina",
-    "definition": "air",
-    "example": "Taba ie keu lon.",
-    "translation": "Tolong beri saya air.",
-    "ipa": "/iɛ/",
-    "notes": ""
+  "ie": {
+    "shard": "i",
+    "kelas": "n",
+    "arti": "air"
   },
-  {
-    "id": "laot",
-    "lemma": "laôt",
-    "variants": [
-      "laôt",
-      "laot"
-    ],
-    "pos": "nomina",
-    "definition": "laut",
-    "example": "Laôt Aceh luas.",
-    "translation": "Laut Aceh luas.",
-    "ipa": "/laɔt/",
-    "notes": ""
+  "laot": {
+    "shard": "l",
+    "kelas": "n",
+    "arti": "laut"
   },
-  {
-    "id": "leumo",
-    "lemma": "leumo",
-    "variants": [
-      "leumo"
-    ],
-    "pos": "nomina",
-    "definition": "sapi",
-    "example": "Leumo nyan di blang.",
-    "translation": "Sapi itu berada di sawah.",
-    "ipa": "/lɯmɔ/",
-    "notes": ""
+  "leumo": {
+    "shard": "l",
+    "kelas": "n",
+    "arti": "sapi/lembu"
   },
-  {
-    "id": "malam",
-    "lemma": "malam",
-    "variants": [
-      "malam"
-    ],
-    "pos": "nomina",
-    "definition": "malam",
-    "example": "Malam nyoe ta jak.",
-    "translation": "Malam ini kita pergi.",
-    "ipa": "/malam/",
-    "notes": ""
+  "malam": {
+    "shard": "m",
+    "kelas": "n",
+    "arti": "malam"
   },
-  {
-    "id": "rumoh",
-    "lemma": "rumoh",
-    "variants": [
-      "rumoh"
-    ],
-    "pos": "nomina",
-    "definition": "rumah; tempat tinggal",
-    "example": "Rumoh jih dekat ngon masjid.",
-    "translation": "Rumahnya dekat dengan masjid.",
-    "ipa": "/rumɔh/",
-    "notes": ""
+  "rumoh": {
+    "shard": "r",
+    "kelas": "n",
+    "arti": "rumah"
   },
-  {
-    "id": "ureueng",
-    "lemma": "ureueng",
-    "variants": [
-      "ureueng"
-    ],
-    "pos": "nomina",
-    "definition": "orang; manusia",
-    "example": "Ureueng Aceh kaya adat.",
-    "translation": "Orang Aceh kaya akan adat.",
-    "ipa": "/urɯɯŋ/",
-    "notes": ""
+  "ureueng": {
+    "shard": "u",
+    "kelas": "n",
+    "arti": "orang"
   },
-  {
-    "id": "uroe",
-    "lemma": "uroe",
-    "variants": [
-      "uroe"
-    ],
-    "pos": "nomina",
-    "definition": "hari",
-    "example": "Uroe nyoe hana hujan.",
-    "translation": "Hari ini tidak hujan.",
-    "ipa": "/urɔe/",
-    "notes": ""
+  "uroe": {
+    "shard": "u",
+    "kelas": "n",
+    "arti": "hari / matahari"
   }
-]
+}

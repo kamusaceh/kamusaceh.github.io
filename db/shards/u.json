@@ -1,28 +1,16 @@
-[
-  {
-    "id": "ureueng",
-    "lemma": "ureueng",
-    "variants": [
-      "ureueng"
-    ],
-    "pos": "nomina",
-    "definition": "orang; manusia",
-    "example": "Ureueng Aceh kaya adat.",
-    "translation": "Orang Aceh kaya akan adat.",
-    "ipa": "/urɯɯŋ/",
-    "notes": ""
+{
+  "ureueng": {
+    "ejaan": "u-reu-eng",
+    "kelas": "nomina",
+    "arti_id": "orang / manusia",
+    "arti_en": "person / people",
+    "contoh": "Ureueng Aceh ramah-ramah."
   },
-  {
-    "id": "uroe",
-    "lemma": "uroe",
-    "variants": [
-      "uroe"
-    ],
-    "pos": "nomina",
-    "definition": "hari",
-    "example": "Uroe nyoe hana hujan.",
-    "translation": "Hari ini tidak hujan.",
-    "ipa": "/urɔe/",
-    "notes": ""
+  "uroe": {
+    "ejaan": "u-roe",
+    "kelas": "nomina",
+    "arti_id": "hari / matahari",
+    "arti_en": "day / sun",
+    "contoh": "Uroe nyoe seunang sekali."
   }
-]
+}

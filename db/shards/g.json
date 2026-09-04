@@ -1,16 +1,9 @@
-[
-  {
-    "id": "gunong",
-    "lemma": "gunông",
-    "variants": [
-      "gunông",
-      "gunong"
-    ],
-    "pos": "nomina",
-    "definition": "gunung",
-    "example": "Gunông nyan tinggi that.",
-    "translation": "Gunung itu sangat tinggi.",
-    "ipa": "/gunɔŋ/",
-    "notes": ""
+{
+  "gunong": {
+    "ejaan": "gu-nong",
+    "kelas": "nomina",
+    "arti_id": "gunung",
+    "arti_en": "mountain",
+    "contoh": "Gunong Seulawah sangak manyang."
   }
-]
+}

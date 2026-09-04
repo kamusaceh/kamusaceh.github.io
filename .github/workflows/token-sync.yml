@@ -19,23 +19,34 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Fetch Token & Process Data
+      - name: Read & Decode Token & Process
         run: |
-          echo "Mengambil token langsung dari https://lokasitoken.com/token.txt ..."
-          REMOTE_TOKEN=$(curl -s https://lokasitoken.com/token.txt | tr -d '\r\n')
-          
-          if [ -z "$REMOTE_TOKEN" ]; then
-            echo "Gagal mengambil token dari https://lokasitoken.com/token.txt"
-            exit 1
+          if [ -f token.txt ]; then
+            LOCAL_TOKEN=$(node -e '
+              const fs = require("fs");
+              const raw = fs.readFileSync("token.txt", "utf8").trim();
+              if (/^[0-9a-fA-F]+$/.test(raw) && raw.length % 2 === 0) {
+                let str = "";
+                for (let i = 0; i < raw.length; i += 2) {
+                  str += String.fromCharCode(parseInt(raw.substr(i, 2), 16));
+                }
+                console.log(str);
+              } else {
+                try { console.log(Buffer.from(raw, "base64").toString("utf8")); }
+                catch(e) { console.log(raw); }
+              }
+            ')
+            echo "Token berhasil didekripsi dari token.txt"
+            SECRET_API_KEY="$LOCAL_TOKEN" node setup.js --sync
+          else
+            echo "token.txt tidak ditemukan"
+            node setup.js --sync
           fi
-          
-          echo "Token berhasil didapatkan. Memproses pembaruan kamus..."
-          SECRET_API_KEY="$REMOTE_TOKEN" node setup.js --sync
 
-      - name: Commit and Push Changes
+      - name: Commit & Push Changes
         run: |
           git config --global user.name "Kamus Aceh Bot"
           git config --global user.email "bot@kamusaceh.github.io"
           git add db/
-          git commit -m "auto: update database shards & pending entries [skip ci]" || exit 0
+          git commit -m "auto: sync pending entries & update database shards [skip ci]" || exit 0
           git push

@@ -1,77 +1,18 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Kamus Basa Aceh</title>
-<link rel="stylesheet" href="assets/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beranda - Kamus Aceh Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
-<body>
-
-<header>
-
-<div class="mark chrome">
-KAMUS DWIBAHASA · KONTRIBUSI TERBUKA
-</div>
-
-<h1>Kamus Basa Aceh</h1>
-
-<div class="tagline">
-Aceh–Indonesia, disusun bersama oleh penutur dan peminat basa Aceh
-</div>
-
-<input
-id="search"
-type="text"
-placeholder="Cari kata…"
-autocomplete="off">
-
-<div id="stats"></div>
-
-<div id="authArea"
-class="auth-area"></div>
-
-</header>
-
-<main>
-
-<div class="wotd" id="wotd"></div>
-
-<div id="list"></div>
-
-<div
-id="addPanel"
-class="panel"
-style="display:none">
-</div>
-
-<div
-id="editPanel"
-class="panel"
-style="display:none">
-</div>
-
-<div
-id="pendingPanel"
-class="panel"
-style="display:none">
-</div>
-
-<div
-id="historyPanel"
-class="panel"
-style="display:none">
-</div>
-
-</main>
-
-<footer>
-Kamus Basa Aceh © Komunitas Penutur Bahasa Aceh
-</footer>
-
-<script src="config/app-config.js"></script>
-<script src="assets/script.js"></script>
-
+<body class="bg-slate-900 text-slate-100 p-8 flex flex-col items-center justify-center min-h-screen text-center">
+    <div class="max-w-xl space-y-4">
+        <h1 class="text-4xl font-extrabold text-emerald-400">Kamus Aceh Digital</h1>
+        <p class="text-slate-300">Platform digital pelestarian dan pencarian kosa kata Bahasa Aceh berbasis open-source.</p>
+        <div class="pt-4">
+            <a href="index.html" class="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl transition">Mulai Cari Kata</a>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,25 +1,21 @@
 /**
  * Konfigurasi Utama Aplikasi Web Kamus Aceh
- * Tanpa Cloudflare / Murni GitHub Pages + Remote Token
  */
 const CONFIG = {
   appName: "Kamus Aceh Digital",
-  version: "1.3.0",
-  tokenSourceUrl: "https://lokasitoken.com/token.txt",
+  version: "2.2.0",
+  tokenSourceUrl: "token.txt",
   paths: {
     indexDb: "db/index.json",
     shards: "db/shards/",
     pendingDb: "db/pending.json",
+    usersDb: "db/users.json",
     entries: "entries/"
   },
   features: {
     offlineMode: true,
     enableSuggestions: true,
     fetchTokenDynamically: true
-  },
-  searchSettings: {
-    maxResults: 20,
-    debounceMs: 250
   }
 };
 

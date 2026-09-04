@@ -1,15 +1,9 @@
-[
-  {
-    "id": "aneuk",
-    "lemma": "aneuk",
-    "variants": [
-      "aneuk"
-    ],
-    "pos": "nomina",
-    "definition": "anak; keturunan",
-    "example": "Aneuk nyan ka jak sikula.",
-    "translation": "Anak itu sudah pergi sekolah.",
-    "ipa": "/anɯʔ/",
-    "notes": ""
+{
+  "aneuk": {
+    "ejaan": "a-neuk",
+    "kelas": "nomina",
+    "arti_id": "anak",
+    "arti_en": "child / kid",
+    "contoh": "Aneuk mit nyan tengah meuen."
   }
-]
+}

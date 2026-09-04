@@ -1,15 +1,9 @@
-[
-  {
-    "id": "bu",
-    "lemma": "bu",
-    "variants": [
-      "bu"
-    ],
-    "pos": "nomina",
-    "definition": "nasi; makanan pokok",
-    "example": "Bu ka masak.",
-    "translation": "Nasi sudah dimasak.",
-    "ipa": "/bu/",
-    "notes": ""
+{
+  "bu": {
+    "ejaan": "bu",
+    "kelas": "nomina",
+    "arti_id": "nasi",
+    "arti_en": "cooked rice",
+    "contoh": "Pajoh bu sigra geutanyo."
   }
-]
+}

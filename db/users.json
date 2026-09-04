@@ -1,10 +1,16 @@
 [
   {
-    "username": "admin",
-    "password": "12345"
+    "id": "usr_01",
+    "username": "admin_aceh",
+    "role": "admin",
+    "name": "Pengelola Kamus Aceh",
+    "email": "admin@kamusaceh.github.io"
   },
   {
-    "username": "editor",
-    "password": "editor123"
+    "id": "usr_02",
+    "username": "kontributor_01",
+    "role": "contributor",
+    "name": "Kontributor Bahasa",
+    "email": "kontributor@kamusaceh.github.io"
   }
 ]
