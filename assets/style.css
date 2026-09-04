@@ -1,8 +1,4 @@
-/* Custom Accent Styles */
+/* Custom Theme & Typography */
 body {
-    background-color: #0f172a;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-}
-input[type="search"]::-webkit-search-cancel-button {
-    filter: invert(1);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }

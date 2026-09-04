@@ -3,35 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kamus Bahasa Aceh Digital</title>
+    <title>Kamus Bahasa Aceh Digital - Pencarian Kata</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="assets/style.css">
     <script src="config/app-config.js"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
-    <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50">
+    <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50 shadow-md">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
-            <h1 class="text-xl font-bold text-emerald-400"><a href="/">📖 Kamus Aceh Digital</a></h1>
-            <nav class="space-x-4 text-sm">
-                <a href="homepage.html" class="hover:text-emerald-400 transition">Beranda</a>
-                <a href="#usulkan" onclick="openSuggestModal()" class="hover:text-emerald-400 transition">Usul Kata</a>
+            <h1 class="text-xl font-bold text-emerald-400">
+                <a href="index.html" class="flex items-center gap-2">📖 <span>Kamus Aceh Digital</span></a>
+            </h1>
+            <nav class="space-x-4 text-sm font-medium">
+                <a href="homepage.html" class="text-slate-300 hover:text-emerald-400 transition">Beranda</a>
+                <a href="index.html" class="text-emerald-400 font-semibold border-b-2 border-emerald-400 pb-1">Cari Kata</a>
             </nav>
         </div>
     </header>
 
     <main class="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
         <div class="text-center space-y-3 py-6">
-            <h2 class="text-3xl font-bold">Cari Kosa Kata Bahasa Aceh</h2>
-            <p class="text-slate-400 text-sm max-w-lg mx-auto">Temukan arti kata, ejaan, kelas kata, dan contoh penggunaan bahasa Aceh secara mudah dan cepat.</p>
+            <h2 class="text-3xl font-extrabold text-white">Cari Kosa Kata Bahasa Aceh</h2>
+            <p class="text-slate-400 text-sm max-w-lg mx-auto">Temukan arti kata, ejaan, kelas kata, dan contoh penggunaan Bahasa Aceh secara instan.</p>
             <div class="relative max-w-xl mx-auto mt-4">
                 <input type="search" id="searchInput" placeholder="Ketik kata Bahasa Aceh atau Indonesia..." 
-                    class="w-full bg-slate-800 border border-slate-700 rounded-xl py-3 px-4 pl-11 text-sm text-white focus:outline-none focus:border-emerald-500 shadow-lg">
+                    class="w-full bg-slate-800 border border-slate-700 rounded-xl py-3 px-4 pl-11 text-sm text-white focus:outline-none focus:border-emerald-500 shadow-lg transition">
                 <span class="absolute left-4 top-3.5 text-slate-400">🔍</span>
             </div>
         </div>
 
         <div id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Hasil Pencarian -->
+            <!-- Hasil Pencarian Dimuat Otomatis -->
         </div>
     </main>
 

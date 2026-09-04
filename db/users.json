@@ -1,16 +1,7 @@
 [
   {
-    "id": "usr_01",
-    "username": "admin_aceh",
-    "role": "admin",
-    "name": "Pengelola Kamus Aceh",
-    "email": "admin@kamusaceh.github.io"
-  },
-  {
-    "id": "usr_02",
-    "username": "kontributor_01",
-    "role": "contributor",
-    "name": "Kontributor Bahasa",
-    "email": "kontributor@kamusaceh.github.io"
+    "id": 1,
+    "username": "admin",
+    "role": "maintainer"
   }
 ]

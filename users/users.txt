@@ -1,2 +1,2 @@
-admin_aceh:admin@kamusaceh.github.io:admin
-kontributor_01:kontributor@kamusaceh.github.io:contributor
+admin:maintainer
+contributor:reviewer

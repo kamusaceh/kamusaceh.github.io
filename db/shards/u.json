@@ -1,16 +1,12 @@
 {
   "ureueng": {
-    "ejaan": "u-reu-eng",
-    "kelas": "nomina",
-    "arti_id": "orang / manusia",
-    "arti_en": "person / people",
-    "contoh": "Ureueng Aceh ramah-ramah."
+    "kata": "ureueng",
+    "arti": "Orang",
+    "kelas": "n"
   },
   "uroe": {
-    "ejaan": "u-roe",
-    "kelas": "nomina",
-    "arti_id": "hari / matahari",
-    "arti_en": "day / sun",
-    "contoh": "Uroe nyoe seunang sekali."
+    "kata": "uroe",
+    "arti": "Hari / Matahari",
+    "kelas": "n"
   }
 }

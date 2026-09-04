@@ -1,9 +1,7 @@
 {
   "ie": {
-    "ejaan": "i-e",
-    "kelas": "nomina",
-    "arti_id": "air",
-    "arti_en": "water",
-    "contoh": "Jienep ie krueng jernih teupat."
+    "kata": "ie",
+    "arti": "Air",
+    "kelas": "n"
   }
 }

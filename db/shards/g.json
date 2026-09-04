@@ -1,9 +1,7 @@
 {
   "gunong": {
-    "ejaan": "gu-nong",
-    "kelas": "nomina",
-    "arti_id": "gunung",
-    "arti_en": "mountain",
-    "contoh": "Gunong Seulawah sangak manyang."
+    "kata": "gunong",
+    "arti": "Gunung",
+    "kelas": "n"
   }
 }

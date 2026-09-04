@@ -1,16 +1,12 @@
 {
   "laot": {
-    "ejaan": "la-ot",
-    "kelas": "nomina",
-    "arti_id": "laut",
-    "arti_en": "sea / ocean",
-    "contoh": "Panglima Laot geupeugah haba."
+    "kata": "laot",
+    "arti": "Laut",
+    "kelas": "n"
   },
   "leumo": {
-    "ejaan": "leu-mo",
-    "kelas": "nomina",
-    "arti_id": "lembu / sapi",
-    "arti_en": "cow / cattle",
-    "contoh": "Leumo geumanoe bak krueng."
+    "kata": "leumo",
+    "arti": "Sapi / Lembu",
+    "kelas": "n"
   }
 }

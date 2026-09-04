@@ -1,9 +1,7 @@
 {
   "aneuk": {
-    "ejaan": "a-neuk",
-    "kelas": "nomina",
-    "arti_id": "anak",
-    "arti_en": "child / kid",
-    "contoh": "Aneuk mit nyan tengah meuen."
+    "kata": "aneuk",
+    "arti": "Anak",
+    "kelas": "n"
   }
 }

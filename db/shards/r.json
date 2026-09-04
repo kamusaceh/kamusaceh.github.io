@@ -1,9 +1,7 @@
 {
   "rumoh": {
-    "ejaan": "ru-moh",
-    "kelas": "nomina",
-    "arti_id": "rumah",
-    "arti_en": "house / home",
-    "contoh": "Rumoh Aceh geubeutoy keunom."
+    "kata": "rumoh",
+    "arti": "Rumah",
+    "kelas": "n"
   }
 }

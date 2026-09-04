@@ -1,52 +1,12 @@
 {
-  "aneuk": {
-    "shard": "a",
-    "kelas": "n",
-    "arti": "anak"
-  },
-  "bu": {
-    "shard": "b",
-    "kelas": "n",
-    "arti": "nasi"
-  },
-  "gunong": {
-    "shard": "g",
-    "kelas": "n",
-    "arti": "gunung"
-  },
-  "ie": {
-    "shard": "i",
-    "kelas": "n",
-    "arti": "air"
-  },
-  "laot": {
-    "shard": "l",
-    "kelas": "n",
-    "arti": "laut"
-  },
-  "leumo": {
-    "shard": "l",
-    "kelas": "n",
-    "arti": "sapi/lembu"
-  },
-  "malam": {
-    "shard": "m",
-    "kelas": "n",
-    "arti": "malam"
-  },
-  "rumoh": {
-    "shard": "r",
-    "kelas": "n",
-    "arti": "rumah"
-  },
-  "ureueng": {
-    "shard": "u",
-    "kelas": "n",
-    "arti": "orang"
-  },
-  "uroe": {
-    "shard": "u",
-    "kelas": "n",
-    "arti": "hari / matahari"
-  }
+  "aneuk": "a",
+  "bu": "b",
+  "gunong": "g",
+  "ie": "i",
+  "laot": "l",
+  "leumo": "l",
+  "malam": "m",
+  "rumoh": "r",
+  "ureueng": "u",
+  "uroe": "u"
 }

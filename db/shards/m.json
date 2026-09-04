@@ -1,9 +1,7 @@
 {
   "malam": {
-    "ejaan": "ma-lam",
-    "kelas": "nomina",
-    "arti_id": "malam",
-    "arti_en": "night",
-    "contoh": "Malam nyoe angin kencang."
+    "kata": "malam",
+    "arti": "Malam",
+    "kelas": "n"
   }
 }

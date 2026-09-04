@@ -1,9 +1,7 @@
 {
   "bu": {
-    "ejaan": "bu",
-    "kelas": "nomina",
-    "arti_id": "nasi",
-    "arti_en": "cooked rice",
-    "contoh": "Pajoh bu sigra geutanyo."
+    "kata": "bu",
+    "arti": "Nasi",
+    "kelas": "n"
   }
 }
