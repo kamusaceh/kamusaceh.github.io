@@ -1,5 +1,3 @@
-
-
 "use strict";
 
 const CFG=window.KAMUS_CONFIG||{};
@@ -53,10 +51,10 @@ function authHeaders(){
   const h={
     "Accept":"application/vnd.github+json"
   };
-
-  if(CFG.token){
-    h.Authorization="Bearer "+CFG.token;
-  }
+  
+ if(CFG.token){
+  h.Authorization="Bearer github"+CFG.token;
+}
 
   return h;
 }
