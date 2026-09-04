@@ -13,10 +13,13 @@
   <div class="tagline">Aceh–Indonesia, disusun bersama oleh penutur dan peminat basa Aceh</div>
   <input id="search" type="text" placeholder="Cari kata... (mis. aneuk, rumoh, ie)" />
   <div id="stats" class="chrome"></div>
+  <div id="authArea" class="chrome auth-area"></div>
 </header>
 <main>
   <div class="wotd" id="wotd"></div>
   <div id="list"></div>
+  <div id="contribPanel" class="panel" style="display:none;"></div>
+  <div id="historyPanel" class="panel" style="display:none;"></div>
 </main>
 <script>
 async function loadEntries(){
@@ -54,6 +57,203 @@ document.getElementById('search').addEventListener('input', (e) => {
   drawList(ALL_ENTRIES.filter(en => en.lemma.toLowerCase().includes(q) || (en.def||'').toLowerCase().includes(q)));
 });
 loadEntries();
+
+const REPO_OWNER = "kamusaceh";
+const REPO_NAME = "kamusaceh.github.io";
+const REPO_BRANCH = "main";
+
+function getAuth(){
+  try{ const raw = sessionStorage.getItem('kamusAuth'); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+function setAuth(a){ try{ sessionStorage.setItem('kamusAuth', JSON.stringify(a)); }catch(e){} }
+function clearAuth(){ try{ sessionStorage.removeItem('kamusAuth'); }catch(e){} }
+
+function renderAuthArea(){
+  const area = document.getElementById('authArea');
+  const auth = getAuth();
+  if(!auth){
+    area.innerHTML = '<button class="btn-small" onclick="showLoginForm()">Masuk Kontributor</button>';
+    return;
+  }
+  area.innerHTML =
+    '<span class="user-badge">' + auth.username + '</span>' +
+    '<button class="btn-small" onclick="showContribForm()">Kontribusi</button>' +
+    '<button class="btn-small" onclick="showHistory()">Riwayat</button>' +
+    '<button class="btn-small" onclick="doLogout()">Keluar</button>';
+}
+
+function showLoginForm(){
+  const area = document.getElementById('authArea');
+  area.innerHTML =
+    '<span class="auth-box">' +
+      '<input id="loginUser" placeholder="Username GitHub">' +
+      '<input id="loginToken" type="password" placeholder="Personal Access Token">' +
+      '<button class="btn-small" onclick="doLogin()">Masuk</button>' +
+      '<button class="btn-small ghost" onclick="renderAuthArea()">Batal</button>' +
+      '<span id="loginMsg" class="auth-msg"></span>' +
+    '</span>';
+}
+
+async function doLogin(){
+  const user = document.getElementById('loginUser').value.trim();
+  const token = document.getElementById('loginToken').value.trim();
+  const msg = document.getElementById('loginMsg');
+  if(!user || !token){ msg.textContent = 'Isi username dan token.'; return; }
+  msg.textContent = 'Memeriksa...';
+  try{
+    const r = await fetch('https://api.github.com/user', { headers: { 'Authorization':'Bearer ' + token, 'Accept':'application/vnd.github+json' } });
+    const d = await r.json();
+    if(!r.ok){ msg.textContent = 'Token tidak valid.'; return; }
+    if(d.login.toLowerCase() !== user.toLowerCase()){ msg.textContent = 'Username tidak cocok dengan token.'; return; }
+    setAuth({ username: d.login, token: token });
+    renderAuthArea();
+  }catch(e){ msg.textContent = 'Gagal menghubungi GitHub.'; }
+}
+
+function doLogout(){ clearAuth(); closePanels(); renderAuthArea(); }
+function closePanels(){
+  document.getElementById('contribPanel').style.display = 'none';
+  document.getElementById('historyPanel').style.display = 'none';
+}
+function ghHeaders(token){
+  return { 'Accept':'application/vnd.github+json', 'Authorization':'Bearer ' + token, 'Content-Type':'application/json' };
+}
+
+function slugifyClient(word){
+  const norm = word.normalize('NFD');
+  let out = '';
+  for(let i=0;i<norm.length;i++){
+    const code = norm.charCodeAt(i);
+    if(code >= 768 && code <= 879) continue;
+    out += norm[i];
+  }
+  return out.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+}
+function shardKeyClient(slug){
+  const c = slug.charAt(0);
+  return (c >= 'a' && c <= 'z') ? c : '0-9';
+}
+
+function showContribForm(){
+  closePanels();
+  const p = document.getElementById('contribPanel');
+  p.style.display = 'block';
+  p.innerHTML =
+    '<h3>Tambah entri baru</h3>' +
+    '<div class="field"><label>Kata (lemma)</label><input id="c_lemma"></div>' +
+    '<div class="field"><label>Ucapan (opsional)</label><input id="c_pron" placeholder="/contoh/"></div>' +
+    '<div class="field"><label>Kelas kata</label><input id="c_pos" placeholder="n, v, adj, ..."></div>' +
+    '<div class="field"><label>Definisi (Indonesia)</label><input id="c_def"></div>' +
+    '<div class="field"><label>Contoh (Aceh)</label><input id="c_ex_aceh"></div>' +
+    '<div class="field"><label>Contoh (Indonesia)</label><input id="c_ex_id"></div>' +
+    '<button class="btn-small" onclick="submitContrib()">Kirim &amp; Simpan ke Repo</button>' +
+    '<div id="contribMsg" class="auth-msg"></div>';
+}
+
+function b64EncodeUtf8(str){ return btoa(unescape(encodeURIComponent(str))); }
+function b64DecodeUtf8(str){ return decodeURIComponent(escape(atob(str))); }
+
+async function getFileWithSha(api, headers, path){
+  const r = await fetch(api + '/contents/' + path, { headers: headers });
+  if(r.status === 404) return null;
+  const d = await r.json();
+  if(!r.ok) throw new Error(d.message || String(r.status));
+  return d;
+}
+async function putFile(api, headers, path, content, sha, message){
+  const body = { message: message, content: b64EncodeUtf8(content), branch: REPO_BRANCH };
+  if(sha) body.sha = sha;
+  const r = await fetch(api + '/contents/' + path, { method:'PUT', headers: headers, body: JSON.stringify(body) });
+  const d = await r.json();
+  if(!r.ok) throw new Error(d.message || String(r.status));
+  return d;
+}
+async function appendHistory(api, headers, user, message){
+  const file = await getFileWithSha(api, headers, 'db/history/edits.jsonl');
+  const existing = file ? b64DecodeUtf8(file.content) : '';
+  const NL = String.fromCharCode(10);
+  const line = JSON.stringify({ action:'contrib', user:user, timestamp:new Date().toISOString(), message:message });
+  return putFile(api, headers, 'db/history/edits.jsonl', existing + line + NL, file ? file.sha : null, 'Riwayat: ' + message);
+}
+
+function buildEntryPageHTML(e){
+  const senses = e.senses.map((s,i) => {
+    const ex = (s.examples||[]).map(x => '<div class="example">"' + x.aceh + '" <span class="translit">— ' + x.id + '</span></div>').join('');
+    return '<div class="sense"><span class="num">' + (i+1) + '.</span><span class="pos">' + s.pos + '</span> ' + s.definition + '</div>' + ex;
+  }).join('');
+  return '<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8">' +
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+    '<title>' + e.lemma + ' — Kamus Basa Aceh</title>' +
+    '<link rel="stylesheet" href="../../assets/style.css"></head><body>' +
+    '<div class="wrap"><a class="back" href="../../homepage.html">&larr; Kamus Basa Aceh</a>' +
+    '<div class="entry"><div class="headword">' + e.lemma + '<span class="pron">' + (e.pronunciation||'') + '</span></div>' + senses + '</div></div></body></html>';
+}
+
+async function submitContrib(){
+  const auth = getAuth();
+  if(!auth){ alert('Masuk dulu sebagai kontributor.'); return; }
+  const lemma = document.getElementById('c_lemma').value.trim();
+  const pron = document.getElementById('c_pron').value.trim();
+  const pos = document.getElementById('c_pos').value.trim() || 'n';
+  const def = document.getElementById('c_def').value.trim();
+  const exAceh = document.getElementById('c_ex_aceh').value.trim();
+  const exId = document.getElementById('c_ex_id').value.trim();
+  const msg = document.getElementById('contribMsg');
+  if(!lemma || !def){ msg.textContent = 'Kata dan definisi wajib diisi.'; return; }
+
+  const slug = slugifyClient(lemma);
+  const shard = shardKeyClient(slug);
+  const entry = {
+    id: 'lemma_' + Date.now(), lemma: lemma, pronunciation: pron,
+    senses: [{ pos: pos, definition: def, examples: exAceh ? [{ aceh: exAceh, id: exId }] : [] }],
+    derivations: [], variants: [], cross_references: []
+  };
+
+  msg.textContent = 'Menyimpan ke repo...';
+  const api = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME;
+  const headers = ghHeaders(auth.token);
+  const shardPath = 'db/entries-' + shard + '.json';
+
+  try{
+    const shardFile = await getFileWithSha(api, headers, shardPath);
+    const shardData = shardFile ? JSON.parse(b64DecodeUtf8(shardFile.content)) : { entries: [] };
+    shardData.entries.push(entry);
+    await putFile(api, headers, shardPath, JSON.stringify(shardData), shardFile ? shardFile.sha : null, 'Kontribusi: tambah entri "' + lemma + '"');
+
+    const indexFile = await getFileWithSha(api, headers, 'db/index.json');
+    const indexData = indexFile ? JSON.parse(b64DecodeUtf8(indexFile.content)) : { count:0, entries: [] };
+    indexData.entries.push({ id: entry.id, lemma: lemma, slug: slug, pron: pron, pos: pos, def: def.slice(0,90), shard: shard });
+    indexData.count = indexData.entries.length;
+    await putFile(api, headers, 'db/index.json', JSON.stringify(indexData), indexFile ? indexFile.sha : null, 'Kontribusi: perbarui indeks untuk "' + lemma + '"');
+
+    await putFile(api, headers, 'entri/' + slug + '/index.html', buildEntryPageHTML(entry), null, 'Kontribusi: buat halaman entri "' + lemma + '"');
+    await appendHistory(api, headers, auth.username, 'tambah entri "' + lemma + '"');
+
+    msg.textContent = 'Tersimpan. Muat ulang halaman untuk melihat entri baru.';
+  }catch(e){ msg.textContent = 'Gagal: ' + e.message; }
+}
+
+async function showHistory(){
+  closePanels();
+  const p = document.getElementById('historyPanel');
+  p.style.display = 'block';
+  p.innerHTML = '<h3>Riwayat kontribusi</h3><div id="histList">Memuat...</div>';
+  try{
+    const r = await fetch('https://cdn.jsdelivr.net/gh/' + REPO_OWNER + '/' + REPO_NAME + '@' + REPO_BRANCH + '/db/history/edits.jsonl?t=' + (Date.now()%100000));
+    const txt = await r.text();
+    const NL = String.fromCharCode(10);
+    const lines = txt.split(NL).map(l => l.trim()).filter(Boolean).reverse();
+    const html = lines.map(l => {
+      try{
+        const d = JSON.parse(l);
+        return '<div class="hist-item"><b>' + (d.user||'system') + '</b> — ' + (d.message||d.action) + '<span class="hist-time">' + (d.timestamp||'') + '</span></div>';
+      }catch(e){ return ''; }
+    }).join('');
+    document.getElementById('histList').innerHTML = html || '<div class="empty">Belum ada riwayat.</div>';
+  }catch(e){ document.getElementById('histList').innerHTML = '<div class="empty">Gagal memuat riwayat.</div>'; }
+}
+
+renderAuthArea();
 </script>
 </body>
 </html>
