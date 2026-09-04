@@ -1,0 +1,2 @@
+# username,password_hash,role,created,status
+admin,CHANGE_ME_bcrypt_hash,admin,2026-09-04,active
