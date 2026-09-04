@@ -1,0 +1,218 @@
+{
+  "entries": [
+    {
+      "id": "lemma_0001",
+      "lemma": "aneuk",
+      "pronunciation": "/anɯk/",
+      "senses": [
+        {
+          "pos": "n",
+          "definition": "anak, keturunan",
+          "examples": [
+            {
+              "aceh": "Aneuk lôn ka trep u sikula.",
+              "id": "Anak saya sudah pergi ke sekolah."
+            }
+          ]
+        }
+      ],
+      "derivations": [
+        "meuaneuk — beranak"
+      ],
+      "variants": [],
+      "cross_references": []
+    },
+    {
+      "id": "lemma_0002",
+      "lemma": "ureueng",
+      "pronunciation": "/uʀɯːəŋ/",
+      "senses": [
+        {
+          "pos": "n",
+          "definition": "orang, manusia",
+          "examples": [
+            {
+              "aceh": "Ureueng nyan ureueng gampông lôn.",
+              "id": "Orang itu orang kampung saya."
+            }
+          ]
+        }
+      ],
+      "derivations": [],
+      "variants": [],
+      "cross_references": []
+    },
+    {
+      "id": "lemma_0003",
+      "lemma": "rumoh",
+      "pronunciation": "/rumoh/",
+      "senses": [
+        {
+          "pos": "n",
+          "definition": "rumah, tempat tinggal",
+          "examples": [
+            {
+              "aceh": "Rumoh gob nyan raya that.",
+              "id": "Rumah orang itu besar sekali."
+            }
+          ]
+        }
+      ],
+      "derivations": [
+        "rumoh sakét — rumah sakit"
+      ],
+      "variants": [],
+      "cross_references": []
+    },
+    {
+      "id": "lemma_0004",
+      "lemma": "ie",
+      "pronunciation": "/iə/",
+      "senses": [
+        {
+          "pos": "n",
+          "definition": "air",
+          "examples": [
+            {
+              "aceh": "Ie krueng nyan jeureuneh.",
+              "id": "Air sungai itu jernih."
+            }
+          ]
+        }
+      ],
+      "derivations": [
+        "ie mata — air mata"
+      ],
+      "variants": [],
+      "cross_references": []
+    },
+    {
+      "id": "lemma_0005",
+      "lemma": "bu",
+      "pronunciation": "/bu/",
+      "senses": [
+        {
+          "pos": "n",
+          "definition": "nasi, makanan pokok dari beras",
+          "examples": [
+            {
+              "aceh": "Tanyoe makheun bu dilee.",
+              "id": "Kita makan nasi dulu."
+            }
+          ]
+        }
+      ],
+      "derivations": [],
+      "variants": [],
+      "cross_references": [
+        "breuh — beras"
+      ]
+    },
+    {
+      "id": "lemma_0006",
+      "lemma": "uroe",
+      "pronunciation": "/uroə/",
+      "senses": [
+        {
+          "pos": "n",
+          "definition": "hari; matahari",
+          "examples": [
+            {
+              "aceh": "Uroe nyoe puas that.",
+              "id": "Hari ini panas sekali."
+            }
+          ]
+        }
+      ],
+      "derivations": [
+        "uroe Jumeuat — hari Jumat"
+      ],
+      "variants": [],
+      "cross_references": []
+    },
+    {
+      "id": "lemma_0007",
+      "lemma": "malam",
+      "pronunciation": "/malam/",
+      "senses": [
+        {
+          "pos": "n",
+          "definition": "waktu setelah matahari terbenam",
+          "examples": [
+            {
+              "aceh": "Malam nyoe tenang that.",
+              "id": "Malam ini tenang sekali."
+            }
+          ]
+        }
+      ],
+      "derivations": [],
+      "variants": [],
+      "cross_references": []
+    },
+    {
+      "id": "lemma_0008",
+      "lemma": "gunông",
+      "pronunciation": "/gunoŋ/",
+      "senses": [
+        {
+          "pos": "n",
+          "definition": "gunung",
+          "examples": [
+            {
+              "aceh": "Gunông Seulawah leumah dari sinoe.",
+              "id": "Gunung Seulawah terlihat dari sini."
+            }
+          ]
+        }
+      ],
+      "derivations": [],
+      "variants": [
+        "gunong"
+      ],
+      "cross_references": []
+    },
+    {
+      "id": "lemma_0009",
+      "lemma": "laôt",
+      "pronunciation": "/laot/",
+      "senses": [
+        {
+          "pos": "n",
+          "definition": "laut",
+          "examples": [
+            {
+              "aceh": "Ureueng gampông lôn jak meulaôt.",
+              "id": "Orang kampung saya pergi melaut."
+            }
+          ]
+        }
+      ],
+      "derivations": [
+        "meulaôt — mencari ikan di laut"
+      ],
+      "variants": [],
+      "cross_references": []
+    },
+    {
+      "id": "lemma_0010",
+      "lemma": "leumo",
+      "pronunciation": "/lɯmo/",
+      "senses": [
+        {
+          "pos": "n",
+          "definition": "sapi",
+          "examples": [
+            {
+              "aceh": "Leumo nyan geupiara lam kandang.",
+              "id": "Sapi itu dipelihara dalam kandang."
+            }
+          ]
+        }
+      ],
+      "derivations": [],
+      "variants": [],
+      "cross_references": []
+    }
+  ]
+}
