@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kamus Basa Aceh</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header>
+  <div class="mark chrome">KAMUS DWIBAHASA · KONTRIBUSI TERBUKA</div>
+  <h1>Kamus Basa Aceh</h1>
+  <div class="tagline">Aceh–Indonesia, disusun bersama oleh penutur dan peminat basa Aceh</div>
+  <input id="search" type="text" placeholder="Cari kata... (mis. aneuk, rumoh, ie)" />
+  <div id="stats" class="chrome"></div>
+</header>
+<main>
+  <div class="wotd" id="wotd"></div>
+  <div id="list"></div>
+</main>
+<script>
+async function loadEntries(){
+  try{
+    const res = await fetch('db/index.json?t=' + (Date.now()%100000));
+    if(!res.ok) throw new Error(res.status);
+    const data = await res.json();
+    render(data.entries || []);
+  }catch(e){
+    document.getElementById('list').innerHTML = '<div class="empty">Belum ada data.</div>';
+  }
+}
+let ALL_ENTRIES = [];
+function render(entries){
+  ALL_ENTRIES = entries.slice().sort((a,b)=>a.lemma.localeCompare(b.lemma));
+  document.getElementById('stats').textContent = entries.length + ' entri tersedia';
+  if(entries.length){
+    const w = entries[Math.floor(Math.random()*entries.length)];
+    document.getElementById('wotd').innerHTML = '<div class="label">Kata Hari Ini</div>' + entryHTML(w);
+  }
+  drawList(ALL_ENTRIES);
+}
+function entryHTML(e){
+  return '<a class="headword" href="entri/' + e.slug + '/">' + e.lemma + '</a><span class="pron">' + (e.pron||'') + '</span>' +
+    '<div class="sense"><span class="pos">' + (e.pos||'') + '</span> ' + (e.def||'') + '</div>';
+}
+function drawList(entries){
+  const list = document.getElementById('list');
+  if(!entries.length){ list.innerHTML = '<div class="empty">Tidak ada entri yang cocok.</div>'; return; }
+  list.innerHTML = entries.map(e => '<div class="entry">' + entryHTML(e) + '</div>').join('');
+}
+document.getElementById('search').addEventListener('input', (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  if(!q){ drawList(ALL_ENTRIES); return; }
+  drawList(ALL_ENTRIES.filter(en => en.lemma.toLowerCase().includes(q) || (en.def||'').toLowerCase().includes(q)));
+});
+loadEntries();
+</script>
+</body>
+</html>
