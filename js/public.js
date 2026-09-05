@@ -59,12 +59,15 @@ async function route(){
 // ===================== TAMPILAN DAFTAR + PENCARIAN =====================
 let cachedIndex = null;
 
+const HOME_WORD_LIMIT = 5;
+
 async function renderListView(){
   const content = document.getElementById('content');
   document.title = 'Kamus Aceh–Indonesia';
   content.innerHTML = `
     <div class="card">
       <input type="text" id="publicSearch" placeholder="Cari kata Aceh atau arti Indonesia...">
+      <div id="publicCount" class="muted" style="margin-top:6px;"></div>
     </div>
     <div class="card list-card">
       <div id="publicWordList" class="word-list"><div class="empty">Memuat daftar kata...</div></div>
@@ -74,6 +77,7 @@ async function renderListView(){
 
   try{
     if(!cachedIndex) cachedIndex = await fetchJsonPublic(`${SITE.dataPrefix}/index.json`);
+    document.getElementById('publicCount').textContent = `${cachedIndex.length} kata dalam kamus`;
     renderPublicList('');
   }catch(e){
     document.getElementById('publicWordList').innerHTML = `<div class="empty">Gagal memuat daftar kata: ${escapeHtmlPublic(e.message)}</div>`;
@@ -83,22 +87,31 @@ async function renderListView(){
 function renderPublicList(query){
   const q = (query || '').toLowerCase();
   const listEl = document.getElementById('publicWordList');
+  const isSearching = q.length > 0;
+
   const filtered = cachedIndex.filter(e =>
     e.word.toLowerCase().includes(q) || (e.arti_singkat || '').toLowerCase().includes(q)
   );
+
   if(filtered.length === 0){
     listEl.innerHTML = '<div class="empty">Tidak ada kata yang cocok.</div>';
     return;
   }
-  listEl.innerHTML = filtered
-    .sort((a, b) => a.word.localeCompare(b.word))
+
+  const sorted = filtered.sort((a, b) => a.word.localeCompare(b.word));
+  // Beranda (tanpa pencarian): cukup tampilkan beberapa kata saja, bukan semua ribuan entri.
+  const toShow = isSearching ? sorted : sorted.slice(0, HOME_WORD_LIMIT);
+
+  listEl.innerHTML = toShow
     .map(e => `
       <div class="word-item" onclick="navigate('/entri/${encodeURIComponent(e.slug)}')">
         <span class="w-word">${escapeHtmlPublic(e.word)}</span>
         <span class="w-pos">${escapeHtmlPublic(e.pos || '')}</span>
         <span class="w-gloss">${escapeHtmlPublic(e.arti_singkat || '')}</span>
       </div>`)
-    .join('');
+    .join('') + (!isSearching && sorted.length > HOME_WORD_LIMIT
+      ? `<div class="empty" style="text-align:left;">Menampilkan ${HOME_WORD_LIMIT} dari ${sorted.length} kata. Ketik di kotak pencarian untuk melihat kata lainnya.</div>`
+      : '');
 }
 
 // ===================== TAMPILAN SATU ENTRI KATA =====================
@@ -110,15 +123,27 @@ async function renderEntry(slug){
     const data = await fetchJsonPublic(`${SITE.dataPrefix}/kata/${slug}.json`);
     document.title = `${data.word} — Kamus Aceh–Indonesia`;
 
-    const defsHtml = (data.definitions || []).map((d, i) => `
-      <div class="entry-def">
-        <div class="entry-def-num">${i + 1}. ${escapeHtmlPublic(d.arti)}</div>
-        ${(d.examples || []).map(ex => `
+    const EX_LIMIT = 5;
+    const defsHtml = (data.definitions || []).map((d, i) => {
+      const examples = d.examples || [];
+      const shown = examples.slice(0, EX_LIMIT);
+      const rest = examples.slice(EX_LIMIT);
+      const exampleHtml = (ex) => `
           <div class="example">
             <div class="example-aceh">${escapeHtmlPublic(ex.aceh)}</div>
             <div class="example-id">${escapeHtmlPublic(ex.indonesia)}</div>
-          </div>`).join('')}
-      </div>`).join('');
+          </div>`;
+      const boxId = `moreEx_${i}`;
+      return `
+      <div class="entry-def">
+        <div class="entry-def-num">${i + 1}. ${escapeHtmlPublic(d.arti)}</div>
+        ${shown.map(exampleHtml).join('')}
+        ${rest.length ? `
+          <div id="${boxId}" style="display:none;">${rest.map(exampleHtml).join('')}</div>
+          <button class="small-btn" onclick="const b=document.getElementById('${boxId}'); const shown=b.style.display!=='none'; b.style.display=shown?'none':'block'; this.textContent=shown?'Lihat semua contoh (${examples.length})':'Sembunyikan sebagian contoh';">Lihat semua contoh (${examples.length})</button>
+        ` : ''}
+      </div>`;
+    }).join('');
 
     const tagsHtml = (arr) => (arr || []).map(t => `<span class="tag">${escapeHtmlPublic(t)}</span>`).join('');
 
