@@ -1,0 +1,23 @@
+{
+  "word": "rumoh",
+  "pos": "n",
+  "pronunciation": "/rumɔh/",
+  "definitions": [
+    {
+      "arti": "rumah, tempat tinggal",
+      "examples": [
+        { "aceh": "Rumoh nyan raya that.", "indonesia": "Rumah itu besar sekali." },
+        { "aceh": "Kamoe tinggai di rumoh baro.", "indonesia": "Kami tinggal di rumah baru." }
+      ]
+    },
+    {
+      "arti": "keluarga inti yang tinggal serumah",
+      "examples": [
+        { "aceh": "Rumoh gopnyan ramè.", "indonesia": "Keluarganya ramai." }
+      ]
+    }
+  ],
+  "sinonim": ["balee"],
+  "rujukan": ["Kamus Bahasa Aceh, Balai Bahasa Aceh"],
+  "catatan": "Kata dasar untuk berbagai istilah, mis. 'rumoh sakét' (rumah sakit)."
+}

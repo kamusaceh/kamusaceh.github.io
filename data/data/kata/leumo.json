@@ -1,0 +1,17 @@
+{
+  "word": "leumo",
+  "pos": "n",
+  "pronunciation": "/ləumɔ/",
+  "definitions": [
+    {
+      "arti": "sapi, lembu",
+      "examples": [
+        { "aceh": "Leumo nyan geupiara lam blang.", "indonesia": "Sapi itu dipelihara di sawah." },
+        { "aceh": "Bapak jak peuek leumo bak beurumput.", "indonesia": "Ayah pergi menggembalakan sapi di padang rumput." }
+      ]
+    }
+  ],
+  "sinonim": ["leumo lakoe (sapi jantan)", "leumo inong (sapi betina)"],
+  "rujukan": ["Kamus Bahasa Aceh, Balai Bahasa Aceh"],
+  "catatan": "Dalam konteks kurban/adat, 'leumo' sering disebut bersama 'kamèng' (kambing) sebagai hewan ternak utama masyarakat Aceh."
+}
