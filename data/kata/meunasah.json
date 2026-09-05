@@ -1,0 +1,17 @@
+{
+  "word": "meunasah",
+  "pos": "n",
+  "pronunciation": "/məunasah/",
+  "definitions": [
+    {
+      "arti": "surau/langgar kecil di gampông, tempat ibadah dan pertemuan warga",
+      "examples": [
+        { "aceh": "Ureueng gampông meupakat bak meunasah watèe malam.", "indonesia": "Warga kampung bermusyawarah di meunasah pada malam hari." },
+        { "aceh": "Aneuk miet neubalajar ngaji bak meunasah.", "indonesia": "Anak-anak belajar mengaji di meunasah." }
+      ]
+    }
+  ],
+  "sinonim": ["surau", "langgar"],
+  "rujukan": ["Kamus Bahasa Aceh, Balai Bahasa Aceh"],
+  "catatan": "Meunasah bukan sekadar tempat ibadah, tapi juga pusat kegiatan sosial dan pemerintahan adat gampông (setingkat balai desa kecil)."
+}
