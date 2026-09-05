@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Kamus Aceh-Indonesia</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap admin-wrap">
+
+  <div class="admin-topbar">
+    <div>
+      <h1>Admin — Kamus Aceh–Indonesia</h1>
+      <div class="conn-status"><span class="dot" id="connDot"></span><span id="connStatusText">Belum terhubung</span></div>
+    </div>
+    <a href="/" class="sha-link">← Lihat situs publik</a>
+  </div>
+
+  <!-- ===== Kartu koneksi ===== -->
+  <div class="card" id="connectCard">
+    <div class="row">
+      <div class="field">
+        <label>Personal Access Token</label>
+        <input type="password" id="token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+      </div>
+      <div class="field" style="flex:0 0 auto; align-self:flex-end;">
+        <button class="primary" onclick="connect()">Hubungkan</button>
+      </div>
+    </div>
+    <button type="button" class="link-btn" id="advToggleBtn" onclick="toggleAdvancedConfig()">Pengaturan lanjutan ▾</button>
+    <div id="advancedConfig" style="display:none; margin-top:12px;">
+      <div class="row">
+        <div class="field"><label>Owner / organisasi</label><input type="text" id="owner" value="kamusaceh"></div>
+        <div class="field"><label>Repository</label><input type="text" id="repo" value="kamusaceh.github.io"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Branch</label><input type="text" id="branch" value="main"></div>
+        <div class="field"><label>Folder data (prefix)</label><input type="text" id="dataPrefix" value="data"></div>
+      </div>
+    </div>
+    <div id="connectStatus" class="status"></div>
+  </div>
+
+  <!-- ===== Kartu ringkasan statistik ===== -->
+  <div class="card stats-card" id="infoPanel" style="display:none;">
+    <div class="stat">
+      <div class="stat-num" id="infoTotal">–</div>
+      <div class="stat-label">Total kata</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num stat-num-sm" id="infoLastUpdate">–</div>
+      <div class="stat-label">Terakhir diubah</div>
+    </div>
+  </div>
+
+  <!-- ===== Tiga aksi utama ===== -->
+  <div class="action-cards" id="actionCards" style="display:none;">
+    <button type="button" class="action-card" id="actionBtn_add" onclick="setMode('add')">
+      <span class="action-icon">+</span>
+      <span class="action-title">Tambah kata</span>
+    </button>
+    <button type="button" class="action-card" id="actionBtn_edit" onclick="setMode('edit')">
+      <span class="action-icon">✎</span>
+      <span class="action-title">Cari &amp; Edit kata</span>
+    </button>
+    <button type="button" class="action-card" id="actionBtn_history" onclick="setMode('history')">
+      <span class="action-icon">↺</span>
+      <span class="action-title">Riwayat</span>
+    </button>
+  </div>
+
+  <!-- ===== Area kerja (isi berubah sesuai aksi yang dipilih) ===== -->
+  <div id="workArea" style="display:none;">
+
+    <div class="card search-card" id="editSearchCard" style="display:none;">
+      <label>Cari kata untuk diedit</label>
+      <input type="text" id="editSearch" placeholder="Ketik nama kata Aceh..." autocomplete="off" oninput="renderSearchSuggestions(this.value)">
+      <div id="searchSuggestions" class="suggestions"></div>
+    </div>
+
+    <div class="empty card" id="editEmptyHint" style="display:none;">Pilih kata dari pencarian di atas untuk mulai mengedit.</div>
+
+    <div class="card form-card" id="formCard" style="display:none;">
+      <div class="field">
+        <label>Kata (Aceh)</label>
+        <input type="text" id="f_word" placeholder="misal: rumoh" oninput="updateWordField('word', this.value); checkDuplicateWord();">
+        <div id="dupWarning" class="status" style="display:none;"></div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Kelas kata</label>
+          <input type="text" id="f_pos" placeholder="misal: n, v, adj" oninput="updateWordField('pos', this.value)">
+        </div>
+        <div class="field">
+          <label>Pelafalan (opsional)</label>
+          <input type="text" id="f_pron" placeholder="misal: /rumɔh/" oninput="updateWordField('pronunciation', this.value)">
+        </div>
+      </div>
+
+      <div id="definitionsBox"></div>
+      <button onclick="addDefinition()">+ Tambah arti</button>
+
+      <hr>
+      <div class="field">
+        <label>Sinonim (pisahkan dengan koma)</label>
+        <input type="text" id="f_sinonim" oninput="updateTagsField('sinonim', this.value)">
+      </div>
+      <div class="field">
+        <label>Rujukan / referensi (pisahkan dengan koma)</label>
+        <input type="text" id="f_rujukan" oninput="updateTagsField('rujukan', this.value)">
+      </div>
+      <div class="field">
+        <label>Catatan (opsional)</label>
+        <textarea id="f_catatan" oninput="updateWordField('catatan', this.value)"></textarea>
+      </div>
+
+      <div class="btns">
+        <button class="primary" onclick="saveWord()">Simpan</button>
+        <button class="danger" id="deleteBtn" onclick="deleteWord()" style="display:none;">Hapus kata ini</button>
+      </div>
+      <div id="formStatus" class="status"></div>
+    </div>
+
+    <div id="historyArea" style="display:none;">
+      <div class="card">
+        <label>Riwayat kata ini (dari commit Git)</label>
+        <div id="fileHistory" class="history-list">
+          <div class="empty">Pilih kata lewat mode "Cari &amp; Edit" untuk melihat riwayatnya.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="history-head">
+          <label>Riwayat aksi (sesi ini)</label>
+          <button onclick="clearActions()">Bersihkan</button>
+        </div>
+        <div id="actionList" class="history-list">
+          <div class="empty">Belum ada aksi.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/github-api.js"></script>
+<script src="js/diff.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
