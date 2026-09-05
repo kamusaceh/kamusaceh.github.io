@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Kamus Aceh–Indonesia</title>
+<script>
+  // Trik routing untuk GitHub Pages: simpan path yang diminta (mis. /entri/rumoh),
+  // lalu alihkan ke root. index.html akan membaca ini dan menampilkan konten yang tepat
+  // tanpa perlu server backend.
+  sessionStorage.setItem('redirectPath', location.pathname + location.search + location.hash);
+  location.replace('/');
+</script>
+</head>
+<body>
+  <p>Mengalihkan...</p>
+</body>
+</html>

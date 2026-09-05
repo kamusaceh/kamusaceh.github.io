@@ -1,0 +1,22 @@
+{
+  "word": "uroe",
+  "pos": "n",
+  "pronunciation": "/uroə/",
+  "definitions": [
+    {
+      "arti": "hari",
+      "examples": [
+        { "aceh": "Uroe nyoe uroe Jeumeuat.", "indonesia": "Hari ini hari Jumat." }
+      ]
+    },
+    {
+      "arti": "matahari",
+      "examples": [
+        { "aceh": "Uroe ka teubét u barat.", "indonesia": "Matahari sudah terbenam di barat." }
+      ]
+    }
+  ],
+  "sinonim": ["mata uroe (untuk arti matahari)"],
+  "rujukan": ["Kamus Bahasa Aceh, Balai Bahasa Aceh"],
+  "catatan": "Makna ganda tergantung konteks kalimat."
+}
