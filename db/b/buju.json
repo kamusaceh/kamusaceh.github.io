@@ -1,0 +1,37 @@
+{
+  "word": "buju",
+  "pos": "a",
+  "meaning": "bujur, panjang, rantai pada alat tenun",
+  "examples": [
+    {
+      "aceh": "bara —",
+      "indo": "balok atas rumah yang membujur: muka — , muka lonjong seperti telur"
+    },
+    {
+      "aceh": "— alang",
+      "indo": "agak membujur"
+    },
+    {
+      "aceh": "rakyat jiplueng — linteueng",
+      "indo": "rakyat lari litang pukang"
+    },
+    {
+      "aceh": "mu—",
+      "indo": "membujur"
+    },
+    {
+      "aceh": "pu —",
+      "indo": "meletakkan secara membujur atau melebar"
+    }
+  ],
+  "rujukan": [
+    "bunta",
+    "bunthok",
+    "linteueng"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2019/01/buju.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-06T19:04:36.042Z"
+}
