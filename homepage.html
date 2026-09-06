@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kamus Bahasa Acèh</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1><a href="/">Kamus Bahasa Acèh</a></h1>
+  <div id="auth-area"></div>
+</header>
+
+<main>
+  <section id="view-list">
+    <input type="text" id="search" placeholder="Ketik kata Acèh…" autocomplete="off">
+    <div id="results"></div>
+    <button id="btn-tambah" style="display:none">+ Tambah Kata</button>
+  </section>
+
+  <section id="view-entri" style="display:none"></section>
+
+  <section id="view-form" style="display:none">
+    <h2 id="form-title">Tambah Kata</h2>
+    <form id="word-form">
+      <label>Kata Acèh <input name="word" required></label>
+      <label>Kelas kata (pos) <input name="pos" placeholder="mis. n, v, adj"></label>
+      <label>Arti <input name="meaning" required></label>
+      <div id="examples-area"></div>
+      <button type="button" id="btn-add-example">+ Contoh kalimat</button>
+      <label>Rujukan (slug, pisah koma) <input name="rujukan" placeholder="mis. parek, tumpoe"></label>
+      <label>Sumber <input name="sumber"></label>
+      <button type="submit">Simpan</button>
+      <button type="button" id="btn-cancel-form">Batal</button>
+    </form>
+  </section>
+</main>
+
+<div id="login-modal" style="display:none">
+  <form id="login-form">
+    <h2>Login Admin</h2>
+    <label>Username <input name="username" required></label>
+    <label>Password <input name="password" type="password" required></label>
+    <button type="submit">Masuk</button>
+    <button type="button" id="btn-close-login">Batal</button>
+    <p id="login-error" class="error"></p>
+  </form>
+</div>
+
+<script src="kamus.js"></script>
+<script>
+const results = document.getElementById("results");
+const search = document.getElementById("search");
+const viewList = document.getElementById("view-list");
+const viewEntri = document.getElementById("view-entri");
+const viewForm = document.getElementById("view-form");
+const authArea = document.getElementById("auth-area");
+const loginModal = document.getElementById("login-modal");
+
+/* ---------- render tombol login/logout ---------- */
+function renderAuthArea() {
+  authArea.innerHTML = currentAdmin
+    ? `<span>Login: ${escapeHtml(currentAdmin.nama)}</span> <button id="btn-logout">Keluar</button>`
+    : `<button id="btn-login">Login</button>`;
+
+  document.getElementById(currentAdmin ? "btn-logout" : "btn-login")
+    .addEventListener("click", () => {
+      if (currentAdmin) {
+        logoutAdmin();
+        renderAuthArea();
+        document.getElementById("btn-tambah").style.display = "none";
+      } else {
+        loginModal.style.display = "flex";
+      }
+    });
+}
+renderAuthArea();
+
+document.getElementById("btn-close-login").addEventListener("click", () => {
+  loginModal.style.display = "none";
+});
+
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const ok = await loginAdmin(fd.get("username"), fd.get("password"));
+  const err = document.getElementById("login-error");
+  if (ok) {
+    err.textContent = "";
+    loginModal.style.display = "none";
+    renderAuthArea();
+    document.getElementById("btn-tambah").style.display = "inline-block";
+    e.target.reset();
+  } else {
+    err.textContent = "Username atau password salah.";
+  }
+});
+
+document.getElementById("btn-tambah").addEventListener("click", () => showForm());
+
+/* ---------- pencarian ---------- */
+let debounceTimer;
+search.addEventListener("input", () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(doSearch, 200);
+});
+
+async function doSearch() {
+  const q = search.value.trim();
+  if (!q) { results.innerHTML = ""; return; }
+  const letter = firstLetter(q);
+  const list = await fetchIndex(letter);
+  const qNorm = stripDiacritics(q.toLowerCase());
+  const filtered = list.filter(item => stripDiacritics(item.word.toLowerCase()).startsWith(qNorm));
+  results.innerHTML = filtered.length
+    ? filtered.map(item => `
+        <a href="/entri/${item.slug}" class="word-link" data-slug="${item.slug}" data-letter="${letter}">
+          <strong>${escapeHtml(item.word)}</strong> — ${escapeHtml(item.meaning)}
+        </a>`).join("")
+    : `<p>Tidak ditemukan.</p>`;
+}
+
+/* ---------- navigasi ke halaman entri TANPA reload (SPA) ---------- */
+document.body.addEventListener("click", (e) => {
+  const link = e.target.closest(".word-link, .rujukan-chip");
+  if (!link) return;
+  e.preventDefault();
+  const slug = link.dataset.slug;
+  const letter = link.dataset.letter || firstLetter(slug);
+  showEntri(slug, letter, true);
+});
+
+window.addEventListener("popstate", () => {
+  const m = location.pathname.match(/^\/entri\/([^/]+)\/?$/);
+  if (m) {
+    showEntri(m[1], firstLetter(m[1]), false);
+  } else {
+    showList(false);
+  }
+});
+
+async function showEntri(slug, letter, pushState) {
+  try {
+    const data = await fetchWordData(letter, slug);
+    viewList.style.display = "none";
+    viewForm.style.display = "none";
+    viewEntri.style.display = "block";
+    renderEntri(viewEntri, data, slug, letter);
+    if (pushState) history.pushState(null, "", `/entri/${slug}`);
+  } catch (e) {
+    viewEntri.innerHTML = `<p>Kata tidak ditemukan.</p><button onclick="showList(true)">Kembali</button>`;
+    viewEntri.style.display = "block";
+    viewList.style.display = "none";
+  }
+}
+
+function showList(pushState) {
+  viewEntri.style.display = "none";
+  viewForm.style.display = "none";
+  viewList.style.display = "block";
+  if (pushState) history.pushState(null, "", "/");
+}
+
+/* tombol Ubah/Hapus di dalam entri (event delegation) */
+viewEntri.addEventListener("click", async (e) => {
+  const btn = e.target.closest("button[data-action]");
+  if (!btn) return;
+  const el = viewEntri.querySelector(".entri");
+  const slug = el.dataset.slug, letter = el.dataset.letter;
+
+  if (btn.dataset.action === "hapus") {
+    if (confirm(`Hapus kata "${slug}"? Tindakan ini akan membuat commit di GitHub.`)) {
+      await deleteWord(letter, slug);
+      showList(true);
+      doSearch();
+    }
+  } else if (btn.dataset.action === "ubah") {
+    const data = await fetchWordData(letter, slug);
+    showForm(data, letter, slug);
+  }
+});
+
+/* ---------- form tambah/ubah kata ---------- */
+let editingLetter = null, editingSlug = null;
+const examplesArea = document.getElementById("examples-area");
+
+function addExampleRow(aceh = "", indo = "") {
+  const row = document.createElement("div");
+  row.className = "example-row";
+  row.innerHTML = `
+    <input placeholder="Kalimat Acèh" class="ex-aceh" value="${escapeHtml(aceh)}">
+    <input placeholder="Terjemahan Indonesia" class="ex-indo" value="${escapeHtml(indo)}">
+    <button type="button" class="ex-remove">×</button>`;
+  row.querySelector(".ex-remove").addEventListener("click", () => row.remove());
+  examplesArea.appendChild(row);
+}
+document.getElementById("btn-add-example").addEventListener("click", () => addExampleRow());
+
+function showForm(data = null, letter = null, slug = null) {
+  editingLetter = letter; editingSlug = slug;
+  document.getElementById("form-title").textContent = data ? `Ubah Kata: ${data.word}` : "Tambah Kata";
+  const form = document.getElementById("word-form");
+  form.word.value = data?.word || "";
+  form.pos.value = data?.pos || "";
+  form.meaning.value = data?.meaning || "";
+  form.rujukan.value = (data?.rujukan || []).join(", ");
+  form.sumber.value = data?.sumber || "";
+  examplesArea.innerHTML = "";
+  (data?.examples || [{ aceh: "", indo: "" }]).forEach(ex => addExampleRow(ex.aceh, ex.indo));
+
+  viewList.style.display = "none";
+  viewEntri.style.display = "none";
+  viewForm.style.display = "block";
+}
+
+document.getElementById("btn-cancel-form").addEventListener("click", () => showList(true));
+
+document.getElementById("word-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const examples = [...examplesArea.querySelectorAll(".example-row")]
+    .map(row => ({
+      aceh: row.querySelector(".ex-aceh").value.trim(),
+      indo: row.querySelector(".ex-indo").value.trim()
+    }))
+    .filter(ex => ex.aceh || ex.indo);
+
+  const entry = {
+    word: fd.get("word").trim(),
+    pos: fd.get("pos").trim(),
+    meaning: fd.get("meaning").trim(),
+    examples,
+    rujukan: fd.get("rujukan").split(",").map(s => s.trim()).filter(Boolean),
+    sumber: fd.get("sumber").trim()
+  };
+
+  try {
+    if (editingSlug) {
+      await editWord(editingLetter, editingSlug, entry);
+      showEntri(editingSlug, editingLetter, true);
+    } else {
+      const slug = await addWord(entry);
+      showEntri(slug, firstLetter(entry.word), true);
+    }
+  } catch (err) {
+    alert(err.message);
+  }
+});
+
+/* ---------- kalau halaman dibuka langsung di /entri/<slug> atau ?ubah=slug ---------- */
+(async function initRoute() {
+  const params = new URLSearchParams(location.search);
+  const ubahSlug = params.get("ubah");
+  if (ubahSlug && currentAdmin) {
+    const letter = firstLetter(ubahSlug);
+    const data = await fetchWordData(letter, ubahSlug).catch(() => null);
+    if (data) { showForm(data, letter, ubahSlug); return; }
+  }
+  const m = location.pathname.match(/^\/entri\/([^/]+)\/?$/);
+  if (m) showEntri(m[1], firstLetter(m[1]), false);
+})();
+</script>
+</body>
+</html>
