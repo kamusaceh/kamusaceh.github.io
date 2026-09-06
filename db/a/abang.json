@@ -1,0 +1,32 @@
+{
+  "word": "abang",
+  "pos": "n",
+  "meaning": "abang, saudara laki-laki yang tertua",
+  "examples": [
+    {
+      "aceh": "─ ka geujak u peukan",
+      "indo": "abang sudah pergi ke pasar"
+    },
+    {
+      "aceh": "meu ─",
+      "indo": "mempunyai abang"
+    },
+    {
+      "aceh": "peu ─",
+      "indo": "menyebut abang kepada seseorang"
+    }
+  ],
+  "rujukan": [
+    "aduen",
+    "bang",
+    "cut",
+    "keukanda",
+    "lém",
+    "po"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2017/12/abang.html",
+  "status": "",
+  "added_by": "setup-import",
+  "edited_by": "setup-import",
+  "updated_at": "2026-09-06T09:14:08.194Z"
+}
