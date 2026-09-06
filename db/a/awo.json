@@ -1,0 +1,33 @@
+{
+  "word": "awô",
+  "pos": "n",
+  "meaning": "air pusingan atau pusaran di belakang kapal atau hempangan",
+  "examples": [
+    {
+      "aceh": "meu --",
+      "indo": "pemutaran air"
+    },
+    {
+      "aceh": "bek le meu --",
+      "indo": "pd pusaran air. <sup>2</sup> awô n sur: sejenis bambu kecil yang biasa digunakan untuk gagang pancing atau sangkar burung"
+    },
+    {
+      "aceh": "<sup>3</sup> awô n sejenis ikan kecil di laut",
+      "indo": "biasa dijemur dan diperdagangkan: karéng -- , ikan teri kering"
+    },
+    {
+      "aceh": "<sup>4</sup> awô n sejenis bola terbuat dari daun kelapa: meu -- (meu'èn --)",
+      "indo": "permainan bola daun kelapa"
+    }
+  ],
+  "rujukan": [
+    "biléh",
+    "bude",
+    "kareng"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2018/08/awo.html",
+  "status": "",
+  "added_by": "setup-import",
+  "edited_by": "setup-import",
+  "updated_at": "2026-09-06T09:14:08.197Z"
+}
