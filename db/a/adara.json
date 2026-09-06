@@ -1,0 +1,24 @@
+{
+  "word": "adara",
+  "pos": "n",
+  "meaning": "udara, angkasa, kayangan",
+  "examples": [
+    {
+      "aceh": "nangroe --",
+      "indo": "negeri kayangan"
+    },
+    {
+      "aceh": "ureueng --",
+      "indo": "orang kayangan"
+    }
+  ],
+  "rujukan": [
+    "angkasa",
+    "kayangan"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2018/01/adara.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-06T09:48:02.755Z"
+}
