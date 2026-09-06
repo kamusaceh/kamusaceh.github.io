@@ -1,0 +1,41 @@
+{
+  "word": "aman",
+  "pos": "a",
+  "meaning": "aman, tentram",
+  "examples": [
+    {
+      "aceh": "nanggroe geutanyoe jinoe ka ─",
+      "indo": "negeri kita sekarang sudah aman"
+    },
+    {
+      "aceh": "gobnyan sakét mubuleuen-buleuen",
+      "indo": "─ teuéh mantong , ia sakit sudah berbulan-bulan lamanya dan selalu tertidur saja"
+    },
+    {
+      "aceh": "lôn ka ─ lôn duek disinoe",
+      "indo": "saya sudah menetap disini"
+    },
+    {
+      "aceh": "meu ─",
+      "indo": "berdamai"
+    },
+    {
+      "aceh": "kon gèt geutanyoe ta meu ─ nibak tamapaké?",
+      "indo": "bukankah lebih baik kita berdamai dari pada bergaduh? peu ─ , mengamankan, mendamaikan, menetapkan trok 'an jinoe nanggroe nyan hana soe ék peu ─ , sampai sekarang tidak ada orang yang sanggup mengamankan negeri itu"
+    },
+    {
+      "aceh": "dilèe lôntuan bileue bak seumeujid nyoe",
+      "indo": "teuma geupeu ─ lôntuan duek bak seumeujit, jéh , dahulu saya menjadi bilal di mesjid ini, kemudian saya ditetapkan di mesjid sana"
+    }
+  ],
+  "rujukan": [
+    "lang",
+    "makmu",
+    "teutap"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2018/03/aman.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-06T19:04:36.041Z"
+}
