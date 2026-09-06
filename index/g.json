@@ -1,12 +1,607 @@
 [
   {
+    "slug": "g-am",
+    "word": "g'am",
+    "meaning": "bergetar-getar (tentang jantung); até lôn meu — - — keu inong nyan, Hati saya berdebardebar karena wanita itu 2 g'am, gh'am, gh'am-gh'am menderum, gemuruh, menderu, bunyi benda yang berat dan bergegar"
+  },
+  {
+    "slug": "g-am-g-um",
+    "word": "g'am-g'um",
+    "meaning": "bunyi bergegar yang bertubi-tubi"
+  },
+  {
+    "slug": "gab",
+    "word": "gab",
+    "meaning": "kokoh, tetap"
+  },
+  {
+    "slug": "gabai",
+    "word": "gabai",
+    "meaning": "kasar, tebal jika diraba, tumpul"
+  },
+  {
+    "slug": "gaboih",
+    "word": "gabôih",
+    "meaning": "kayu gabus tempat mengasah pisau cukur, 2 v mengasah; ta — sikin nyoe bak reujang bacut, Asalah pisau ini cepat sedikit; apam — batèe — meu—, mempunyai tempat mengasah pisau cukur; geumabôih, sedang mengasah (pisau) peu — = — (v); geunabôih, hasil mengasah, cara mengasah"
+  },
+  {
+    "slug": "gabra",
+    "word": "gabra",
+    "meaning": "ribut"
+  },
+  {
+    "slug": "gabuek",
+    "word": "gabuek",
+    "meaning": "1 gabuek zz kesibukan yg membuat orang gugup dan apa yg dikerjakan menjadi salah, kebingungan (krn terkejut)"
+  },
+  {
+    "slug": "gaca",
+    "word": "gaca",
+    "meaning": "tanaman inai, pacar"
+  },
+  {
+    "slug": "gachep",
+    "word": "gachép",
+    "meaning": "kacip"
+  },
+  {
+    "slug": "gacue",
+    "word": "gacue",
+    "meaning": "membuat, melakukan sesuatu dengan cepat-cepat (umpama berjalan)"
+  },
+  {
     "slug": "gada",
     "word": "gada",
     "meaning": "(dl hik) memerangi; berada di medan peperangan"
   },
   {
+    "slug": "gada-2",
+    "word": "gada",
+    "meaning": "(dl hik) memerangi; berada di medan peperangan"
+  },
+  {
+    "slug": "gada-gada",
+    "word": "gada-gada",
+    "meaning": "ular-ular pd bendera, penunjuk arah angin di puncak tiang"
+  },
+  {
+    "slug": "gade",
+    "word": "gadè",
+    "meaning": "meminta-minta, mengharapkan"
+  },
+  {
+    "slug": "gadee-gadee",
+    "word": "gadèe-gadèe",
+    "meaning": "menyerbu ke berbagai-bagai arah (dl hik)"
+  },
+  {
+    "slug": "gadeh-gadoh",
+    "word": "gadéh-gadoh",
+    "meaning": "sibuk, tergesa-gesa"
+  },
+  {
+    "slug": "gadeng",
+    "word": "gadéng",
+    "meaning": "gading (gajah), berasal dr gading, berwarna gading"
+  },
+  {
+    "slug": "gadoh",
+    "word": "gadoh",
+    "meaning": "hilang"
+  },
+  {
+    "slug": "gadoh-2",
+    "word": "gadôh",
+    "meaning": "gaduh, ribut"
+  },
+  {
+    "slug": "gagah",
+    "word": "gagah",
+    "meaning": "gagah, kuat, paksa"
+  },
+  {
+    "slug": "gagap",
+    "word": "gagap",
+    "meaning": "gagap"
+  },
+  {
+    "slug": "gah",
+    "word": "gah",
+    "meaning": "gagah, megah, masyhur, ternama berita, gas"
+  },
+  {
+    "slug": "gahra",
+    "word": "gahra",
+    "meaning": "gahara, gara, istri (yang sah, merdeka)"
+  },
+  {
+    "slug": "gaibugai",
+    "word": "gaibugai",
+    "meaning": "tidak bijaksana, tidak berbudi"
+  },
+  {
+    "slug": "gajah",
+    "word": "gajah",
+    "meaning": "gajah"
+  },
+  {
+    "slug": "gaji",
+    "word": "gaji",
+    "meaning": "gaji, upah, jerih payah"
+  },
+  {
+    "slug": "gak-gok",
+    "word": "gak-gôk",
+    "meaning": "sejenis permainan anak-anak"
+  },
+  {
+    "slug": "gaki",
+    "word": "gaki",
+    "meaning": "kaki, bagian bawah suatu benda, ukuran panjang"
+  },
+  {
+    "slug": "gala",
+    "word": "gala",
+    "meaning": "gadaian, petaruh"
+  },
+  {
+    "slug": "galagaro",
+    "word": "galagarô",
+    "meaning": "sejenis gaharu yang tergolong aweueh peuet plôh peuet"
+  },
+  {
+    "slug": "galah",
+    "word": "galah",
+    "meaning": "galah, kayu pendorong perahu dari tepian ke laut atau sebahknya"
+  },
+  {
+    "slug": "galak",
+    "word": "galak",
+    "meaning": "kampak pendek yang bermata lebar untuk membelah kayu"
+  },
+  {
+    "slug": "galak-2",
+    "word": "galak",
+    "meaning": "suka, mau, cinta, gembira, sedang"
+  },
+  {
+    "slug": "galaran",
+    "word": "galaran",
+    "meaning": "(dl hik) gadaian, uang yang diperoleh karena menggadaikan suatu barang"
+  },
+  {
+    "slug": "galat",
+    "word": "galat",
+    "meaning": "silap, salah"
+  },
+  {
+    "slug": "galawala",
+    "word": "galawala",
+    "meaning": "tidak wajar, tidak sopan, sembrono"
+  },
+  {
+    "slug": "galeb",
+    "word": "galéb",
+    "meaning": "galib, biasa, lazim, umum"
+  },
+  {
+    "slug": "galeng",
+    "word": "galéng",
+    "meaning": "hitam legam umpama rambut, warna kulit)"
+  },
+  {
+    "slug": "galeue",
+    "word": "galeue",
+    "meaning": "mengempaskan diri merebahkan dhi"
+  },
+  {
+    "slug": "galeuen",
+    "word": "galeuen",
+    "meaning": "berwarna kuning kecoklat-coklatan"
+  },
+  {
+    "slug": "galoh",
+    "word": "galôh",
+    "meaning": "sj kupu-kupu malam berbentuk kecil yang suka menyerbu cahaya lampu atau mengelilingi lampu, prumpuen"
+  },
+  {
+    "slug": "galong",
+    "word": "galông",
+    "meaning": "membujuk, merayu 2 gal ô ng boh gal ô ng n pelampung pukat yang dukat pada bagian tengah di atas mulut kantong ( euntung ) dan pada tali-temali ( ali dan pucong )"
+  },
+  {
+    "slug": "galue",
+    "word": "galue",
+    "meaning": "jalur, potong"
+  },
+  {
+    "slug": "gam",
+    "word": "gam",
+    "meaning": "dipergunakan sebagai nama laki-laki, kata panggilan terhadap anak laki-laki yang tidak diketahui namanya, panggilan terhadap putra sendiri"
+  },
+  {
+    "slug": "gamak",
+    "word": "gamak",
+    "meaning": "menggamak-gamak, mengancam (dengan senjata)"
+  },
+  {
+    "slug": "gamat",
+    "word": "gamat",
+    "meaning": "sejenis tanaman untuk obat luka"
+  },
+  {
+    "slug": "gamba",
+    "word": "gamba",
+    "meaning": "gambar, pigura, lukisan (untuk negeri, rumah), peta"
+  },
+  {
+    "slug": "gambang",
+    "word": "gambang",
+    "meaning": "gambang, sejenis harmonika"
+  },
+  {
+    "slug": "gambaran",
+    "word": "gambaran",
+    "meaning": "gambaran"
+  },
+  {
+    "slug": "gambe",
+    "word": "gambé",
+    "meaning": "gambir"
+  },
+  {
+    "slug": "gameh-gamoh",
+    "word": "gamèh-gamoh",
+    "meaning": "sibuk"
+  },
+  {
+    "slug": "gamet",
+    "word": "gamèt",
+    "meaning": "1 gamèt picu senjata api, menarik picu senjata api"
+  },
+  {
+    "slug": "gameum",
+    "word": "gameum",
+    "meaning": "bingung"
+  },
+  {
+    "slug": "gampet",
+    "word": "gampét",
+    "meaning": "kampit, kantong atau keranjang tempat menyhnpan ikan-ikan yang ditangkap tapasoe eungkôt nyoe lam -- mangat bek jigrôb lam ie teuma, Masukkanlah ikan ini ke dalam kampit supaya ia tidak melompat lagi ke dalam air; tapeu-- breueh bak reujang, Isikanlah segera beras ke dalam kampit; meu--, diisi ke dalam kampit; meu— - —, berkampit-kampit; breueh meu— - —, beras berkampitkampit; peu — = — Bd eumpang"
+  },
+  {
+    "slug": "gampoh",
+    "word": "gampôh",
+    "meaning": "memintal tali atau benang, menyambung helai kain"
+  },
+  {
+    "slug": "gampong",
+    "word": "gampông",
+    "meaning": "kampung"
+  },
+  {
+    "slug": "ganai",
+    "word": "ganai",
+    "meaning": "pohon bakung"
+  },
+  {
+    "slug": "ganaih",
+    "word": "ganaih",
+    "meaning": "ga(ng)sang, gatal, jalang, bandel, nakal (untuk anak-anak), boros"
+  },
+  {
+    "slug": "ganceng",
+    "word": "gancéng",
+    "meaning": "sj perhiasan dada wanita, terdiri dr tiga buah mainan emas berbentuk bulan sabit bertatahkan permata yang dhangkai dengan rantai secara horisontal"
+  },
+  {
+    "slug": "gancheb",
+    "word": "ganchéb",
+    "meaning": "kacip pinang"
+  },
+  {
     "slug": "ganda",
     "word": "ganda",
     "meaning": "ganda, kembar ..."
+  },
+  {
+    "slug": "ganda-2",
+    "word": "ganda",
+    "meaning": "ganda, kembar ..."
+  },
+  {
+    "slug": "gandai",
+    "word": "gandai",
+    "meaning": "sutera"
+  },
+  {
+    "slug": "gandarusa",
+    "word": "gandarusa",
+    "meaning": "gandarusa, sejenis tumbuh-tumbuhan yang mengandung obat"
+  },
+  {
+    "slug": "gandawahet",
+    "word": "gandawahet",
+    "meaning": "gandawahet, kandawahet, sidangawahet"
+  },
+  {
+    "slug": "gandawatra",
+    "word": "gandawatra",
+    "meaning": "perbandingan dalam pertamhan (biasanya ketika mengadu hewan) untuk merangsang pesertanya menaikkan taruhannya; boh --, menghasut, memberanikan; leumo lagèe nyan, pakri neujeuet boh --, Keadaan sapi spt itu, bagaimana Anda berani menaikkan taruhannya! meu--, dinaikkan, diperbesar taruhannya, dihasut; Bd ganda"
+  },
+  {
+    "slug": "gandeng",
+    "word": "gandéng",
+    "meaning": "mengganding, menyeret (umpama perahu)"
+  },
+  {
+    "slug": "gando",
+    "word": "gando",
+    "meaning": "gando"
+  },
+  {
+    "slug": "gandoe",
+    "word": "gandoe",
+    "meaning": "busur, pelenting"
+  },
+  {
+    "slug": "gandom",
+    "word": "gandôm",
+    "meaning": "gandum"
+  },
+  {
+    "slug": "gandra",
+    "word": "gandra",
+    "meaning": "mendorong, menekan, menindih, mendesak"
+  },
+  {
+    "slug": "gandrawatra",
+    "word": "gandrawatra",
+    "meaning": "gandrawatra"
+  },
+  {
+    "slug": "gane",
+    "word": "ganè",
+    "meaning": "mengisi peluru meriam"
+  },
+  {
+    "slug": "ganggang",
+    "word": "ganggang",
+    "meaning": "mengganggang, mengasapi"
+  },
+  {
+    "slug": "gani",
+    "word": "gani",
+    "meaning": "gani atau rani, mahakaya, mahabesar (untuk Allah)"
+  },
+  {
+    "slug": "ganja",
+    "word": "ganja",
+    "meaning": "ganja"
+  },
+  {
+    "slug": "ganje",
+    "word": "ganjé",
+    "meaning": "ganjil, aneh"
+  },
+  {
+    "slug": "gantang",
+    "word": "gantang",
+    "meaning": "ukuran isi di daerah Aceh yang hanya dikenal namanya saja, di samakan dengan 2 arè 2 gantang n buah kentang"
+  },
+  {
+    "slug": "ganti",
+    "word": "ganti",
+    "meaning": "ganti, sejenis akar wangi yang dimakan dengan sirih dan di pergunakan sebagai obat, tergolong dalam aweueh peuet ploh peuet"
+  },
+  {
+    "slug": "gantoe",
+    "word": "gantoe",
+    "meaning": "ganti, giliran, hari pasar; ija lôn ka ji—, Kain saya sudah digantikannya (dengan yang lain); — jaroe, menggantikan percari nafkah; aneuk goh lorn rayek h'an ji— jaroe, Anak yang masih kecil belum dapat menggantikan ayahnya untuk mencari nafkah; — tika, ganti tikar = kawin dengan adik istri yang sudah meninggal; jeunoe — lôn, Sekarang giliran saya; pat na — peukan uroe nyoe! Di mana diadakah hari pasar hari ini? uroe nyoe uroe —, Hari ini hari pasar, hari orang mengadu hewan; meu—, berganti; meu—, berganti-ganti (dl hik meugeu -); maté raja meu— raja, Mangkat seorang raja digamti oleh yang lain; reunggét lôn nyang gadoh ka meu—, Ringgit saya yang telah hilang sudah berganti atau digantikan; goh lom meu— gigoe, Ia belum berganti giginya; peu— = —, burung pikatan; leuek peu—, burung balam yang dipergunakan untuk memikat burung-burung balam lain geumantoe, sedang melakukan penggantian; teungoh jigeumanto, Ia sedang menggantikan atau mengembalikan pinjamannya; geunantoe, geulantoe, pengganti, gantirugi; nyoe geunantoe pisang keu aneuk miet, Ini adalah sebagai pengganti pembelian pisang untuk anak-anak (dikatakan sebagai basa-basi ketika menyerahkan suatu hadiah; surat nyoe lôn kirem geunantoe lôn mumat jaroe ngon droeneu, Surat ini saya kirimkan sebagai pengganti saya berjabatan tangan dengan Anda"
+  },
+  {
+    "slug": "gantoh",
+    "word": "gantoh",
+    "meaning": "terantuk (kaki), terhalang, terhambat"
+  },
+  {
+    "slug": "gantueb",
+    "word": "gantueb",
+    "meaning": "ikan biji nangka, sejenis ikan laut"
+  },
+  {
+    "slug": "gantuen",
+    "word": "gantuen",
+    "meaning": "menahan (umpama salah satu hajat alamiah)"
+  },
+  {
+    "slug": "gantung",
+    "word": "gantung",
+    "meaning": "menggantungkan"
+  },
+  {
+    "slug": "ganu-gana",
+    "word": "ganu-gana",
+    "meaning": "begitu-begini, ini - itu"
+  },
+  {
+    "slug": "gapah",
+    "word": "gapah",
+    "meaning": "lemak, gemuk"
+  },
+  {
+    "slug": "gapeueh",
+    "word": "gapeueh",
+    "meaning": "kapas, kapok"
+  },
+  {
+    "slug": "gapi",
+    "word": "gapi",
+    "meaning": "bulai, nama orang"
+  },
+  {
+    "slug": "gapiet",
+    "word": "gapiet",
+    "meaning": "jepit-jepit (membawa sesuatu di bawah ketiak)"
+  },
+  {
+    "slug": "gapu",
+    "word": "gapu",
+    "meaning": "kapur"
+  },
+  {
+    "slug": "gapulaga",
+    "word": "gapulaga",
+    "meaning": "kapulaga, termasuk dalam aweueh peuet plôh peuet"
+  },
+  {
+    "slug": "gapunaga",
+    "word": "gapunaga",
+    "meaning": "gapunaga"
+  },
+  {
+    "slug": "garam",
+    "word": "garam",
+    "meaning": "garam"
+  },
+  {
+    "slug": "gareh",
+    "word": "garéh",
+    "meaning": "garis, gores, parut, baris"
+  },
+  {
+    "slug": "gareng",
+    "word": "garéng",
+    "meaning": "garing (karena dimasak atau dipanggang)"
+  },
+  {
+    "slug": "gari",
+    "word": "gari",
+    "meaning": "roda,jentera"
+  },
+  {
+    "slug": "garo",
+    "word": "garô",
+    "meaning": "menggaruk"
+  },
+  {
+    "slug": "garot",
+    "word": "garôt",
+    "meaning": "hutan belukar yang ditumbuhi tanaman berduri"
+  },
+  {
+    "slug": "garu",
+    "word": "garu",
+    "meaning": "garu"
+  },
+  {
+    "slug": "gasa",
+    "word": "gasa",
+    "meaning": "kasar, (ki) tidak sopan"
+  },
+  {
+    "slug": "gasai",
+    "word": "gasai",
+    "meaning": "ganjil, tidak genap"
+  },
+  {
+    "slug": "gasang",
+    "word": "gasang",
+    "meaning": "liar, suka berkelahi (untuk anak-anak), ga(n)sang (tuk orang-orang dewasa)"
+  },
+  {
+    "slug": "gaseh",
+    "word": "gaséh",
+    "meaning": "kasih, sayang"
+  },
+  {
+    "slug": "gaseue",
+    "word": "gaseue",
+    "meaning": "kasau"
+  },
+  {
+    "slug": "gasie",
+    "word": "gasie",
+    "meaning": "gasie"
+  },
+  {
+    "slug": "gasien",
+    "word": "gasien",
+    "meaning": "miskin"
+  },
+  {
+    "slug": "gasui",
+    "word": "gasui",
+    "meaning": "gasui, meugasui (-gasui), meugeugasui (dl hik) a hiruk-pikuk, berdesing, bergelombang (tentang rombongan orang yang sedang bergerak)"
+  },
+  {
+    "slug": "gata",
+    "word": "gata",
+    "meaning": "kata ganti orang kedua (tunggal dan jamak) Anda, tuan"
+  },
+  {
+    "slug": "gatai",
+    "word": "gatai",
+    "meaning": "gatal, ga(n)sang"
+  },
+  {
+    "slug": "gateh",
+    "word": "gatéh",
+    "meaning": "kaki bahagian bawah"
+  },
+  {
+    "slug": "gateng",
+    "word": "gaténg",
+    "meaning": "gaténg"
+  },
+  {
+    "slug": "gatheuek",
+    "word": "gatheuek",
+    "meaning": "sejenis udang besar yang tidak makan, berdiam di daerah-daerah dekat laut yang payau atau asin airnya dan membuat tempatnya dari tanah sampai setinggi satu meter"
+  },
+  {
+    "slug": "gathob",
+    "word": "gathôb",
+    "meaning": "mengatupkan, menutup"
+  },
+  {
+    "slug": "gati",
+    "word": "gati",
+    "meaning": "boh --, lengan-lengan kayu yang dipasang pada sayap-sayap perahu katir supaya setimbang peu--, memasang lengan-lengan kayu; tapeu-- bak bagaih bidôk nyan! Pasanglah segera lengan-lengan kayu pada perahu katir itu"
+  },
+  {
+    "slug": "gatib",
+    "word": "gatib",
+    "meaning": "nikah"
+  },
+  {
+    "slug": "gatob",
+    "word": "gatôb",
+    "meaning": "gatôb => gathôb"
+  },
+  {
+    "slug": "gatok",
+    "word": "gatok",
+    "meaning": "gatok, katok, boh gatok, boh panta n sj buah kelereng, terbuat dr tanduk kerbau, berbentuk setengah bulat, gading atau buah pinang yg telah diasah"
+  },
+  {
+    "slug": "gatu",
+    "word": "gatu",
+    "meaning": "senang hati, sukacita"
+  },
+  {
+    "slug": "gawang",
+    "word": "gawang",
+    "meaning": "menggoyang-goyangkan sesuatu ke sana kemari (untuk mengusir ayam yang bertengger di atas), mengusir"
+  },
+  {
+    "slug": "gawe",
+    "word": "gawè",
+    "meaning": "bak gawè , sejenis tanaman jalar yang tumbuh di pagar, berbuah kecil-kecil seperti mentimun, tetapi tidak dapat dimakan, disebut boh gawè, timon gawè ²gawè"
+  },
+  {
+    "slug": "gawo",
+    "word": "gawo",
+    "meaning": "mengarau"
   }
 ]
