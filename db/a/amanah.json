@@ -1,0 +1,31 @@
+{
+  "word": "amanah",
+  "pos": "n",
+  "meaning": "amanah, sesuatu yang dipercayakan, nasehat, perintah",
+  "examples": [
+    {
+      "aceh": "nyoe ─ gob h'an jeuet lôn publoe",
+      "indo": "ini adalah amanah orang, saya tidak boleh menjualnya"
+    },
+    {
+      "aceh": "meu ─",
+      "indo": "menyimpan amanah"
+    },
+    {
+      "aceh": "peu ─",
+      "indo": "menyerahkan"
+    },
+    {
+      "aceh": "peue nyang geupeu ─ bak jih habéh jipeuteuboih",
+      "indo": "apa yang dipercayakan kepadanya telah dirusaknya"
+    }
+  ],
+  "rujukan": [
+    "amanat"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2018/03/amanah.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-06T15:40:57.791Z"
+}
