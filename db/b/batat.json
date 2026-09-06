@@ -1,0 +1,37 @@
+{
+  "word": "batat",
+  "pos": "a",
+  "meaning": "keras, tegar, mengeras, tidak mau masak (tentang buah-buahan), keras kepala, tidak patuh",
+  "examples": [
+    {
+      "aceh": "Jaroe lôn ka —",
+      "indo": "tangan saya sudah mengeras"
+    },
+    {
+      "aceh": "bek tapèt boh mamplam ngon reunong",
+      "indo": "rhôt jeuet keu — , janganlah Anda memetik buah mangga dengan galah karena jika jatuh, ia tidak akan masak"
+    },
+    {
+      "aceh": "— that aneuk nyan",
+      "indo": "peue nyang tapeugah h'an jideungo , anak itu tegar sekali, apa yang dinasihatkan kepadanya tidak didengarnya"
+    },
+    {
+      "aceh": "bandum aneukgeuh —",
+      "indo": "semua anaknya keras kepala. pu— , membuat keras"
+    },
+    {
+      "aceh": "pu— droe",
+      "indo": "bersikap bandel"
+    }
+  ],
+  "rujukan": [
+    "bangkaran",
+    "bateue",
+    "jie"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2018/10/batat.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-06T19:04:36.051Z"
+}
