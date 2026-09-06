@@ -1,0 +1,40 @@
+{
+  "word": "areuta",
+  "pos": "n",
+  "meaning": "harta, milik hal, persoalan",
+  "examples": [
+    {
+      "aceh": "─ beunda",
+      "indo": "harta benda"
+    },
+    {
+      "aceh": "─ sihareukat",
+      "indo": "harta yang menjadi milik bersama"
+    },
+    {
+      "aceh": "─ pusaka",
+      "indo": "harta pusaka"
+    },
+    {
+      "aceh": "meu─",
+      "indo": "berharta"
+    },
+    {
+      "aceh": "gobnyan le meu─",
+      "indo": "dia memiliki banyak harta"
+    },
+    {
+      "aceh": "peu─",
+      "indo": "memberikan harta, memiliki"
+    }
+  ],
+  "rujukan": [
+    "milék",
+    "blat"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2018/06/areuta.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-06T15:40:57.794Z"
+}
