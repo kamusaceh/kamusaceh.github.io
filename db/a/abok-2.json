@@ -3,9 +3,11 @@
   "pos": "n",
   "meaning": "tes",
   "examples": [],
-  "rujukan": [],
-  "sumber": "",
+  "rujukan": [
+    "tes rujukan"
+  ],
+  "sumber": "tes  sumber",
   "added_by": "admin1",
   "edited_by": "admin1",
-  "updated_at": "2026-09-06T15:15:36.411Z"
+  "updated_at": "2026-09-06T15:16:05.098Z"
 }
