@@ -1,0 +1,31 @@
+{
+  "word": "cèh",
+  "pos": "a",
+  "meaning": "halus, lumat, keluar, (tentang anak ayam yg menetas), cerna, penyek",
+  "examples": [
+    {
+      "aceh": "tatob bak — ! tumbuklah sampai halus! ka rab — aneuk manok",
+      "indo": "anak ayam hampir menetas"
+    },
+    {
+      "aceh": "aneuk ban —",
+      "indo": "anak yang baru menetas"
+    },
+    {
+      "aceh": "pew —",
+      "indo": "membuat sampai halus, hancur, lumat (karena ditumbuk)"
+    },
+    {
+      "aceh": "ceumeucèh",
+      "indo": "melakukan cèh ²cèh"
+    }
+  ],
+  "rujukan": [
+    "chèh"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2019/02/ceh_7.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-06T19:04:36.037Z"
+}
