@@ -1,0 +1,15 @@
+{
+  "username": "admin1",
+  "added": 1,
+  "edited": 0,
+  "deleted": 0,
+  "restored": 0,
+  "recentActions": [
+    {
+      "action": "tambah",
+      "word": "tes kata",
+      "slug": "tes-kata",
+      "at": "2026-09-06T18:55:00.049Z"
+    }
+  ]
+}
