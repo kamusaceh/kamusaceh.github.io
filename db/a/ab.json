@@ -1,0 +1,33 @@
+{
+  "word": "'ab",
+  "pos": "v",
+  "meaning": "menyuap (nasi), makan (kasar)",
+  "examples": [
+    {
+      "aceh": "ka --- bu laju-laju",
+      "indo": "jèh buet diblang teungoh meukarat: makanlah cepat-cepat, pekerjaan disawah sedang mendesak"
+    },
+    {
+      "aceh": "ranup sigo ---",
+      "indo": "sesuap sirih"
+    },
+    {
+      "aceh": "meu--- (teu---)",
+      "indo": "tidak sengaja menyuap, meu---, saling menyuap"
+    },
+    {
+      "aceh": "peu---",
+      "indo": "menyuapkan"
+    },
+    {
+      "aceh": "kapeu--- bu keu adekkeu!",
+      "indo": "suapkan nasi kepada adikmu!"
+    }
+  ],
+  "rujukan": [],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2017/12/ab.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-06T19:04:36.036Z"
+}
