@@ -1,0 +1,37 @@
+{
+  "word": "gapeueh",
+  "pos": "n",
+  "meaning": "kapas, kapok",
+  "examples": [
+    {
+      "aceh": "bak --",
+      "indo": "pohon kapas"
+    },
+    {
+      "aceh": "bak -- panjoe",
+      "indo": "pohon kapok randu"
+    },
+    {
+      "aceh": "-- Plimbang",
+      "indo": "kapas Palembang"
+    },
+    {
+      "aceh": "-- rubék",
+      "indo": "kapas widuri"
+    },
+    {
+      "aceh": "Si --",
+      "indo": "si Kapas (nama anjing)"
+    },
+    {
+      "aceh": "meu--",
+      "indo": "berkapas, seperti kapas"
+    }
+  ],
+  "rujukan": [],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2023/04/gapeueh.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-06T19:04:36.040Z"
+}
