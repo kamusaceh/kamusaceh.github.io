@@ -1,0 +1,39 @@
+{
+  "word": "bagaih",
+  "pos": "a",
+  "meaning": "lekas, segera, cepat, kencang, kuat",
+  "examples": [
+    {
+      "aceh": "angèn --",
+      "indo": "angin kencang"
+    },
+    {
+      "aceh": "jak --",
+      "indo": "berjalan cepat"
+    },
+    {
+      "aceh": "mu -- --",
+      "indo": "bergegas-gegas"
+    },
+    {
+      "aceh": "pu --",
+      "indo": "mempercepat"
+    },
+    {
+      "aceh": "tapu -- kajak",
+      "indo": "percepatlah jalan Anda"
+    }
+  ],
+  "rujukan": [
+    "baca",
+    "laju",
+    "pantaih",
+    "reujang",
+    "sigra"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2018/09/bagaih.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-06T19:04:36.046Z"
+}
