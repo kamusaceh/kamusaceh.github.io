@@ -1,0 +1,33 @@
+{
+  "word": "asai",
+  "pos": "n",
+  "meaning": "asal, permulaan, keturunan, sebab, jika, sekiranya",
+  "examples": [
+    {
+      "aceh": "─ phôn jeuet keu meunan sabab buet si nyan",
+      "indo": "asal mula pekerjaan itu karena dia"
+    },
+    {
+      "aceh": "pat ─ gata?",
+      "indo": "Anda berasal dari mana? ─ bèk meunan lé jipubuet, jeuet tateurimong si nyan , jika ia tidak berbuat (seperti itu) lagi orang itu boleh kita terima"
+    },
+    {
+      "aceh": "meu─",
+      "indo": "berasal dari orang baik-baik"
+    },
+    {
+      "aceh": "gobnyan biek ureueng meu─",
+      "indo": "ia keturunan baik-baik"
+    }
+  ],
+  "rujukan": [
+    "meung",
+    "phôn",
+    "usai"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2018/07/asai.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-06T15:40:57.795Z"
+}
