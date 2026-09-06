@@ -1,0 +1,33 @@
+{
+  "word": "diet",
+  "pos": "n",
+  "meaning": "diat, denda krn membunuh atau melukai seseorang",
+  "examples": [
+    {
+      "aceh": "- darah",
+      "indo": "diat darah, denda krn melukai seseorang"
+    },
+    {
+      "aceh": "- nyaw'ong",
+      "indo": "diat nyawa krn membunuh seseorang"
+    },
+    {
+      "aceh": "meu -",
+      "indo": "membayarkan diat"
+    },
+    {
+      "aceh": "ka Iheueh tameu - gata? sudahkah Anda membayarkan diatnya? peu -",
+      "indo": "menyuruh bayarkan diat"
+    }
+  ],
+  "rujukan": [
+    "- bila",
+    "darah",
+    "kiseueh"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2021/10/diet.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-06T19:04:36.038Z"
+}
