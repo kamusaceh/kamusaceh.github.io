@@ -1,0 +1,28 @@
+{
+  "word": "ahli",
+  "pos": "a",
+  "meaning": "ahli, pandai, keluarga",
+  "examples": [
+    {
+      "aceh": "dilee jameun ureueng Acèh ─ lam prang",
+      "indo": "dahulu orang Aceh sangat ahli dalam perang. ─ rumoh , sekeluarga"
+    },
+    {
+      "aceh": "─ droeneuh",
+      "indo": "keluarga Anda"
+    },
+    {
+      "aceh": "padum droe ureueng ─ droeneuh?",
+      "indo": "berapa orang keluarga Anda?"
+    }
+  ],
+  "rujukan": [
+    "ahloi",
+    "ai"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2018/02/ahli.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-06T19:04:36.045Z"
+}
