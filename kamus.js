@@ -172,7 +172,6 @@ function b64DecodeUnicode(str) { return decodeURIComponent(escape(atob(str))); }
 async function githubApi(path, options = {}) {
   const token = await getGithubToken();
   const res = await fetch(`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/${path}`, {
-    cache: "no-store", // jangan pernah pakai cache browser di sini — sha basi = konflik 409
     ...options,
     headers: { Authorization: `token ${token}`, Accept: "application/vnd.github+json", ...(options.headers || {}) }
   });
@@ -231,25 +230,6 @@ async function putFileJsonWithRetry(path, mutateFn, message, maxRetries = 6) {
     try {
       await putFileJson(path, newData, message, sha);
       return newData;
-    } catch (e) {
-      lastErr = e;
-      if (!/does not match/i.test(e.message)) throw e;
-    }
-  }
-  throw lastErr;
-}
-
-// Sama seperti putFileJsonWithRetry tapi untuk DELETE: ambil sha TERBARU tepat
-// sebelum menghapus, dan coba lagi kalau kena konflik 409 (sha basi).
-async function deleteFileWithRetry(path, message, maxRetries = 6) {
-  let lastErr;
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    if (attempt > 0) await sleep(300 * attempt);
-    const sha = await getFileSha(path);
-    if (!sha) return false; // sudah tidak ada / sudah terhapus
-    try {
-      await deleteFile(path, sha, message);
-      return true;
     } catch (e) {
       lastErr = e;
       if (!/does not match/i.test(e.message)) throw e;
@@ -329,16 +309,11 @@ async function addWord(entry) {
 
 async function editWord(letter, slug, updates) {
   if (!currentAdmin) throw new Error("Harus login sebagai admin");
-  let notFound = false;
-  const updated = await putFileJsonWithRetry(
-    `db/${letter}/${slug}.json`,
-    (data) => {
-      if (!data) { notFound = true; return null; }
-      return { ...data, ...updates, edited_by: currentAdmin.username, updated_at: new Date().toISOString() };
-    },
-    `Ubah kata: ${updates.word || slug}`
-  );
-  if (notFound || !updated) throw new Error("Kata tidak ditemukan");
+  const { sha, data } = await getFileJson(`db/${letter}/${slug}.json`);
+  if (!data) throw new Error("Kata tidak ditemukan");
+
+  const updated = { ...data, ...updates, edited_by: currentAdmin.username, updated_at: new Date().toISOString() };
+  await putFileJson(`db/${letter}/${slug}.json`, updated, `Ubah kata: ${updated.word}`, sha);
   await putFileJsonWithRetry(
     `index/${letter}.json`,
     (idxData) => {
@@ -353,9 +328,10 @@ async function editWord(letter, slug, updates) {
 
 async function deleteWord(letter, slug) {
   if (!currentAdmin) throw new Error("Harus login sebagai admin");
+  const sha = await getFileSha(`db/${letter}/${slug}.json`);
+  if (!sha) throw new Error("Kata tidak ditemukan");
   const wordBefore = await getFileJson(`db/${letter}/${slug}.json`).then(r => r.data).catch(() => null);
-  const removed = await deleteFileWithRetry(`db/${letter}/${slug}.json`, `Hapus kata: ${slug}`);
-  if (!removed) throw new Error("Kata tidak ditemukan");
+  await deleteFile(`db/${letter}/${slug}.json`, sha, `Hapus kata: ${slug}`);
   await putFileJsonWithRetry(
     `index/${letter}.json`,
     (idxData) => (idxData ? idxData.filter(item => item.slug !== slug) : null),
@@ -476,12 +452,12 @@ async function loadHistoryList(letter, slug) {
 async function restoreWordVersion(letter, slug, commitSha) {
   if (!currentAdmin) throw new Error("Harus login sebagai admin");
   const oldData = await fetchWordVersionAtCommit(letter, slug, commitSha);
+  const currentSha = await getFileSha(`db/${letter}/${slug}.json`);
 
-  const restored = await putFileJsonWithRetry(
-    `db/${letter}/${slug}.json`,
-    () => ({ ...oldData, edited_by: currentAdmin.username, updated_at: new Date().toISOString() }),
-    `Pulihkan kata: ${oldData.word} (dari commit ${commitSha.slice(0, 7)})`
-  );
+  const restored = { ...oldData, edited_by: currentAdmin.username, updated_at: new Date().toISOString() };
+
+  await putFileJson(`db/${letter}/${slug}.json`, restored,
+    `Pulihkan kata: ${restored.word} (dari commit ${commitSha.slice(0, 7)})`, currentSha);
 
   await putFileJsonWithRetry(
     `index/${letter}.json`,
