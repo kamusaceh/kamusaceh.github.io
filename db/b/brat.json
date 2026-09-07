@@ -1,0 +1,35 @@
+{
+  "word": "brat",
+  "pos": "a",
+  "meaning": "berat, tertekan, hamil, kehamilan",
+  "examples": [
+    {
+      "aceh": "h'an ek lôn mè",
+      "indo": "— that , saya tidak dapat membawanya karena berat sekah"
+    },
+    {
+      "aceh": "teungoh lam —",
+      "indo": "ia dalam keadaan hamil"
+    },
+    {
+      "aceh": "mu —",
+      "indo": "memberatkan"
+    },
+    {
+      "aceh": "pu —",
+      "indo": "memberatkan"
+    },
+    {
+      "aceh": "beuneurat",
+      "indo": "keberatan,beban"
+    }
+  ],
+  "rujukan": [
+    "bunténg"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2018/12/brat.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-07T08:12:28.801Z"
+}
