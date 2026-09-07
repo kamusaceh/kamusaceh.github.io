@@ -3,11 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <title>Kamus Bahasa Acèh</title>
-<link rel="stylesheet" href="style.css?v=${KAMUS_JS_VERSION}">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -60,7 +57,7 @@
   </form>
 </div>
 
-<script src="kamus.js?v=${KAMUS_JS_VERSION}"></script>
+<script src="kamus.js"></script>
 <script>
 const results = document.getElementById("results");
 const search = document.getElementById("search");
@@ -181,7 +178,7 @@ document.getElementById("btn-tambah").addEventListener("click", () => showForm()
 let debounceTimer;
 search.addEventListener("input", () => {
   clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(doSearch, 200); // sugest hasil sambil mengetik
+  debounceTimer = setTimeout(doSearch, 200);
 });
 search.addEventListener("keydown", (e) => { if (e.key === "Enter") { clearTimeout(debounceTimer); doSearch(); } });
 document.getElementById("btn-cari").addEventListener("click", () => { clearTimeout(debounceTimer); doSearch(); });
@@ -201,7 +198,6 @@ async function doSearch() {
     : `<p>Tidak ditemukan.</p>`;
 }
 
-/* ---------- statistik & 10 kata acak di halaman utama ---------- */
 async function renderStatsAndRandom() {
   const statsBar = document.getElementById("stats-bar");
   statsBar.textContent = "Memuat statistik…";
@@ -266,7 +262,7 @@ function showList(pushState) {
   viewForm.style.display = "none";
   viewList.style.display = "block";
   if (pushState) history.pushState(null, "", "/");
-  renderStatsAndRandom(); // ambil ulang statistik & acak 10 kata baru tiap kembali ke home
+  renderStatsAndRandom();
 }
 
 viewEntri.addEventListener("click", async (e) => {
@@ -375,7 +371,7 @@ document.getElementById("word-form").addEventListener("submit", async (e) => {
   }
   const m = location.pathname.match(/^\/entri\/([^/]+)\/?$/);
   if (m) { showEntri(m[1], firstLetter(m[1]), false); return; }
-  renderStatsAndRandom(); // landing di halaman utama — tampilkan statistik & 10 kata acak
+  renderStatsAndRandom();
 })();
 </script>
 </body>
