@@ -1,0 +1,37 @@
+{
+  "word": "badan",
+  "pos": "n",
+  "meaning": "badan, tubuh",
+  "examples": [
+    {
+      "aceh": "-- ureueng",
+      "indo": "badan orang"
+    },
+    {
+      "aceh": "-- leumo",
+      "indo": "badan sapi"
+    },
+    {
+      "aceh": "aneuk --",
+      "indo": "anak kandung"
+    },
+    {
+      "aceh": "mu --",
+      "indo": "berbadan, hamil"
+    },
+    {
+      "aceh": "ho siuroe ho reupôk that jipu --",
+      "indo": "dari sehari ke hari badannya bertambah nyata"
+    }
+  ],
+  "rujukan": [
+    "angeeta",
+    "jasad",
+    "tubôh"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2018/09/badan.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-07T08:12:28.833Z"
+}
