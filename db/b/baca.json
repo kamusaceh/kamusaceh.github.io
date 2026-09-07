@@ -1,0 +1,28 @@
+{
+  "word": "baca",
+  "pos": "a",
+  "meaning": "besar, cepat, lekas, lancar",
+  "examples": [
+    {
+      "aceh": "bak -- bacuttajak",
+      "indo": "berjalanlah cepat sedikit"
+    },
+    {
+      "aceh": "jijak jimu -- --",
+      "indo": "mareka berjalan bergegas-gegas"
+    },
+    {
+      "aceh": "pu --",
+      "indo": "mempercepat 2 baca v membaca: gobnyan teungoh geu baca kitab , ia sedang membaca buku"
+    }
+  ],
+  "rujukan": [
+    "bagaih",
+    "leup'eung"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2018/09/baca.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-07T08:12:28.783Z"
+}
