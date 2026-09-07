@@ -1,0 +1,36 @@
+{
+  "word": "dayông",
+  "pos": "n",
+  "meaning": "(pen)dayung, pengayuh, mendayung",
+  "examples": [
+    {
+      "aceh": "— sampan",
+      "indo": "mendayung sampan"
+    },
+    {
+      "aceh": "lagèe Niah ban geu— tuleueng —",
+      "indo": "tulang belikat"
+    },
+    {
+      "aceh": "meu—",
+      "indo": "berdayung, mempunyai dayung"
+    },
+    {
+      "aceh": "ureueng nyan teuga that jimeu—",
+      "indo": "orang itu kuat sekali berdayung"
+    },
+    {
+      "aceh": "peu—",
+      "indo": "#ERROR!"
+    }
+  ],
+  "rujukan": [
+    "nieh; kayôh",
+    "peunganyoh"
+  ],
+  "sumber": "Kamus Bahasa Aceh (Blogger) - /2019/09/dayong.html",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-07T08:12:28.833Z"
+}
