@@ -1,0 +1,15 @@
+{
+  "username": "admin1",
+  "added": 0,
+  "edited": 0,
+  "deleted": 0,
+  "restored": 1,
+  "recentActions": [
+    {
+      "action": "pulihkan",
+      "word": "du'a",
+      "slug": "du-a",
+      "at": "2026-09-07T07:45:41.737Z"
+    }
+  ]
+}
