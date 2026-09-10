@@ -1,0 +1,25 @@
+{
+  "word": "abang",
+  "pos": "n",
+  "meaning": "abang, saudara laki-laki yang tertua",
+  "examples": [
+    {
+      "aceh": "─ ka geujak u peukan",
+      "indo": "abang sudah pergi ke pasar"
+    },
+    {
+      "aceh": "meu ─",
+      "indo": "mempunyai abang"
+    },
+    {
+      "aceh": "peu ─",
+      "indo": "menyebut abang kepada seseorang"
+    }
+  ],
+  "rujukan": [],
+  "sumber": "",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-10T09:57:20.663Z"
+}
