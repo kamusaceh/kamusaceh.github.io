@@ -1,0 +1,25 @@
+{
+  "word": "beumbam",
+  "pos": "v",
+  "meaning": "bembam, memanggang ikan di dalam abu panas atau dengan api yang sedang malap",
+  "examples": [
+    {
+      "aceh": "mu—",
+      "indo": "dibembam, sedang membembam"
+    },
+    {
+      "aceh": "teu—",
+      "indo": "terbembam"
+    },
+    {
+      "aceh": "beuneumbam",
+      "indo": "pembembanan, hasil membembam"
+    }
+  ],
+  "rujukan": [],
+  "sumber": "",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-10T09:57:20.632Z"
+}
