@@ -1,0 +1,37 @@
+{
+  "word": "garéh",
+  "pos": "n",
+  "meaning": "garis, gores, parut, baris",
+  "examples": [
+    {
+      "aceh": "peue ta-- bak buku nyan? Apa yg Anda gariskan di buku itu? meu--",
+      "indo": "bergaris"
+    },
+    {
+      "aceh": "bèk an teupèh",
+      "indo": "meu-- pi h'an, Jangankan kena, tergores pun tidak"
+    },
+    {
+      "aceh": "jaroe lôn ka meu-- ngon duroe trieng",
+      "indo": "Tangan saya sudah tergores oleh duri bambu"
+    },
+    {
+      "aceh": "buku nyan meu-- gèt that",
+      "indo": "Buku itu bergaris bagus sekah"
+    },
+    {
+      "aceh": "buku gamba hana meu--",
+      "indo": "buku gambar tidak bergaris"
+    },
+    {
+      "aceh": "bajèe jih meu— keunong kawat",
+      "indo": "Bajunya bergores-gores kena kawat"
+    }
+  ],
+  "rujukan": [],
+  "sumber": "",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-10T09:57:20.612Z"
+}
