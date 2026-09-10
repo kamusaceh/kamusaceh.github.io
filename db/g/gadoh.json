@@ -1,0 +1,51 @@
+{
+  "word": "gadoh",
+  "pos": "a",
+  "meaning": "hilang",
+  "examples": [
+    {
+      "aceh": "ija lôn ka --",
+      "indo": "kain saya sudah hilang"
+    },
+    {
+      "aceh": "-m ' eub",
+      "indo": "hilang tanpa diketahui kemana perginya"
+    },
+    {
+      "aceh": "peu--",
+      "indo": "menghilangkan, mendiamkan (ump perkara yg tidak diteruskan ke pengadilan)"
+    },
+    {
+      "aceh": "peudroe? Ke mana Anda menghilang? lôn ka lôn peu-- areuta gob",
+      "indo": "Saya telah menghilangkan milik seseorang"
+    },
+    {
+      "aceh": "peukara nyan ka geupeu-- hana geupeupanyang lé",
+      "indo": "perkara itu sudah didiamkan, tidak akan diperpanjang lagi"
+    },
+    {
+      "aceh": "nyang peu-- ie seumayang peuet peukara",
+      "indo": "yang menghilangkan atau membatalkan air sembahyang, empat perkara"
+    },
+    {
+      "aceh": "geumadoh",
+      "indo": "kehilangan, kecurian"
+    },
+    {
+      "aceh": "geunadoh",
+      "indo": "yang kehilangan"
+    },
+    {
+      "aceh": "padit na geunadoh gata? Berapa Anda kehilangan?",
+      "indo": ""
+    }
+  ],
+  "rujukan": [
+    "lôn ka geumadoh siplôh reunggét"
+  ],
+  "sumber": "Saya kehilangan sepuluh ringgit",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-10T09:57:20.605Z"
+}
