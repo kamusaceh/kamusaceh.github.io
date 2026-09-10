@@ -1,0 +1,25 @@
+{
+  "word": "adat",
+  "pos": "adv",
+  "meaning": "seperti, jika, kalau",
+  "examples": [
+    {
+      "aceh": "-- h'an",
+      "indo": "jika tidak"
+    },
+    {
+      "aceh": "-- meunan",
+      "indo": "jika demikian"
+    },
+    {
+      "aceh": "jadi",
+      "indo": "lalu, maka: -- meunan, nyang tôk langkah ulôntuan ubak Teungku, nyang gurèe ulôntuan, -- meunan kareuna hajat Ulôntuan teungku meulangkah u rumôh ulôntuan singoh , jadi kedatangan Saya pada Teungku, guru Saya, karena hajat Saya ((spy) Teungku datang besok ke rumah Saya"
+    }
+  ],
+  "rujukan": [],
+  "sumber": "",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-10T09:57:20.668Z"
+}
