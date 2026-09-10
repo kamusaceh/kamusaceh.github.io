@@ -1,0 +1,59 @@
+{
+  "word": "ba",
+  "pos": "v",
+  "meaning": "membawa, membaca",
+  "examples": [
+    {
+      "aceh": "ta -- surat nyoe bak teungku",
+      "indo": "Anda bawakan surat ini kepada teungku"
+    },
+    {
+      "aceh": "gobnyan teungoh geu -- hikayat bak ureueng meukawén",
+      "indo": "ia sedang membaca hikayat di tempat orang kawin"
+    },
+    {
+      "aceh": "-- plueng",
+      "indo": "melarikan"
+    },
+    {
+      "aceh": "teu --",
+      "indo": "terbawa"
+    },
+    {
+      "aceh": "kitab nyan ka rôh teu -- sajan lôn",
+      "indo": "kitab itu telah turut terbawa bersama saya"
+    },
+    {
+      "aceh": "pu --",
+      "indo": "membawakan"
+    },
+    {
+      "aceh": "lheueh di peukan jihue u gampông",
+      "indo": "ureueng meuladang nyang jak pu -- , setelah ke pasar ia menyeretnya ke kampung, peladang-peladanglah yang telah membawanya"
+    },
+    {
+      "aceh": "neu -- lintô barô ka geupeuleumah bak waréh kawôm",
+      "indo": "pembawaan pengantin laki-laki sudah diperlihatkan kepada ahli famili"
+    },
+    {
+      "aceh": "<sup>2</sup> ba n huruf ke dua huruf arab: -- dibarôh saboh titék",
+      "indo": "huruf ba bertitik sebuah dibawahnya"
+    },
+    {
+      "aceh": "-- mubuleuen si uroe",
+      "indo": "huruf ba menyerupai bulan sehari"
+    },
+    {
+      "aceh": "<sup>3</sup> ba n ayah",
+      "indo": "hamba sahaya, (terutama disebut oleh anak-anak)"
+    }
+  ],
+  "rujukan": [
+    "neu --"
+  ],
+  "sumber": "pembawaan",
+  "status": "",
+  "added_by": "import-xlsx",
+  "edited_by": "import-xlsx",
+  "updated_at": "2026-09-10T09:57:20.623Z"
+}
