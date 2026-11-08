@@ -1,0 +1,736 @@
+[
+ {
+  "id": "A-0015-L-03",
+  "w": "'ala",
+  "c": "a",
+  "d": "lebih tinggi, bangga, congkak",
+  "x": [
+   {
+    "e": "meu – that (peu – droe)",
+    "t": "membanggakan diri"
+   },
+   {
+    "e": "peukayan baro ji peu –",
+    "t": "Mereka memuliakan orang yg berpakaian baru."
+   },
+   {
+    "e": "meu – that",
+    "t": "congkak sekali"
+   }
+  ],
+  "v": "'akla; a'ala",
+  "r": "meulia"
+ },
+ {
+  "id": "A-0015-L-06",
+  "w": "alaih",
+  "c": "v",
+  "d": "memilih, menyaring, menghiasi, mempersiapkan",
+  "x": [
+   {
+    "e": "ta – bungon nyeo, tacok nyang gèt-gèt mantong",
+    "t": "pilihlah bunga ini, dan ambil yg baik-baik saja."
+   },
+   {
+    "e": "ka ji – droejih jikeumeung meucang",
+    "t": "Ia sudah bersiap-siap hendak bertempur."
+   },
+   {
+    "e": "inong nyan sabé ji – (–) droe",
+    "t": "Wanita itu selalu menghias dirinya."
+   }
+  ],
+  "h": "1",
+  "r": "Bd acan; Bd ajam"
+ },
+ {
+  "id": "A-0015-R-02",
+  "w": "alam",
+  "c": "n",
+  "d": "dunia, jagat",
+  "x": [
+   {
+    "e": "ban saboh – Poteu Allah",
+    "t": "seluruh alam Tuhan"
+   },
+   {
+    "e": "– dônya",
+    "t": "seluruh dunia, alam semesta"
+   }
+  ],
+  "h": "2",
+  "r": "cuhut"
+ },
+ {
+  "id": "A-0015-R-05",
+  "w": "alamat",
+  "c": "n",
+  "d": "alamat, tanda, gejala",
+  "x": [
+   {
+    "e": "nyoe – ureueng maté",
+    "t": "Ini adalah tanda orang yg telah mati."
+   },
+   {
+    "e": "meungnyo jitamong bambang lam rumoh nyan keueung teuka jamèe",
+    "t": "Jika kupu-kupu masuk ke rumah, itu tandanya tamu akan datang"
+   },
+   {
+    "e": "geumpa nyeo peue –?",
+    "t": "Apa tanda gempa ini?"
+   }
+  ],
+  "v": "'alamat",
+  "r": "tanda"
+ },
+ {
+  "id": "A-0015-R-07",
+  "w": "alang",
+  "c": "a",
+  "d": "tanggung, kekurangan, keperluan, tidak mencukupi",
+  "x": [
+   {
+    "e": "ija nyoe – that",
+    "t": "Kain ini tanggung sekali (tidak mencukupi utk keperluan)."
+   },
+   {
+    "e": "lôn – that keu pèng, neupeuutang siat",
+    "t": "Saya sangat memerlukan uang, pinjamkanlah sebentar."
+   },
+   {
+    "e": "meunyo neutulông lôn bèk –, neutulông bak tôk!",
+    "t": "Jika Anda menolong saya, janganlah tanggung-tanggung, tolonglah dng sempurna"
+   }
+  ],
+  "r": "sapéh"
+ },
+ {
+  "id": "A-0016-L-01",
+  "w": "alangan",
+  "c": "n",
+  "d": "batang tebu berdaun yg dipegang oleh orang-orang yg turut dl arak-arakan",
+  "x": [
+   {
+    "e": "jak ampeueng sadati ngon –",
+    "t": "menjemput sadati dng arak-arakan"
+   }
+  ],
+  "h": "1"
+ },
+ {
+  "id": "A-0016-L-02",
+  "w": "alangan",
+  "c": "a",
+  "d": "kesusahan, bahaya, sekarat, ombak yg memukul di pantai atau kuala",
+  "x": [
+   {
+    "e": "gobnyan teungoh di – bèk tamarit sapeue",
+    "t": "ia sedang dl kesusahan, jangan Anda berkata apa-apa (dngnya)."
+   },
+   {
+    "e": "prumohgeu teungoh di –",
+    "t": "istrinya dl keadaan sekarat (krn melahirkan)."
+   },
+   {
+    "e": "saré leupaih lam –, u labôhan lé jihala",
+    "t": "setelah melewati ombak yg pantai, mereka lalu langsung menuju ke pelabuhan"
+   }
+  ],
+  "h": "2"
+ },
+ {
+  "id": "A-0016-L-03",
+  "w": "alat",
+  "c": "n",
+  "d": "alat, perkakas, sarana, keperluan, perlengkapan",
+  "x": [
+   {
+    "e": "sieb that jimeu –",
+    "t": "Ia telah mempersiapkan seluruh perlengkapan."
+   },
+   {
+    "e": "– teupeuen",
+    "t": "alat tenun"
+   },
+   {
+    "e": "– dape",
+    "t": "perkakas dapur"
+   }
+  ],
+  "r": "beungkông (sebaris)"
+ },
+ {
+  "id": "A-0016-R-02",
+  "w": "alèe",
+  "c": "n",
+  "d": "alu",
+  "x": [
+   {
+    "e": "peue malee bak – tob blancan",
+    "t": "Apa yg perlu dimalukan kpd orang yg tidak berarti"
+   },
+   {
+    "e": "na tameu –? jeungki nyoe hana meu –!",
+    "t": "adakah Anda memiliki alu penumbuk padi ini tidak berlalu!"
+   },
+   {
+    "e": "pubuet kah katamong lam gampong nyan, mangat jipeu – lé inong?",
+    "t": "apa pekerjaanmu di kampung itu spy dipukul dgn alu oleh wanita"
+   }
+  ]
+ },
+ {
+  "id": "A-0017-L-02",
+  "w": "alèh",
+  "c": "v",
+  "d": "1 bergoyang, (utk timbangan), melenggang, (terutama utk gerakan tangan), berpindah ke pihak lain, melihat ke belakang; 2 membalas (utk tembakan)",
+  "x": [
+   {
+    "e": "ji – u wie, ji – uneun",
+    "t": "ia bergoyang ke kiri dan ke kanan."
+   },
+   {
+    "e": "saksi nyoe ji –",
+    "t": "saksi ini berpihak kepada lawan."
+   },
+   {
+    "e": "inong nyan ji – jaroe jilinggang-linggang",
+    "t": "wanita itu melenggang dng tangannya"
+   }
+  ],
+  "h": "1",
+  "r": "tulèh (sebaris); alôn (sebaris); alét; linggang"
+ },
+ {
+  "id": "A-0017-R-03",
+  "w": "alèn",
+  "c": "v",
+  "d": "anyam",
+  "x": [
+   {
+    "e": "ta – trieng nyan",
+    "t": "anyamlah bambu itu"
+   }
+  ],
+  "h": "1"
+ },
+ {
+  "id": "A-0017-R-06",
+  "w": "alét",
+  "c": "v",
+  "d": "mengasah, menggosok, mengusap, mengelus-ngelus",
+  "x": [
+   {
+    "e": "ta – sikin nyoe",
+    "t": "asahlah pisau ini."
+   },
+   {
+    "e": "hana teudôh ji – misè",
+    "t": "tidak henti-hentinya ia mengusap-usap kumisnya"
+   },
+   {
+    "e": "ngon titék plôh – reuôh",
+    "t": "menyapu titik peluh dan keringat = memperoleh sesuatu dng susah payah"
+   }
+  ],
+  "r": "alèh; asah; gabôih"
+ },
+ {
+  "id": "A-0018-R-02",
+  "w": "ali",
+  "c": "n",
+  "d": "sj tangguk utk menangkap udang",
+  "x": [
+   {
+    "e": "pat tajak meu –?",
+    "t": "di mana Anda menangguk udang?"
+   }
+  ],
+  "h": "1",
+  "r": "ruleue; sanggok"
+ },
+ {
+  "id": "A-0018-R-03",
+  "w": "ali",
+  "c": "v",
+  "d": "hanyang, ganyang, lempar",
+  "x": [
+   {
+    "e": "bèk le narit, euntreuk ku – keuh u yub",
+    "t": "jangan banyak cakap, nanti kuhanyang engkau ke bawah (rumah)"
+   },
+   {
+    "e": "– (alè-alè)",
+    "t": "alat pemutar yg terdiri dr sebuah kantong anyaman rotan yg diikat dgn dua utas tali rotan"
+   },
+   {
+    "e": "boh –",
+    "t": "batu"
+   }
+  ],
+  "h": "2",
+  "v": "alè; halè; hali",
+  "r": "alè; halè; hali; halin; haling"
+ },
+ {
+  "id": "A-0018-R-06",
+  "w": "Allah",
+  "c": "n",
+  "d": "Allah, Tuhan Yang Maha Esa, (juga dipergunakan sbg kata seru)",
+  "x": [
+   {
+    "e": "insya –, jeunoe (– jinoe) ngon apueh droeneuh, kamoe na seunang bacut",
+    "t": "Insya Allah, dng doa Anda, kini kami mudah-mudahan dl keadaan senang sedikit"
+   },
+   {
+    "e": "Poteu – (Potallah)",
+    "t": "Tuhan kita"
+   },
+   {
+    "e": "keureuna –",
+    "t": "krn Allah, cuma-cuma, tidak mengharapkan suatu balasan dr manusia"
+   }
+  ],
+  "r": "alôh-alah; ilahi"
+ },
+ {
+  "id": "A-0018-R-08",
+  "w": "alôh-alah",
+  "c": "v",
+  "d": "terus-menerus menyebut 'Allah, mengaduh, mendayu",
+  "x": [
+   {
+    "e": "peue di kah sabé –",
+    "t": "mengapa engkau selalu mengaduh."
+   }
+  ],
+  "r": "palèt-palot; ranab"
+ },
+ {
+  "id": "A-0019-L-02",
+  "w": "alôn",
+  "c": "n",
+  "d": "alunan, (ki) kesusahan, bahaya, melapetaka, bergoncang-goncang, mengalir",
+  "x": [
+   {
+    "e": "jibeudoh – ubé-bé glé",
+    "t": "timbul gelombang setinggi-tinggi gunung."
+   },
+   {
+    "e": "meung na tuah bak – nyoe, jeueb-jeueb nanggroe meuceuhu nama",
+    "t": "jika terlepas dr bahaya ini, nama Anda akan termasyhur di setiap negeri."
+   },
+   {
+    "e": "kapai ji – lé glumbang",
+    "t": "kapal digoncang-goncang oleh gelombang."
+   }
+  ],
+  "v": "halon",
+  "r": "bakat; glumbang; reuyeuk"
+ },
+ {
+  "id": "A-0019-R-03",
+  "w": "alue",
+  "c": "n",
+  "d": "anak cabang sungai atau rawa yg buntu, alur, jalur, nama kampung",
+  "x": [
+   {
+    "e": "taplah padebak meu – –",
+    "t": "Belahlah padi sehingga berjalur"
+   },
+   {
+    "e": "phon jeuet – nyoe jipeu – le ie raya",
+    "t": "mula-mula terjadi alur ini krn dibentuk oleh banjir"
+   },
+   {
+    "e": "gampong –",
+    "t": "sebuah kampung dekat Ulee Lheue"
+   }
+  ]
+ },
+ {
+  "id": "A-0019-R-04",
+  "w": "'alumat",
+  "c": "a",
+  "d": "keras, hebat",
+  "x": [
+   {
+    "e": "deumpék ngon surak that –",
+    "t": "tempik dan sorak terdengar sangat keras."
+   }
+  ]
+ },
+ {
+  "id": "A-0019-R-05",
+  "w": "'am",
+  "c": "adv",
+  "d": "umum",
+  "x": [
+   {
+    "e": "di darat bala –, di laôt kaphé, sabab teukeuse ureueng dônya",
+    "t": "di darat timbul malapetaka umum, di laut orang-orang kafir, semua itu disebabkan oleh ketidakpatuhan rakyat jelata"
+   },
+   {
+    "e": "ureueng –",
+    "t": "orang awam"
+   },
+   {
+    "e": "bala –",
+    "t": "malapetaka yang menimpa umum"
+   }
+  ],
+  "r": "'awam"
+ },
+ {
+  "id": "A-0019-R-06",
+  "w": "ama",
+  "c": "n",
+  "d": "amar nahi, perintah atau larangan di agama",
+  "x": [
+   {
+    "e": "tapeubuet ban – nah'i",
+    "t": "kerjakanlah hal-hal yang disuruh atau diperintahkan oleh Tuhan"
+   }
+  ],
+  "h": "1",
+  "r": "bida"
+ },
+ {
+  "id": "A-0020-L-02",
+  "w": "'amai",
+  "c": "n",
+  "d": "amal, pekerjaan, (biasanya dl arti kata yg baik), mimpi, belajar",
+  "x": [
+   {
+    "e": "lôn nyoe hana – sagai, le that maksiet",
+    "t": "saya ini tidak beramal sedikit pun, banyak sekali melakukan maksiat"
+   },
+   {
+    "e": "beuklam lôn leumah –, nyeum lôn jak u haji",
+    "t": "tadi malam saya bermimpi seakan-akan saya pergi ke haji."
+   },
+   {
+    "e": "keu peue ta – 'eleumèe keubai?",
+    "t": "utk apa Anda mempelajari ilmu kebal?"
+   }
+  ],
+  "v": "amai"
+ },
+ {
+  "id": "A-0020-L-03",
+  "w": "amak",
+  "c": "n",
+  "d": "alat untuk mencedok sesuatu (diperbuat dr upih pinang atau nibung)",
+  "x": [
+   {
+    "e": "–, bubèe, lhèe ngon gampét",
+    "t": "cedok, bubu, dan keranjang ikan"
+   },
+   {
+    "e": "jipeugèt peunajôh ji – – ayôn, jipeurugoe teupông mantong ngon minyeuk, teuma jiboih",
+    "t": "ia membuat kue dl jumlah yg sangat banyak, hanya memboroskan tepung dan minyak saja, kemudian, ia membuangnya."
+   },
+   {
+    "e": "– ayôn, teureubéh bui trôn",
+    "t": "gegabah spt babi yang menuruni tebing yg curam"
+   }
+  ]
+ },
+ {
+  "id": "A-0020-R-01",
+  "w": "aman",
+  "c": "a",
+  "d": "aman, tentram",
+  "x": [
+   {
+    "e": "nanggroe geutanyoe jinoe ka –",
+    "t": "negeri kita sekarang sudah aman."
+   },
+   {
+    "e": "gobnyan sakèt mubuleuen-buleuen, – teuèh mantong",
+    "t": "ia sakit sudah berbulan-bulan lamanya dan selalu tertidur saja"
+   },
+   {
+    "e": "lôn ka – lôn duek disinoe",
+    "t": "saya sudah menetap di sini."
+   }
+  ],
+  "r": "lang; makmu; teutap"
+ },
+ {
+  "id": "A-0020-R-02",
+  "w": "amanah",
+  "c": "n",
+  "d": "amanah, sesuatu yang dipercayakan, nasihat, perintah",
+  "x": [
+   {
+    "e": "nyoe – gob h'an jeuet lôn publoe",
+    "t": "ini adalah amanah orang, saya tidak boleh menjualnya"
+   },
+   {
+    "e": "peue nyang geupeu – bak jih habéh jipeuteuboih",
+    "t": "apa yg dipercayakan kepadanya telah dirusakkannya."
+   }
+  ],
+  "r": "amanat"
+ },
+ {
+  "id": "A-0021-L-01",
+  "w": "amanat",
+  "c": "n",
+  "d": "amanat, pesan, anjuran, nasihat, sesuatu yg dipercayakan",
+  "x": [
+   {
+    "e": "~ si Pulan, h'an jibri woe droeneu",
+    "t": "pesan si Polan, Anda jangan pulang."
+   },
+   {
+    "e": "bèk ubah ban ~ gurèe!",
+    "t": "janganlah Anda ubah spt yg dinasihatkan oleh guru"
+   },
+   {
+    "e": "ban nyang ka geu(peu) ~ lé teungku bèk tapeulaku!",
+    "t": "jangan Anda kerjakan apa yg dipesankan oleh teungku."
+   }
+  ],
+  "v": "umanat",
+  "r": "amanah; wasiet"
+ },
+ {
+  "id": "A-0021-L-02",
+  "w": "amarah",
+  "c": "a",
+  "d": "marah, geram, berang, jengkel",
+  "x": [
+   {
+    "e": "bèk tapeuseutèt napsu ~",
+    "t": "janganlah Anda turuti napsu pemarah"
+   },
+   {
+    "e": "gobnyan reujang that jibeudoih teuka ~",
+    "t": "Ia cepat sekali marah"
+   },
+   {
+    "e": "geu(peu) ~ (ateueh) lôn sidroe",
+    "t": "ia memarahi saya."
+   }
+  ],
+  "v": "marah",
+  "r": "beungèh; marah"
+ },
+ {
+  "id": "A-0021-R-01",
+  "w": "amat",
+  "c": "a",
+  "d": "(dl hik) amat, sangat",
+  "x": [
+   {
+    "e": "ngon sakti – sangat, hèkeumat si cilaka",
+    "t": "ia seorang yg amat sakti serta mempunyai ilmu sihir, si celaka itu!"
+   }
+  ],
+  "h": "1"
+ },
+ {
+  "id": "A-0021-R-04",
+  "w": "ambang",
+  "c": "n",
+  "d": "perawakan, keadaan lahirlah, keadaan, letak",
+  "x": [
+   {
+    "e": "ureueng nyan – jih gèt, tapi akaiji h'an jeuet tangui",
+    "t": "orang itu bagus perawakannya, tetapi perangainya tidak dapat diteladani."
+   },
+   {
+    "e": "prahô nyoe gèt that – hak jidong",
+    "t": "perahu ini timbang sekali keadaannya"
+   },
+   {
+    "e": "rumoh nyoe kayèe jih gèt, peuneugètjih pi gèt. tapi – jih hana gèt",
+    "t": "rumah ini baik perkayuannya, buatannya pun baik, tetapi letaknya tidak baik"
+   }
+  ],
+  "r": "acak"
+ },
+ {
+  "id": "A-0021-R-05",
+  "w": "ambat",
+  "c": "a",
+  "d": "lama-lama",
+  "x": [
+   {
+    "e": "bèk – that tajak, taplueng!",
+    "t": "janganlah Anda lambat-lambat berjalan, larilah!"
+   }
+  ],
+  "r": "lambat"
+ },
+ {
+  "id": "A-0022-L-01",
+  "w": "ambat-ambat",
+  "c": "v",
+  "d": "mengingat-ingat, memperhatikan, mengamat-amati",
+  "x": [
+   {
+    "e": "si Pulen bak lôn – – lagèe-lagèe lôn turi rupa tapi hana lôn tusee",
+    "t": "Kalau saya ingat-ingat, rasa-r-sanya saya mengenal rupa si Pola itu, tetapi saya tidak mengetahui namanya lagi!"
+   },
+   {
+    "e": "bak lôn – rupa gobnyan, lagèe-lagèe na tom meurumpok lôn ngon gobnyan",
+    "t": "kalau saya memperhatikan rupanya, rasa-rasanya saya pernah bertemu dengannya"
+   },
+   {
+    "e": "jinoe gata padum na umu? – hom! Bak lôn – – (=bak, ubé – – lôn) alèh na peuet plôh thôn",
+    "t": "berapa umur Anda sekarang? – entahlah! menurut pengamat saya, barangkali empat puluh tahun"
+   }
+  ]
+ },
+ {
+  "id": "A-0022-R-03",
+  "w": "amèng",
+  "c": "n",
+  "d": "desas-desus, berita",
+  "x": [
+   {
+    "e": "na lôn deungo –, gobnyan h'an geujeung woe lé u gampông",
+    "t": "Saya mendengar desas-desus bahwa ia tidak berani pulang ke kampungnya lagi"
+   },
+   {
+    "e": "h'an tom jijak keu noe, meung – jih pih tan tatupat",
+    "t": "ia tidak pernah datang kemari; beritanya pun tidak diketahui di mana ia berada."
+   }
+  ],
+  "r": "angèn"
+ },
+ {
+  "id": "A-0022-R-04",
+  "w": "ameum",
+  "c": "v",
+  "d": "mengingat-ingat, mengenangkan, merenungkan",
+  "x": [
+   {
+    "e": "lumpoe h'an jeuet tapeuimeum, tapeu – jeuet",
+    "t": "mimpin tidak boleh diikuti, tetapi boleh dikenangkan"
+   },
+   {
+    "e": "cuba tapeu – lé gata peue nyang lôn kheun uroe jèh bak gata, lôn ka tuwo",
+    "t": "Coba Anda ingat-ingat apa yang telah saya katakan dahulu kpd Anda, saya sudah lupa"
+   }
+  ],
+  "v": "peuameum",
+  "r": "ambat-ambat; imeum"
+ },
+ {
+  "id": "A-0023-L-01",
+  "w": "amiek",
+  "c": "v",
+  "d": "membuntuti terus-menerus, bersandar rapat",
+  "x": [
+   {
+    "e": "ho nyang jijak ta – sabé, meung goh lom jibayeue utangji!",
+    "t": "buntuti terus ke mana perginya sebelum ia membayar utangnya"
+   },
+   {
+    "e": "bèk ta – lôn, hugôb that",
+    "t": "jangan Anda bersandar rapat dng saya, keadaannya panas sekali."
+   },
+   {
+    "e": "gata taduek meu – that bak gob, hugôh gob-gob",
+    "t": "Anda duduk terlalu bersandar rapat pd saya, saya merasa panas krnnya."
+   }
+  ],
+  "h": "1"
+ },
+ {
+  "id": "A-0023-L-03",
+  "w": "amilan",
+  "c": "n",
+  "d": "ambilan, utang",
+  "x": [
+   {
+    "e": "padum ka – gata bak keude nyan?",
+    "t": "sudah berapa utang Anda di kedai itu?"
+   }
+  ],
+  "h": "1"
+ },
+ {
+  "id": "A-0023-L-04",
+  "w": "amilan",
+  "c": "n",
+  "d": "tujuan, maksud, tipu daya, cara mencapai suatu maksud",
+  "x": [
+   {
+    "e": "peue – gata bak buet nyan?",
+    "t": "apakah maksud Anda dl hal itu?"
+   },
+   {
+    "e": "gasèh jinoe ami –",
+    "t": "kasih sayang sekarang dibarengi dng maksud"
+   },
+   {
+    "e": "ami – –",
+    "t": "maksud sesamanya"
+   }
+  ],
+  "h": "2"
+ },
+ {
+  "id": "A-0023-R-04",
+  "w": "ampeueng",
+  "c": "v",
+  "d": "jemput, mendatangi, menghalangi",
+  "x": [
+   {
+    "e": "jamèe ka teuka, beureujang tajak –",
+    "t": "tamu-tamu sudah tiba, segeralah menjemputnya"
+   },
+   {
+    "e": "jak – sadatinggon alangan",
+    "t": "menjemput sadati dng arak-arakan alangan"
+   },
+   {
+    "e": "le that ureueng jak meu – bak piasan nyan",
+    "t": "banyak orang mendatangi perayaan itu"
+   }
+  ],
+  "r": "alangan (sebaris); suleueng; teukeudi"
+ },
+ {
+  "id": "A-0024-L-01",
+  "w": "ampeuet",
+  "c": "n",
+  "d": "ambang",
+  "x": [
+   {
+    "e": "bek taduek bak – pintô!",
+    "t": "janganlah duduk di ambang pintu"
+   },
+   {
+    "e": "~ reunyeum",
+    "t": "ambang tangga"
+   },
+   {
+    "e": "~ pintô",
+    "t": "ambang pintu"
+   }
+  ],
+  "v": "eumpeuet"
+ },
+ {
+  "id": "A-0024-L-02",
+  "w": "amplaih",
+  "c": "n",
+  "d": "empelas, menggosok sampai mengkilat",
+  "x": [
+   {
+    "e": "ta – beugèt alèe parang nyoe",
+    "t": "gosoklah gagang parang ini hingga berkilat."
+   },
+   {
+    "e": "reuncông nyan jroh that geu –",
+    "t": "rencong itu sangat rapi diampelas"
+   }
+  ]
+ }
+]

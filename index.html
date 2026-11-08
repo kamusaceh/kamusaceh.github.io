@@ -523,9 +523,40 @@ function kamusMulai(DATA){
 
   /* awal */
   var day=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5);
-  show(day%DATA.length,"Kata hari ini");
+  if(!window.__khi)show(day%DATA.length,"Kata hari ini");   /* cadangan bila kata-hari-ini.json gagal dimuat */
   drawGrid();drawRecent();
 }
+/* Kata hari ini: dibaca dari kata-hari-ini.json (berkas khusus berisi entri lengkap), tidak bergantung pada API.
+   Satu kata per hari, berganti tiap tengah malam waktu setempat. */
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+  function tebal(kalimat,kata){
+    var stem=kata.slice(0,Math.max(3,kata.length-2)).toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+    return esc(kalimat).replace(new RegExp("([A-Za-z]*"+stem+"[A-Za-z]*)","i"),"<b>$1</b>");
+  }
+  function lengkap(d){return d&&d.id&&d.w&&d.c&&d.d&&d.x&&d.x.length&&d.x.every(function(o){return o.e&&o.t})}
+  function tampil(d,t){
+    var ex=d.x.map(function(o){return '<p class="ex">'+tebal(o.e,d.w)+'</p><p class="tr">'+esc(o.t)+'</p>'}).join("");
+    var entry=$("entry");
+    $("cardLabel").textContent="Kata hari ini";
+    $("cardCls").textContent=d.c;
+    $("cardNo").textContent=new Intl.DateTimeFormat("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(t);
+    entry.innerHTML='<h2 class="w">'+esc(d.w)+(d.h?'<sup class="hm">'+esc(d.h)+'</sup>':"")+'</h2><p class="ph">'+(d.v?'varian: '+esc(d.v)+' ':'')+'<span class="cls">'+esc(d.c)+'</span></p><p class="def">'+esc(d.d)+'</p>'+ex+(d.r?'<p class="rj">Lihat juga: '+esc(d.r)+'</p>':'')+'<p class="rj"><a href="/entri/'+encodeURIComponent(d.id)+'/">Buka halaman kata →</a></p>';
+    entry.classList.remove("swap");void entry.offsetWidth;entry.classList.add("swap");
+    window.__khi=true;
+  }
+  fetch("/kata-hari-ini.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(L){
+    L=(L||[]).filter(lengkap);
+    if(!L.length)throw 0;
+    var t=new Date(),hari=Math.floor((t.getTime()-t.getTimezoneOffset()*6e4)/864e5);
+    tampil(L[hari%L.length],t);
+  }).catch(function(){
+    var entry=$("entry");
+    if(!window.__khi&&entry&&!entry.childElementCount)entry.innerHTML='<p class="def">Kata hari ini belum dapat dimuat.</p>';
+  });
+})();
+
 /* Titik berdenyut di atas judul: hijau = terhubung ke API, merah = tidak terhubung. */
 (function(){
   var dot=document.querySelector(".eyebrow i");
