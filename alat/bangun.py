@@ -108,12 +108,20 @@ for r in rows[1:]:
     ex = [(g(f"contoh_{n}"), g(f"arti_{n}")) for n in range(1, 26) if g(f"contoh_{n}") or g(f"arti_{n}")]
     if not arti and not rj: continue            # tanpa arti/rujukan = isi tipis: jangan diindeks
     lab = w + (f" ({h})" if h else "")
-    isi = arti or (f"Lihat: {rj}" if rj else "")
+    isi = arti or (f"Rujuk: {rj}" if rj else "")
     ref_items = [x.strip() for x in re.split(r"[;,]", rj) if x.strip()]
     ref_html = "".join(
         f'<a href="/entri/{e(ID_KATA[kunci_kata(x)])}/">{e(x)}</a>'
         if kunci_kata(x) in ID_KATA else f'<span>{e(x)}</span>'
         for x in ref_items
+    )
+    ref_icon = '<svg class="ref-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M5 5h6v6"/></svg>'
+    isi_html = e(arti) if arti else (
+        '<span class="def-ref-label">Rujuk:</span> ' + ', '.join(
+            f'<a class="def-ref-link" href="/entri/{e(ID_KATA[kunci_kata(x)])}/">{ref_icon}{e(x)}</a>'
+            if kunci_kata(x) in ID_KATA else f'<span class="def-ref-text">{e(x)}</span>'
+            for x in ref_items
+        ) if ref_items else ""
     )
     judul = f"{lab} – arti dan contoh kalimat bahasa Aceh · {NAMA}"
     bagus = [x for x in ex if x[0] and x[1] and not re.match(r"^[\s–—-]", x[0])]
@@ -128,7 +136,7 @@ for r in rows[1:]:
     sup = f'<sup class="hm">{e(h)}</sup>' if h else ""
     ganti = [('<h1 id="word"></h1>', f'<h1 id="word">{sup}{e(w)}</h1>'),
              ('id="bg" aria-hidden="true"></div>', f'id="bg" aria-hidden="true">{e(w)}</div>'),
-             ('<p class="def" id="def"></p>', f'<p class="def" id="def">{e(isi)}</p>'),
+             ('<p class="def" id="def"></p>', f'<p class="def" id="def">{isi_html}</p>'),
              ('<section class="blk" id="refblk" hidden>', f'<section class="blk" id="refblk"{" " if ref_items else " hidden"}>'),
              ('<div class="ref-links" id="refs"></div>', f'<div class="ref-links" id="refs">{ref_html}</div>'),
              ('<div class="xs" id="exs"></div>', '<div class="xs" id="exs">' + "".join(f'<div><p class="ex">{e(a)}</p><p class="tr">{e(b)}</p></div>' for a, b in ex) + '</div>'),
