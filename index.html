@@ -179,6 +179,19 @@ h2{font-family:var(--display);font-weight:800;font-stretch:85%;font-size:clamp(1
 .item b{font-family:var(--display);font-size:1.15rem;font-weight:800;letter-spacing:-.02em}
 .item em{font-family:var(--mono);font-style:normal;font-size:.72rem;color:var(--accent);margin:0 8px 0 5px}
 .item span{color:var(--muted);font-size:.95rem}
+.vw{display:flex;gap:6px;margin:0 0 18px}
+.vw button{height:34px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--display);font-weight:700;font-size:.9rem;cursor:pointer}
+.vw button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.grid[data-view="tabel"]{column-width:auto;column-count:1;column-rule:0}
+.grid[data-view="tabel"] .th,.grid[data-view="tabel"] .item{display:grid;grid-template-columns:minmax(120px,1.2fr) 70px 3fr;gap:14px;align-items:baseline;padding:10px 8px}
+.grid .th{display:none}
+.grid[data-view="tabel"] .th{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--ink)}
+.grid[data-view="tabel"] .item em{margin:0}
+.grid[data-view="ringkas"]{display:flex;flex-wrap:wrap;gap:8px;column-width:auto;column-rule:0}
+.grid[data-view="ringkas"] .item{width:auto;border:1px solid var(--line);border-radius:999px;background:var(--surface);padding:6px 14px}
+.grid[data-view="ringkas"] .item:hover,.grid[data-view="ringkas"] .item:focus-visible{border-color:var(--accent)}
+.grid[data-view="ringkas"] .item em,.grid[data-view="ringkas"] .item span{display:none}
+@media(max-width:560px){.grid[data-view="tabel"] .th,.grid[data-view="tabel"] .item{grid-template-columns:1fr 54px}.grid[data-view="tabel"] .th span:last-child{display:none}.grid[data-view="tabel"] .item span{grid-column:1/-1}}
 /* features */
 .feat{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
 .f{grid-column:span 2;border:1px solid var(--line);border-radius:22px;padding:24px;background:var(--surface);min-width:0}
@@ -316,7 +329,8 @@ padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-righ
 <span class="tag" id="count">isi kamus dari xlsx</span>
 </div>
 <div class="az" id="az" role="group" aria-label="Filter huruf awal"></div>
-<div class="grid" id="grid"></div>
+<div class="vw" id="vw" role="group" aria-label="Pilih tampilan daftar"><button type="button" data-v="kolom">Kolom</button><button type="button" data-v="tabel">Tabel</button><button type="button" data-v="ringkas">Ringkas</button></div>
+<div class="grid" id="grid" data-view="kolom"></div>
 </section>
 <!-- <section id="fitur">
 <div class="sec-head"><h2>Dibuat untuk mencari cepat</h2></div>
@@ -499,14 +513,26 @@ drawGrid();
 az.appendChild(b);
 });
 var seen={},SAMPLE=DATA.filter(function(d){if(!d.d||!d.x.length||seen[d.w])return false;seen[d.w]=1;return true}).slice(0,6);
+var vw=$("vw"),tampilan="kolom";
+try{var tv=localStorage.getItem("kamus-tampilan");if(tv==="kolom"||tv==="tabel"||tv==="ringkas")tampilan=tv}catch(e){}
+function setTampilan(v){
+tampilan=v;grid.setAttribute("data-view",v);
+vw.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x.getAttribute("data-v")===v))});
+}
+vw.addEventListener("click",function(e){
+var bt=e.target.closest("button[data-v]");if(!bt)return;
+setTampilan(bt.getAttribute("data-v"));
+try{localStorage.setItem("kamus-tampilan",tampilan)}catch(x){}
+});
+setTampilan(tampilan);
 function drawGrid(){
 var semua=letter?DATA.filter(function(d){return d.H===letter}):SAMPLE;
 var list=semua;
 $("count").textContent=letter
 ?semua.length+" kata berawalan "+letter
 :list.length+" kata contoh dari "+DATA.length+" entri \u00b7 pilih huruf atau cari kata di atas untuk melihat semuanya";
-grid.innerHTML=list.map(function(d){
-return '<button class="item" type="button" data-id="'+esc(d.id)+'"><b>'+lab(d)+'</b><em>'+esc(d.c||d.j)+'</em><span>'+esc(rd(d))+'</span></button>';
+grid.innerHTML='<div class="th" aria-hidden="true"><span>Kata</span><span>Kelas</span><span>Arti</span></div>'+list.map(function(d){
+return '<button class="item" type="button" data-id="'+esc(d.id)+'" title="'+esc(rd(d))+'"><b>'+lab(d)+'</b><em>'+esc(d.c||d.j)+'</em><span>'+esc(rd(d))+'</span></button>';
 }).join("");
 }
 grid.addEventListener("click",function(e){
