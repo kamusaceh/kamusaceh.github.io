@@ -18,6 +18,7 @@ Proyek ini dipublikasikan melalui GitHub Pages dan dirancang sebagai situs stati
 - `index.html` — halaman beranda kamus
 - `entri/index.html` — halaman detail satu kata
 - `kontributor/index.html` — halaman komunitas kontributor
+- `huruf/index.html` — halaman daftar kata per huruf (`/huruf/a` sampai `/huruf/z`, dan `/huruf/` untuk semua); alamat per huruf dilayani lewat `404.html`
 - `config.js` — konfigurasi aplikasi, termasuk URL data dan endpoint API
 - `favicon.svg` — ikon situs
 - `og.png` — gambar pratinjau sosial

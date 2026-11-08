@@ -35,7 +35,7 @@
 </style>
 <script src="/config.js"></script>
 <script>
-(function(){var p=location.pathname,m=p.match(/^\/(entri|profil|riwayat)\/[^\/]+\/?$/);if(m){fetch("/"+m[1]+"/").then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(h){document.open();document.write(h);document.close()}).catch(function(){});return}var old=p.match(/^\/(entri|profil|kontributor)\.html$/);if(old){var k=decodeURIComponent((location.hash||"").slice(1));location.replace(old[1]==="kontributor"?"/kontributor/":"/"+old[1]+"/"+(k?encodeURIComponent(k):""))}})();
+(function(){var p=location.pathname,m=p.match(/^\/(entri|profil|riwayat|huruf)\/[^\/]+\/?$/);if(m){fetch("/"+m[1]+"/").then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(h){document.open();document.write(h);document.close()}).catch(function(){});return}var old=p.match(/^\/(entri|profil|kontributor)\.html$/);if(old){var k=decodeURIComponent((location.hash||"").slice(1));location.replace(old[1]==="kontributor"?"/kontributor/":"/"+old[1]+"/"+(k?encodeURIComponent(k):""))}})();
 </script>
 </head>
 <body>

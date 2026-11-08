@@ -172,26 +172,15 @@ h2{font-family:var(--display);font-weight:800;font-stretch:85%;font-size:clamp(1
 .az button:hover:not(:disabled){transform:translateY(-4px) rotate(-4deg);border-color:var(--accent)}
 .az button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .az button:disabled{opacity:.3;cursor:default}
-.grid{column-width:300px;column-gap:40px;column-rule:1px solid var(--line)}
-.item{display:block;width:100%;break-inside:avoid;text-align:left;border:0;border-bottom:1px solid var(--line);border-radius:8px;background:none;color:var(--ink);font:inherit;line-height:1.45;padding:9px 8px;cursor:pointer;min-width:0;transition:background .15s}
+.grid{display:flex;flex-wrap:wrap;gap:8px}
+.item{width:auto;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:inherit;line-height:1.4;padding:6px 14px;cursor:pointer;min-width:0;transition:border-color .2s,transform .18s}
+.item:hover,.item:focus-visible{border-color:var(--accent);transform:translateY(-2px)}
+.item b{font-family:var(--display);font-size:1.05rem;font-weight:800;letter-spacing:-.02em}
+.az button[data-all]{width:auto;padding:0 16px}
+.lanjut{flex-basis:100%;margin:12px 0 0}
+.lanjut a{color:var(--accent);font-weight:600;text-decoration:none}
+.lanjut a:hover{text-decoration:underline}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-.item:hover,.item:focus-visible{background:var(--surface)}
-.item b{font-family:var(--display);font-size:1.15rem;font-weight:800;letter-spacing:-.02em}
-.item em{font-family:var(--mono);font-style:normal;font-size:.72rem;color:var(--accent);margin:0 8px 0 5px}
-.item span{color:var(--muted);font-size:.95rem}
-.vw{display:flex;gap:6px;margin:0 0 18px}
-.vw button{height:34px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--display);font-weight:700;font-size:.9rem;cursor:pointer}
-.vw button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.grid[data-view="tabel"]{column-width:auto;column-count:1;column-rule:0}
-.grid[data-view="tabel"] .th,.grid[data-view="tabel"] .item{display:grid;grid-template-columns:minmax(120px,1.2fr) 70px 3fr;gap:14px;align-items:baseline;padding:10px 8px}
-.grid .th{display:none}
-.grid[data-view="tabel"] .th{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--ink)}
-.grid[data-view="tabel"] .item em{margin:0}
-.grid[data-view="ringkas"]{display:flex;flex-wrap:wrap;gap:8px;column-width:auto;column-rule:0}
-.grid[data-view="ringkas"] .item{width:auto;border:1px solid var(--line);border-radius:999px;background:var(--surface);padding:6px 14px}
-.grid[data-view="ringkas"] .item:hover,.grid[data-view="ringkas"] .item:focus-visible{border-color:var(--accent)}
-.grid[data-view="ringkas"] .item em,.grid[data-view="ringkas"] .item span{display:none}
-@media(max-width:560px){.grid[data-view="tabel"] .th,.grid[data-view="tabel"] .item{grid-template-columns:1fr 54px}.grid[data-view="tabel"] .th span:last-child{display:none}.grid[data-view="tabel"] .item span{grid-column:1/-1}}
 /* features */
 .feat{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
 .f{grid-column:span 2;border:1px solid var(--line);border-radius:22px;padding:24px;background:var(--surface);min-width:0}
@@ -329,8 +318,7 @@ padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-righ
 <span class="tag" id="count">isi kamus dari xlsx</span>
 </div>
 <div class="az" id="az" role="group" aria-label="Filter huruf awal"></div>
-<div class="vw" id="vw" role="group" aria-label="Pilih tampilan daftar"><button type="button" data-v="kolom">Kolom</button><button type="button" data-v="tabel">Tabel</button><button type="button" data-v="ringkas">Ringkas</button></div>
-<div class="grid" id="grid" data-view="kolom"></div>
+<div class="grid" id="grid"></div>
 </section>
 <!-- <section id="fitur">
 <div class="sec-head"><h2>Dibuat untuk mencari cepat</h2></div>
@@ -501,39 +489,27 @@ document.addEventListener("click",function(e){if(!e.target.closest(".search"))cl
 /* indeks A-Z dan daftar */
 var letters=[];
 DATA.forEach(function(d){var c=d.H;if(letters.indexOf(c)<0)letters.push(c)});
+function tekan(){
+az.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(letter?x.textContent===letter&&!x.hasAttribute("data-all"):x.hasAttribute("data-all")))});
+drawGrid();
+}
 "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(function(c){
 var b=document.createElement("button");b.type="button";b.textContent=c;
 b.setAttribute("aria-pressed","false");
 if(letters.indexOf(c)<0)b.disabled=true;
-b.onclick=function(){
-letter=(letter===c)?"":c;
-az.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x.textContent===letter))});
-drawGrid();
-};
+b.onclick=function(){letter=(letter===c)?"":c;tekan()};
 az.appendChild(b);
 });
-var seen={},SAMPLE=DATA.filter(function(d){if(!d.d||!d.x.length||seen[d.w])return false;seen[d.w]=1;return true}).slice(0,6);
-var vw=$("vw"),tampilan="kolom";
-try{var tv=localStorage.getItem("kamus-tampilan");if(tv==="kolom"||tv==="tabel"||tv==="ringkas")tampilan=tv}catch(e){}
-function setTampilan(v){
-tampilan=v;grid.setAttribute("data-view",v);
-vw.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x.getAttribute("data-v")===v))});
-}
-vw.addEventListener("click",function(e){
-var bt=e.target.closest("button[data-v]");if(!bt)return;
-setTampilan(bt.getAttribute("data-v"));
-try{localStorage.setItem("kamus-tampilan",tampilan)}catch(x){}
-});
-setTampilan(tampilan);
+var sb=document.createElement("button");sb.type="button";sb.textContent="Semua";sb.setAttribute("data-all","");sb.setAttribute("aria-pressed","true");
+sb.onclick=function(){letter="";tekan()};
+az.appendChild(sb);
+function urut(a,b){return String(a.w).localeCompare(String(b.w),"id")||(+a.h||0)-(+b.h||0)}
 function drawGrid(){
-var semua=letter?DATA.filter(function(d){return d.H===letter}):SAMPLE;
-var list=semua;
-$("count").textContent=letter
-?semua.length+" kata berawalan "+letter
-:list.length+" kata contoh dari "+DATA.length+" entri \u00b7 pilih huruf atau cari kata di atas untuk melihat semuanya";
-grid.innerHTML='<div class="th" aria-hidden="true"><span>Kata</span><span>Kelas</span><span>Arti</span></div>'+list.map(function(d){
-return '<button class="item" type="button" data-id="'+esc(d.id)+'" title="'+esc(rd(d))+'"><b>'+lab(d)+'</b><em>'+esc(d.c||d.j)+'</em><span>'+esc(rd(d))+'</span></button>';
-}).join("");
+var semua=(letter?DATA.filter(function(d){return d.H===letter}):DATA.slice()).sort(urut);
+$("count").textContent=semua.length+" kata"+(letter?" berawalan "+letter:" dari seluruh kamus");
+grid.innerHTML=semua.map(function(d){
+return '<button class="item" type="button" data-id="'+esc(d.id)+'" title="'+esc(rd(d))+'"><b>'+lab(d)+'</b></button>';
+}).join("")+'<p class="lanjut"><a href="/huruf/'+(letter?letter.toLowerCase()+"/":"")+'">Buka halaman '+(letter?"huruf "+letter:"semua huruf")+' \u2192</a></p>';
 }
 grid.addEventListener("click",function(e){
 var it=e.target.closest(".item");
