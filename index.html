@@ -93,6 +93,8 @@ a{color:inherit}
 .eyebrow{font-family:var(--mono);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px;margin:0 0 18px}
 .eyebrow i{width:9px;height:9px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-out infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+.eyebrow i.off{background:#e5383b;animation-name:pulse-off}
+@keyframes pulse-off{0%{box-shadow:0 0 0 0 rgba(229,56,59,.6)}100%{box-shadow:0 0 0 12px rgba(229,56,59,0)}}
 h1{font-family:var(--display);font-weight:800;font-stretch:80%;font-size:clamp(2.6rem,6.4vw,5rem);line-height:1.02;letter-spacing:-.035em;margin:0 0 20px;text-wrap:balance}
 .roll{display:inline-block;height:1.08em;overflow:hidden;vertical-align:bottom;background:linear-gradient(transparent 68%,var(--mark) 68%,var(--mark) 90%,transparent 90%);padding-right:.08em}
 .roll-in{display:flex;flex-direction:column;transition:transform .7s cubic-bezier(.7,0,.2,1)}
@@ -524,7 +526,17 @@ function kamusMulai(DATA){
   show(day%DATA.length,"Kata hari ini");
   drawGrid();drawRecent();
 }
-kamusAmbil("data").then(function(r){if(!r||!r.ok)throw 0;kamusMulai(r.entri)}).catch(function(){kamusGalat()});
+/* Titik berdenyut di atas judul: hijau = terhubung ke API, merah = tidak terhubung. */
+(function(){
+  var dot=document.querySelector(".eyebrow i");
+  function status(ok){
+    if(!dot)return;
+    dot.classList.toggle("off",!ok);
+    dot.title=ok?"Terhubung ke server":"Tidak terhubung ke server";
+  }
+  if(typeof kamusAmbil!=="function"){status(false);return}   /* config.js gagal dimuat */
+  kamusAmbil("data").then(function(r){if(!r||!r.ok)throw 0;status(true);kamusMulai(r.entri)}).catch(function(){status(false);kamusGalat()});
+})();
 </script>
 
 <div class="md" id="md" hidden>
