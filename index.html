@@ -172,13 +172,13 @@ h2{font-family:var(--display);font-weight:800;font-stretch:85%;font-size:clamp(1
 .az button:hover:not(:disabled){transform:translateY(-4px) rotate(-4deg);border-color:var(--accent)}
 .az button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .az button:disabled{opacity:.3;cursor:default}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
-.item{text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:18px;padding:18px;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-width:0;transition:transform .25s cubic-bezier(.3,1.4,.5,1),box-shadow .25s,border-color .25s;animation:rise .5s both;animation-delay:calc(var(--i)*35ms)}
+.grid{column-width:300px;column-gap:40px;column-rule:1px solid var(--line)}
+.item{display:block;width:100%;break-inside:avoid;text-align:left;border:0;border-bottom:1px solid var(--line);border-radius:8px;background:none;color:var(--ink);font:inherit;line-height:1.45;padding:9px 8px;cursor:pointer;min-width:0;transition:background .15s}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-.item:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:var(--shadow)}
-.item b{font-family:var(--display);font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
-.item span{color:var(--muted);font-size:.95rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.item em{font-family:var(--mono);font-style:normal;font-size:.72rem;color:var(--accent)}
+.item:hover,.item:focus-visible{background:var(--surface)}
+.item b{font-family:var(--display);font-size:1.15rem;font-weight:800;letter-spacing:-.02em}
+.item em{font-family:var(--mono);font-style:normal;font-size:.72rem;color:var(--accent);margin:0 8px 0 5px}
+.item span{color:var(--muted);font-size:.95rem}
 /* features */
 .feat{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
 .f{grid-column:span 2;border:1px solid var(--line);border-radius:22px;padding:24px;background:var(--surface);min-width:0}
@@ -500,14 +500,13 @@ az.appendChild(b);
 });
 var seen={},SAMPLE=DATA.filter(function(d){if(!d.d||!d.x.length||seen[d.w])return false;seen[d.w]=1;return true}).slice(0,6);
 function drawGrid(){
-var PER=24;
 var semua=letter?DATA.filter(function(d){return d.H===letter}):SAMPLE;
-var list=semua.slice(0,PER);
+var list=semua;
 $("count").textContent=letter
-?(list.length<semua.length?list.length+" dari "+semua.length:semua.length)+" kata berawalan "+letter+" · cari kata di atas untuk melihat semuanya"
-:list.length+" kata contoh dari "+DATA.length+" entri · cari kata di atas untuk melihat semuanya";
-grid.innerHTML=list.map(function(d,i){
-return '<button class="item" type="button" data-id="'+esc(d.id)+'" style="--i:'+i+'"><em>'+esc(d.c||d.j)+'</em><b>'+lab(d)+'</b><span>'+esc(rd(d))+'</span></button>';
+?semua.length+" kata berawalan "+letter
+:list.length+" kata contoh dari "+DATA.length+" entri \u00b7 pilih huruf atau cari kata di atas untuk melihat semuanya";
+grid.innerHTML=list.map(function(d){
+return '<button class="item" type="button" data-id="'+esc(d.id)+'"><b>'+lab(d)+'</b><em>'+esc(d.c||d.j)+'</em><span>'+esc(rd(d))+'</span></button>';
 }).join("");
 }
 grid.addEventListener("click",function(e){
