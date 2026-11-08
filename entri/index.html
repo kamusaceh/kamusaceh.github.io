@@ -180,6 +180,9 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
 .md-submit:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
 .md-submit:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
 .md-submit:disabled{opacity:.6;cursor:wait}
+.spin{display:inline-block;width:1em;height:1em;margin-right:9px;vertical-align:-.15em;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:btnspin .7s linear infinite}
+@keyframes btnspin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.spin{animation-duration:1.5s}}
 .md-msg{margin:0;border-left:4px solid var(--mark);background:var(--bg);padding:10px 14px;border-radius:10px;font-size:.98rem;line-height:1.4}
 .md-msg.ok{border-color:var(--accent)}
 @media (max-width:520px){.md-row{grid-template-columns:minmax(0,1fr)}.md-panel{padding:26px 20px 22px}.hb{padding:7px 12px}}
@@ -535,6 +538,11 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
     md.hidden=true;document.body.style.overflow="";
     if(last&&document.body.contains(last))last.focus();
   }
+  function busy(btn,on,label){
+    if(!btn)return;
+    if(on){if(btn.disabled)return;btn.dataset.loadingHtml=btn.innerHTML;btn.innerHTML='<span class="spin" aria-hidden="true"></span>'+label;btn.disabled=true;btn.setAttribute("aria-busy","true")}
+    else{if(btn.dataset.loadingHtml!==undefined){btn.innerHTML=btn.dataset.loadingHtml;delete btn.dataset.loadingHtml}btn.disabled=false;btn.removeAttribute("aria-busy")}
+  }
   function post(url,body){
     return fetch(url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)}).then(function(r){return r.json()});
   }
@@ -560,7 +568,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
     var u=$("lg-user").value.trim(),p=$("lg-pass").value,m=$("ms-login"),go=$("lg-go");
     if(!u||!p){msg(m,"Isi nama pengguna dan kata sandi.");return}
     if(!CFG.loginUrl){msg(m,"Server login belum disambungkan, jadi belum ada akun yang bisa masuk. Isi loginUrl di KAMUS_CONFIG pada file ini.");return}
-    go.disabled=true;
+    busy(go,true,"Memproses…");
     post(CFG.loginUrl,{aksi:"login",user:u,pass:p}).then(function(d){
       if(d&&d.ok){
         token=d.token||"ok";nama=d.nama||u;
@@ -568,7 +576,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
         $("lg-pass").value="";paint();
         if(pending==="add"){pending=null;show("add",last)}else hide();
       }else msg(m,(d&&d.pesan)||"Nama pengguna atau kata sandi salah.");
-    }).catch(function(){msg(m,"Tidak dapat menghubungi server. Coba lagi nanti.")}).then(function(){go.disabled=false});
+    }).catch(function(){msg(m,"Tidak dapat menghubungi server. Coba lagi nanti.")}).then(function(){busy(go,false)});
   });
 
   fa.addEventListener("submit",function(e){
@@ -577,11 +585,11 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
     var obj={kata_kepala:$("ad-w").value.trim(),homonim:$("ad-l").value.trim(),varian:$("ad-v").value.trim(),jenis_entri:$("ad-j").value,tipe_kata:$("ad-c").value,arti_indonesia:$("ad-d").value.trim(),rujukan:$("ad-r").value.trim(),contoh:[]};
     Array.prototype.forEach.call($("ad-exs").children,function(r){var a=r.querySelector(".ex-e").value.trim(),b=r.querySelector(".ex-t").value.trim();if(a||b)obj.contoh.push({e:a,t:b})});
     if(!obj.kata_kepala||!(obj.arti_indonesia||obj.rujukan)){msg(m,"Isi kata dan artinya (atau rujukannya).");return}
-    go.disabled=true;
+    busy(go,true,editId?"Menyimpan…":"Mengirim…");
     window.KAMUS_CRUD.save(obj,editId).then(function(d){
       if(d&&d.ok){msg(m,d.pesan||"Tersimpan.",true);if(editId||d.pesan==="Kata ditambahkan.")setTimeout(hide,700);if(!editId)reset()}
       else msg(m,(d&&d.pesan)||"Gagal menyimpan.");
-    }).then(function(){go.disabled=false});
+    }).catch(function(){msg(m,"Terjadi kesalahan saat menyimpan. Coba lagi.")}).then(function(){busy(go,false)});
   });
 
   window.KAMUS_UI={edit:function(d){
