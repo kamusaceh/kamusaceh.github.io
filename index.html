@@ -136,6 +136,7 @@ h1{font-family:var(--display);font-weight:800;font-stretch:80%;font-size:clamp(2
 .sugg{position:absolute;left:0;right:0;top:calc(100% + 14px);background:var(--surface);border:2px solid var(--ink);border-radius:16px;margin:0;padding:6px;list-style:none;z-index:5;box-shadow:var(--shadow);transform-origin:top;animation:pop .22s ease-out}
 @keyframes pop{from{opacity:0;transform:translateY(-6px) scaleY(.96)}to{opacity:1;transform:none}}
 .sugg li{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer;font-family:var(--display);font-weight:600}
+.sugg .sw{flex:none;max-width:60%;overflow-wrap:anywhere}
 .sugg li small{font-family:var(--text);font-weight:400;color:var(--muted);font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .sugg li[aria-selected="true"],.sugg li:hover{background:var(--bg)}
 .sugg .none{cursor:default;color:var(--muted);font-weight:400}
@@ -452,7 +453,7 @@ if(!matches.length){
 sugg.innerHTML='<li class="none" role="option">Kata tidak ditemukan</li>';
 }else{
 sugg.innerHTML=matches.map(function(d,i){
-return '<li role="option" data-id="'+esc(d.id)+'" aria-selected="'+(i===0)+'">'+hl(d.w,term)+(d.h?' <sup class="hm">'+esc(d.h)+'</sup>':'')+'<small>'+esc(rd(d))+'</small></li>';
+return '<li role="option" data-id="'+esc(d.id)+'" aria-selected="'+(i===0)+'"><span class="sw">'+hl(d.w,term)+(d.h?' <sup class="hm">'+esc(d.h)+'</sup>':'')+'</span><small>'+esc(rd(d))+'</small></li>';
 }).join("");
 }
 sugg.hidden=false;q.setAttribute("aria-expanded","true");
