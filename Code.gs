@@ -305,7 +305,7 @@ function bacaKontributor() {
     var username = String(r[2] || '').trim();
     var aksi = String(r[4] || '').trim().toLowerCase();
     if (!username) return;
-    var p = siapkan(username, username, 'kontributor', '', 0);
+    var p = profil[kunci(username)] || siapkan(username, username, 'kontributor', '', 0);
     p.adaAktivitas = true;
     if (aksi === 'tambah') p.kata++;
     else if (aksi === 'sunting') p.sunting++;
