@@ -26,7 +26,7 @@ function kamusAmbil(aksi) {
 
 function kamusOrang(x) {
   var bln = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"], j = String(x.j || ""), m = j.match(/^(\d{4})-(\d{2})/);
-  return { n: x.n || x.nama || x.username, username: x.username || x.user || x.u || "", r: x.r, j: m ? bln[+m[2] - 1] + " " + m[1] : j, kata: x.kata, sunting: x.sunting, verif: x.verif, lafal: x.lafal, streak: x.streak };
+  return { n: x.n || x.nama || x.username, username: x.username || x.user || x.u || "", r: x.r, j: m ? bln[+m[2] - 1] + " " + m[1] : j, kata: x.kata, sunting: x.sunting, verif: x.verif, streak: x.streak };
 }
 
 /* Beranda dimuat ulang dengan URL unik agar data terbaru tidak tertahan cache. */
