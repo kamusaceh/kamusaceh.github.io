@@ -113,7 +113,7 @@ for r in rows[1:]:
               {"@type": "ListItem", "position": 2, "name": lab, "item": kanon}]}]
     s = pasang(tmpl, judul, seo(judul, potong(desk, 300), kanon, "index,follow", ld, "article"))
     sup = f'<sup class="hm">{e(h)}</sup>' if h else ""
-    ganti = [('<h1 id="word"></h1>', f'<h1 id="word">{e(w)}{sup}</h1>'),
+    ganti = [('<h1 id="word"></h1>', f'<h1 id="word">{sup}{e(w)}</h1>'),
              ('id="bg" aria-hidden="true"></div>', f'id="bg" aria-hidden="true">{e(w)}</div>'),
              ('<p class="def" id="def"></p>', f'<p class="def" id="def">{e(isi)}</p>'),
              ('<div class="xs" id="exs"></div>', '<div class="xs" id="exs">' + "".join(f'<div><p class="ex">{e(a)}</p><p class="tr">{e(b)}</p></div>' for a, b in ex) + '</div>'),
@@ -126,7 +126,7 @@ for r in rows[1:]:
     urls.append(kanon)
 
 # 4. sitemap, robots, favicon
-st = [SITE + "/", SITE + "/kontributor/"] + urls
+st = [SITE + "/", SITE + "/kontributor/", SITE + "/huruf/"] + urls
 tulis("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
       "".join(f"  <url><loc>{e(u)}</loc><lastmod>{HARI}</lastmod></url>\n" for u in st) + "</urlset>\n")
 tulis("robots.txt", f"User-agent: *\nAllow: /\nDisallow: /profil/\nDisallow: /riwayat/\nDisallow: /pdf/\nDisallow: /entri/index.html\n\nSitemap: {SITE}/sitemap.xml\n")

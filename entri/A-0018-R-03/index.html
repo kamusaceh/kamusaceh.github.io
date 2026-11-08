@@ -183,7 +183,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
 .md-msg{margin:0;border-left:4px solid var(--mark);background:var(--bg);padding:10px 14px;border-radius:10px;font-size:.98rem;line-height:1.4}
 .md-msg.ok{border-color:var(--accent)}
 @media (max-width:520px){.md-row{grid-template-columns:minmax(0,1fr)}.md-panel{padding:26px 20px 22px}.hb{padding:7px 12px}}
-.hm{font-size:.45em;margin-left:3px;color:var(--accent);vertical-align:super}
+.hm{font-size:.45em;margin-right:3px;color:var(--accent);vertical-align:super}
 .xs{display:grid;gap:18px}
 .rj{margin:0;color:var(--muted);font-style:italic}
 .hist{list-style:none;margin:0;padding:0;display:grid;gap:14px}
@@ -216,7 +216,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
     <div class="hero">
       <div class="bgword" id="bg" aria-hidden="true">ali</div>
       <p class="eyebrow"><i></i>Entri kamus Aceh–Indonesia</p>
-      <h1 id="word">ali<sup class="hm">2</sup></h1>
+      <h1 id="word"><sup class="hm">2</sup>ali</h1>
       <div class="under" aria-hidden="true"></div>
       <div class="say" id="say"><span class=syl>varian: alè; halè; hali</span></div>
     </div>
@@ -309,14 +309,14 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
     var key=pathKey();
     if(!DATA[key])key=ids[0];
     var d=DATA[key];
-    function lab(x){return esc(x.w)+(x.h?'<sup class="hm">'+esc(x.h)+'</sup>':"")}
+    function lab(x){return (x.h?'<sup class="hm">'+esc(x.h)+'</sup>':"")+esc(x.w)}
     var jd=d.w+(d.h?" ("+d.h+")":""),is=d.d||(d.r?"Lihat: "+d.r:"");
     document.title=jd+" – arti dan contoh kalimat bahasa Aceh · Kamus Aceh";
     (function(){var u=location.origin+"/entri/"+encodeURIComponent(key)+"/";
       [["meta[name=description]","content","Arti kata “"+jd+"” dalam bahasa Aceh: "+is],["link[rel=canonical]","href",u],["meta[property='og:title']","content",document.title],["meta[property='og:url']","content",u]]
       .forEach(function(a){var el=document.querySelector(a[0]);if(el)el.setAttribute(a[1],a[2])})})();
     var hh=$("word");hh.setAttribute("aria-label",d.w);
-    hh.innerHTML=d.w.split("").map(function(ch,i){return '<span aria-hidden="true" style="--i:'+i+'">'+esc(ch)+'</span>'}).join("")+(d.h?'<sup class="hm">'+esc(d.h)+'</sup>':"");
+    hh.innerHTML=(d.h?'<sup class="hm">'+esc(d.h)+'</sup>':"")+d.w.split("").map(function(ch,i){return '<span aria-hidden="true" style="--i:'+i+'">'+esc(ch)+'</span>'}).join("");
     $("bg").textContent=d.w;
     $("say").innerHTML=(d.v?'<span class="syl">varian: '+esc(d.v)+'</span>':'')+'<span class="cls">'+esc(d.c||JNS[d.j]||d.j)+'</span>';
     $("def").textContent=d.d||(d.r?"Lihat: "+d.r:"Belum ada arti.");

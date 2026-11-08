@@ -256,7 +256,7 @@ padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-righ
 .md-msg{margin:0;border-left:4px solid var(--mark);background:var(--bg);padding:10px 14px;border-radius:10px;font-size:.98rem;line-height:1.4}
 .md-msg.ok{border-color:var(--accent)}
 @media (max-width:520px){.md-row{grid-template-columns:minmax(0,1fr)}.md-panel{padding:26px 20px 22px}.hb{padding:7px 12px}}
-.hm{font-size:.45em;margin-left:3px;color:var(--accent);vertical-align:super}
+.hm{font-size:.45em;margin-right:3px;color:var(--accent);vertical-align:super}
 .xs{display:grid;gap:18px}
 .rj{margin:0;color:var(--muted);font-style:italic}
 /* spinner tombol, ikon profil setelah login */
@@ -381,7 +381,7 @@ if(reduce){el.textContent="gampong";return;}
 setInterval(function(){el.textContent=seq[k%seq.length];k++;},520);
 })();
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
-function lab(d){return esc(d.w)+(d.h?'<sup class="hm">'+esc(d.h)+'</sup>':"")}
+function lab(d){return (d.h?'<sup class="hm">'+esc(d.h)+'</sup>':"")+esc(d.w)}
 function rd(d){return d.d||(d.r?"→ "+d.r:"Arti belum tercatat.")}
 function hl(text,term){
 var i=term?text.toLowerCase().indexOf(term):-1;
@@ -445,7 +445,7 @@ if(!matches.length){
 sugg.innerHTML='<li class="none" role="option">Kata tidak ditemukan</li>';
 }else{
 sugg.innerHTML=matches.map(function(d,i){
-return '<li role="option" data-id="'+esc(d.id)+'" aria-selected="'+(i===0)+'"><span class="sw">'+hl(d.w,term)+(d.h?' <sup class="hm">'+esc(d.h)+'</sup>':'')+'</span><small>'+esc(rd(d))+'</small></li>';
+return '<li role="option" data-id="'+esc(d.id)+'" aria-selected="'+(i===0)+'"><span class="sw">'+(d.h?'<sup class="hm">'+esc(d.h)+'</sup>':'')+hl(d.w,term)+'</span><small>'+esc(rd(d))+'</small></li>';
 }).join("");
 }
 sugg.hidden=false;q.setAttribute("aria-expanded","true");
@@ -512,7 +512,7 @@ var entry=$("entry");
 $("cardLabel").textContent="Kata hari ini";
 $("cardCls").textContent=d.c;
 $("cardNo").textContent=new Intl.DateTimeFormat("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(t);
-entry.innerHTML='<h2 class="w">'+esc(d.w)+(d.h?'<sup class="hm">'+esc(d.h)+'</sup>':"")+'</h2><p class="ph">'+(d.v?'varian: '+esc(d.v)+' ':'')+'<span class="cls">'+esc(d.c)+'</span></p><p class="def">'+esc(d.d)+'</p>'+ex+(d.r?'<p class="rj">Lihat juga: '+esc(d.r)+'</p>':'')+'<p class="rj"><a href="/entri/'+encodeURIComponent(d.id)+'/">Buka halaman kata →</a></p>';
+entry.innerHTML='<h2 class="w">'+(d.h?'<sup class="hm">'+esc(d.h)+'</sup>':"")+esc(d.w)+'</h2><p class="ph">'+(d.v?'varian: '+esc(d.v)+' ':'')+'<span class="cls">'+esc(d.c)+'</span></p><p class="def">'+esc(d.d)+'</p>'+ex+(d.r?'<p class="rj">Lihat juga: '+esc(d.r)+'</p>':'')+'<p class="rj"><a href="/entri/'+encodeURIComponent(d.id)+'/">Buka halaman kata →</a></p>';
 entry.classList.remove("swap");void entry.offsetWidth;entry.classList.add("swap");
 window.__khi=true;
 }
