@@ -352,7 +352,6 @@ function kamusMulai(RAW){
     {id:"limaratus",nm:"Lima Ratus Kata",ds:"Menambahkan 500 kata ke kamus.",rule:"500 kata",test:function(p){return p.kata>=500},need:function(p){return (500-p.kata)+" kata lagi"},ic:"M5 4h9a4 4 0 0 1 4 4v12H9a4 4 0 0 1-4-4zM9 8h5M9 12h5M9 16h3",tone:"m"},
     {id:"teliti",nm:"Penyunting Teliti",ds:"Melakukan 500 suntingan.",rule:"500 suntingan",test:function(p){return p.sunting>=500},need:function(p){return (500-p.sunting)+" suntingan lagi"},ic:"M4 20l4-1 11-11-3-3L5 16zM14 6l3 3",tone:"a"},
     {id:"elang",nm:"Mata Elang",ds:"Memverifikasi 250 entri.",rule:"250 verifikasi",test:function(p){return p.verif>=250},need:function(p){return (250-p.verif)+" verifikasi lagi"},ic:"M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z",tone:"m"},
-    {id:"lafal",nm:"Penjaga Lafal",ds:"Menambahkan lafal untuk 100 kata.",rule:"100 lafal",test:function(p){return p.lafal>=100},need:function(p){return (100-p.lafal)+" lafal lagi"},ic:"M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2",tone:"a"},
     {id:"rajin",nm:"Rajin Setiap Hari",ds:"Berkontribusi 30 hari berturut-turut.",rule:"30 hari beruntun",test:function(p){return p.streak>=30},need:function(p){return (30-p.streak)+" hari lagi"},ic:"M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z",tone:"m"}
   ];
   var LEVELS=[[0,"Pemula"],[500,"Penulis"],[1500,"Penjaga Kata"],[3000,"Pustakawan"]];
@@ -362,7 +361,7 @@ function kamusMulai(RAW){
   function fmt(n){return n.toLocaleString("id-ID")}
 
   PEOPLE.forEach(function(p,i){
-    p.poin=p.kata*3+p.sunting+p.verif*2+p.lafal*2;
+    p.poin=p.kata*3+p.sunting+p.verif*2;
     p.ini=p.n.split(" ").slice(0,2).map(function(w){return w.charAt(0)}).join("").toUpperCase();
     p.av="av"+(i%4);
     p.badges=BADGES.filter(function(b){return b.test(p)});
@@ -452,7 +451,7 @@ function kamusMulai(RAW){
       '<button class="x" id="x" type="button" aria-label="Tutup profil">&times;</button>'+
       '<div class="who"><span class="av '+p.av+'" aria-hidden="true">'+esc(p.ini)+'</span><div><div class="nm" id="pn">'+esc(p.n)+'</div><div class="role">'+esc(p.r)+' · bergabung '+esc(p.j)+'</div></div></div>'+
       '<div class="lvl"><div class="lvl-top"><b>'+esc(LEVELS[p.lv][1])+'</b><span>'+(p.next?fmt(p.next[0]-p.poin)+' poin lagi menuju '+esc(p.next[1]):'Level tertinggi')+'</span></div><div class="bar"><i style="width:'+p.pct+'%"></i></div></div>'+
-      '<dl class="big"><div><dt>Kata</dt><dd>'+fmt(p.kata)+'</dd></div><div><dt>Sunting</dt><dd>'+fmt(p.sunting)+'</dd></div><div><dt>Verifikasi</dt><dd>'+fmt(p.verif)+'</dd></div><div><dt>Lafal</dt><dd>'+fmt(p.lafal)+'</dd></div></dl>'+
+      '<dl class="big"><div><dt>Kata</dt><dd>'+fmt(p.kata)+'</dd></div><div><dt>Sunting</dt><dd>'+fmt(p.sunting)+'</dd></div><div><dt>Verifikasi</dt><dd>'+fmt(p.verif)+'</dd></div></dl>'+
       '<div><p class="lab">Suntingan per minggu · 12 minggu terakhir</p><div class="act" role="img" aria-label="Grafik batang suntingan per minggu">'+
         p.act.map(function(v,i){return '<i style="--i:'+i+';height:'+Math.round(v/mx*100)+'%" title="'+v+' suntingan"></i>'}).join("")+
       '</div><div class="axis"><span>12 minggu lalu</span><span>Minggu ini</span></div></div>'+
