@@ -2,6 +2,32 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
+<script>
+/* Anti-cache: lepas service worker sisa, kosongkan cache, dan muat ulang bila HTML di server lebih baru. */
+(function(){
+var K="kamus-segar";
+function jaga(){try{var n=Date.now(),l=+sessionStorage.getItem(K)||0;if(n-l<60000)return false;sessionStorage.setItem(K,String(n));return true}catch(e){return false}}
+try{
+if("serviceWorker" in navigator){
+navigator.serviceWorker.getRegistrations().then(function(rs){
+if(!rs.length)return;
+return Promise.all(rs.map(function(r){return r.unregister()})).then(function(){if(jaga())location.reload()});
+}).catch(function(){});
+}
+if(window.caches&&caches.keys){caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})}).catch(function(){})}
+window.addEventListener("load",function(){
+setTimeout(function(){
+var u=location.pathname;
+function sig(r){return (r.headers.get("etag")||"")+"|"+(r.headers.get("last-modified")||"")}
+Promise.all([fetch(u,{cache:"default"}),fetch(u,{method:"HEAD",cache:"no-store"})]).then(function(a){
+var s1=sig(a[0]),s2=sig(a[1]);
+if(s1!=="|"&&s2!=="|"&&s1!==s2&&jaga())location.reload();
+}).catch(function(){});
+},1500);
+});
+}catch(e){}
+})();
+</script>
 <script>try{var t=localStorage.getItem("kamus-tema");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Kamus Aceh · Kamus Aceh–Indonesia daring</title>
