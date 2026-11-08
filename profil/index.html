@@ -331,7 +331,8 @@ function kamusMulai(RAW){
 
   function render(){
     var key=decodeURIComponent((location.pathname.match(/^\/profil\/([^\/]+)/)||[])[1]||(location.hash||"").slice(1));
-    var p=PEOPLE.filter(function(x){return x.slug===key})[0]||PEOPLE[0];
+    var p=PEOPLE.filter(function(x){return x.slug===key})[0];
+    if(!p){document.title="Profil tidak ditemukan · Kamus Aceh";$("app").innerHTML='<section class="blk"><h1>Profil tidak ditemukan</h1><p class="meta">Akun ini belum terdaftar sebagai kontributor atau nama profil tidak cocok.</p><a class="pill" href="/">Kembali ke beranda</a></section>';return;}
     document.title=p.n+" · Kamus Aceh";
 
     var li=0;LEVELS.forEach(function(l,k){if(p.poin>=l[0])li=k});
