@@ -16,7 +16,7 @@ Catatan referensi untuk server Kamus Aceh. Dokumen ini hanya pengetahuan; kode l
 | `Entri` | Data kata (sumber utama, kolom wajib lihat di bawah) |
 | `Aktivitas` | Log aksi: waktu, username, jenis, id_kata, detail, id_revisi |
 | `Riwayat` | Revisi: id_revisi, waktu, username, id_kata, aksi, ringkasan, sebelum, sesudah, membatalkan |
-| `Kontributor` | Statistik per pengguna (kata, sunting, verif, lafal, streak, poin; berisi rumus) |
+| `Kontributor` | Statistik per pengguna (kata, sunting, verif, streak, poin; berisi rumus) |
 | `Pengguna` | username, nama, peran, hash_sandi, garam |
 | `Ringkasan`, `Riwayat_Perkata` | Berisi rumus; dibuat otomatis oleh menu "Siapkan sheet" |
 
@@ -29,7 +29,7 @@ Semua POST dikirim sebagai teks JSON (`Content-Type: text/plain`).
 | Metode | Aksi | Hasil |
 |---|---|---|
 | GET | `?aksi=data` | `{ok, entri:[...], riwayat:{id:[...]}}` |
-| GET | `?aksi=kontributor` | `{ok, kontributor:[{username,n,r,j,kata,sunting,verif,lafal,streak,poin}]}` |
+| GET | `?aksi=kontributor` | `{ok, kontributor:[{username,n,r,j,kata,sunting,verif,streak,poin}]}` |
 | GET | `?aksi=ping` | `{ok, waktu}` |
 | POST | `login` (`user`, `pass`) | `{ok, token, nama, peran}` |
 | POST | `keluar` (`token`) | `{ok}` |
