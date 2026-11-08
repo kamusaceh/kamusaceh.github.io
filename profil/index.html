@@ -314,7 +314,7 @@ function kamusMulai(RAW){
   function slug(n){return n.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
 
   PEOPLE.forEach(function(p,i){
-    p.i=i;p.slug=slug(p.n);
+    p.i=i;p.slug=slug(p.username||"");
     p.poin=p.kata*3+p.sunting+p.verif*2+p.lafal*2;
     p.ini=p.n.split(" ").slice(0,2).map(function(w){return w.charAt(0)}).join("").toUpperCase();
     p.av="av"+(i%4);
@@ -335,7 +335,7 @@ function kamusMulai(RAW){
   function render(){
     var key=decodeURIComponent((location.pathname.match(/^\/profil\/([^\/]+)/)||[])[1]||(location.hash||"").slice(1));
     var p=PEOPLE.filter(function(x){return x.slug===key})[0];
-    if(!p){document.title="Profil tidak ditemukan · Kamus Aceh";$("app").innerHTML='<section class="blk"><h1>Profil tidak ditemukan</h1><p class="meta">Akun ini belum terdaftar sebagai kontributor atau nama profil tidak cocok.</p><a class="pill" href="/">Kembali ke beranda</a></section>';return;}
+    if(!p){document.title="Profil tidak ditemukan · Kamus Aceh";$("app").innerHTML='<section class="blk"><h1>Profil tidak ditemukan</h1><p class="meta">Username ini belum terdaftar sebagai kontributor atau tidak cocok dengan data akun.</p><a class="pill" href="/">Kembali ke beranda</a></section>';return;}
     document.title=p.n+" · Kamus Aceh";
 
     var li=0;LEVELS.forEach(function(l,k){if(p.poin>=l[0])li=k});
