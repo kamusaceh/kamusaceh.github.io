@@ -15,7 +15,7 @@
  *
  * API (semua POST dikirim sebagai teks JSON, Content-Type text/plain):
  *   GET  ?aksi=data         -> {ok, entri:[...], riwayat:{id:[...]}}     (format langsung dipakai halaman web)
- *   GET  ?aksi=kontributor  -> {ok, kontributor:[{username,n,r,j,kata,sunting,verif,lafal,streak,poin}]}
+ *   GET  ?aksi=kontributor  -> {ok, kontributor:[{username,n,r,j,kata,sunting,verif,streak,poin}]}
  *   POST {aksi:"login", user, pass}                  -> {ok, token, nama, peran}
  *   POST {aksi:"keluar", token}
  *   POST {aksi:"tambah_kata",   token, data}
@@ -48,7 +48,7 @@ var KOLOM_WAJIB = ['id', 'huruf', 'kata_kepala', 'homonim', 'varian', 'jenis_ent
 var HEAD = {
   Aktivitas:   ['waktu', 'username', 'jenis', 'id_kata', 'detail', 'id_revisi'],
   Riwayat:     ['id_revisi', 'waktu', 'username', 'id_kata', 'aksi', 'ringkasan', 'sebelum', 'sesudah', 'membatalkan'],
-  Kontributor: ['username', 'nama', 'peran', 'bergabung', 'kata', 'sunting', 'verif', 'lafal', 'streak', 'poin'],
+  Kontributor: ['username', 'nama', 'peran', 'bergabung', 'kata', 'sunting', 'verif', 'streak', 'poin'],
   Pengguna:    ['username', 'nama', 'peran', 'hash_sandi', 'garam']
 };
 
@@ -136,8 +136,8 @@ function pastikanKontributor(sesi) {
   var K = sheet('Kontributor'), n = lastRow(K, 1), v = n > 1 ? K.getRange(2, 1, n - 1, 1).getValues() : [];
   for (var i = 0; i < v.length; i++) if (v[i][0] === sesi.u) return;
   var r = n + 1, f = function (j) { return '=COUNTIFS(Aktivitas!$B:$B,$A' + r + ',Aktivitas!$C:$C,"' + j + '")'; };
-  K.getRange(r, 1, 1, 10).setValues([[sesi.u, sesi.nama, sesi.peran, Utilities.formatDate(new Date(), CFG.ZONA, 'yyyy-MM-dd'),
-    f('tambah'), f('sunting'), f('verif'), f('lafal'), 0, '=E' + r + '*3+F' + r + '+G' + r + '*2+H' + r + '*2']]);
+  K.getRange(r, 1, 1, 9).setValues([[sesi.u, sesi.nama, sesi.peran, Utilities.formatDate(new Date(), CFG.ZONA, 'yyyy-MM-dd'),
+    f('tambah'), f('sunting'), f('verif'), 0, '=E' + r + '*3+F' + r + '+G' + r + '*2']]);
 }
 
 /* ===================== operasi CRUD ===================== */
@@ -268,10 +268,10 @@ function bacaData() {
 }
 function bacaKontributor() {
   var K = sheet('Kontributor'), n = lastRow(K, 1), list = [];
-  if (n > 1) K.getRange(2, 1, n - 1, 10).getDisplayValues().forEach(function (r) {
+  if (n > 1) K.getRange(2, 1, n - 1, 9).getDisplayValues().forEach(function (r) {
     if (!r[0]) return;
     var j = r[3];
-    list.push({ username: r[0], n: r[1], r: r[2], j: j, kata: Number(r[4]) || 0, sunting: Number(r[5]) || 0, verif: Number(r[6]) || 0, lafal: Number(r[7]) || 0, streak: Number(r[8]) || 0, poin: Number(r[9]) || 0 });
+    list.push({ username: r[0], n: r[1], r: r[2], j: j, kata: Number(r[4]) || 0, sunting: Number(r[5]) || 0, verif: Number(r[6]) || 0, streak: Number(r[7]) || 0, poin: Number(r[8]) || 0 });
   });
   return { ok: true, kontributor: list };
 }
@@ -340,6 +340,11 @@ function menuUbahSandi() {
 function siapkanSheet() {
   var S = ss();
   entri();                                                    // pastikan sheet Entri lengkap kolomnya
+  var oldK = S.getSheetByName('Kontributor');
+  if (oldK && oldK.getLastColumn() >= 10) {
+    var oldHead = oldK.getRange(1, 1, 1, 10).getDisplayValues()[0];
+    if (oldHead[0] === 'username' && oldHead[1] === 'nama' && oldHead[2] === 'peran' && oldHead[3] === 'bergabung' && oldHead[4] === 'kata' && oldHead[5] === 'sunting' && oldHead[6] === 'verif' && oldHead[8] === 'streak' && oldHead[9] === 'poin') oldK.deleteColumn(8);
+  }
   Object.keys(HEAD).forEach(function (n) {
     var sh = S.getSheetByName(n) || S.insertSheet(n), h = HEAD[n];
     if (sh.getRange(1, 1, 1, h.length).getValues()[0].join('|') !== h.join('|')) sh.getRange(1, 1, 1, h.length).setValues([h]);
