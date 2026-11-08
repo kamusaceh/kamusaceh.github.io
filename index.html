@@ -591,11 +591,11 @@ Tanpa alamat, login ditolak dan usulan kata hanya disimpan sebagai draf di peran
 (function(){
 var CFG=KAMUS_CONFIG;
 var $=function(id){return document.getElementById(id)};
-var md=$("md"),fl=$("f-login"),fa=$("f-add"),last=null,pending=null,token=null,nama="";
-try{token=sessionStorage.getItem("kamus-token");nama=sessionStorage.getItem("kamus-nama")||""}catch(e){}
+var md=$("md"),fl=$("f-login"),fa=$("f-add"),last=null,pending=null,token=null,nama="",username="";
+try{token=sessionStorage.getItem("kamus-token");nama=sessionStorage.getItem("kamus-nama")||"";username=sessionStorage.getItem("kamus-username")||""}catch(e){}
 var ICON='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>';
 function slugProfil(s){return String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
-function urlProfil(){return "/profil/"+slugProfil(nama||"")+"/"}
+function urlProfil(){return "/profil/"+slugProfil(username||"")+"/"}
 function paint(){
 var b=$("loginBtn");
 if(token){
@@ -650,8 +650,8 @@ if(!CFG.loginUrl){msg(m,"Server login belum disambungkan, jadi belum ada akun ya
 busy(go,true,"Memproses…");
 post(CFG.loginUrl,{aksi:"login",user:u,pass:p}).then(function(d){
 if(d&&d.ok){
-token=d.token||"ok";nama=d.nama||u;
-try{sessionStorage.setItem("kamus-token",token);sessionStorage.setItem("kamus-nama",nama)}catch(e){}
+token=d.token||"ok";nama=d.nama||u;username=u;
+try{sessionStorage.setItem("kamus-token",token);sessionStorage.setItem("kamus-nama",nama);sessionStorage.setItem("kamus-username",username)}catch(e){}
 $("lg-pass").value="";paint();
 if(pending==="add"){pending=null;show("add",last)}else hide();
 }else msg(m,(d&&d.pesan)||"Nama pengguna atau kata sandi salah.");
