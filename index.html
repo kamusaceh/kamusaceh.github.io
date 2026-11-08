@@ -500,8 +500,12 @@ az.appendChild(b);
 });
 var seen={},SAMPLE=DATA.filter(function(d){if(!d.d||!d.x.length||seen[d.w])return false;seen[d.w]=1;return true}).slice(0,6);
 function drawGrid(){
-var list=SAMPLE.filter(function(d){return !letter||d.H===letter});
-$("count").textContent=list.length+" kata contoh dari "+DATA.length+" entri"+(letter?" berawalan "+letter:"")+" · cari kata di atas untuk melihat semuanya";
+var PER=24;
+var semua=letter?DATA.filter(function(d){return d.H===letter}):SAMPLE;
+var list=semua.slice(0,PER);
+$("count").textContent=letter
+?(list.length<semua.length?list.length+" dari "+semua.length:semua.length)+" kata berawalan "+letter+" · cari kata di atas untuk melihat semuanya"
+:list.length+" kata contoh dari "+DATA.length+" entri · cari kata di atas untuk melihat semuanya";
 grid.innerHTML=list.map(function(d,i){
 return '<button class="item" type="button" data-id="'+esc(d.id)+'" style="--i:'+i+'"><em>'+esc(d.c||d.j)+'</em><b>'+lab(d)+'</b><span>'+esc(rd(d))+'</span></button>';
 }).join("");
