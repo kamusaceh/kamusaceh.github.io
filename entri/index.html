@@ -251,10 +251,6 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
           <p class="lab">Kata lain</p>
           <div class="more" id="more"></div>
         </section>
-        <section class="blk">
-          <p class="lab">Riwayat</p>
-          <p class="def" id="revision-count">0 revisi</p>
-        </section>
         <button class="copy" id="copy" type="button">Salin kata dan arti</button>
         <div class="crud"><button class="copy" id="btn-edit" type="button">Sunting kata ini</button><button class="copy danger" id="btn-del" type="button">Hapus kata ini</button></div>
       </aside>
@@ -364,7 +360,6 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
       mb.setAttribute("href","/riwayat/"+encodeURIComponent(key)+"/");
     }
     $("histlab").textContent="Riwayat suntingan";
-    $("revision-count").textContent=hs.length+" revisi";
     $("histblk").hidden=!hs.length;
     drawHist(false);
     $("copy").onclick=function(){
