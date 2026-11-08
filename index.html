@@ -171,14 +171,6 @@ h2{font-family:var(--display);font-weight:800;font-stretch:85%;font-size:clamp(1
 .az a{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--display);font-weight:700;font-size:1rem;cursor:pointer;transition:transform .18s cubic-bezier(.3,1.6,.5,1),background .2s,color .2s}
 .az a:hover:not([aria-disabled="true"]){transform:translateY(-4px) rotate(-4deg);border-color:var(--accent)}
 .az a[aria-disabled="true"]{opacity:.3;cursor:default;pointer-events:none}
-.grid{display:flex;flex-wrap:wrap;gap:8px}
-.item{width:auto;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:inherit;line-height:1.4;padding:6px 14px;cursor:pointer;min-width:0;transition:border-color .2s,transform .18s}
-.item:hover,.item:focus-visible{border-color:var(--accent);transform:translateY(-2px)}
-.item b{font-family:var(--display);font-size:1.05rem;font-weight:800;letter-spacing:-.02em}
-.az a[data-all]{width:auto;padding:0 16px}
-.lanjut{flex-basis:100%;margin:12px 0 0}
-.lanjut a{color:var(--accent);font-weight:600;text-decoration:none}
-.lanjut a:hover{text-decoration:underline}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 /* features */
 .feat{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
@@ -317,7 +309,6 @@ padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-righ
 <span class="tag" id="count">isi kamus dari xlsx</span>
 </div>
 <nav class="az" id="az" aria-label="Buka daftar kata menurut huruf"></nav>
-<div class="grid" id="grid"></div>
 </section>
 <!-- <section id="fitur">
 <div class="sec-head"><h2>Dibuat untuk mencari cepat</h2></div>
@@ -365,7 +356,7 @@ padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-righ
 <script>
 function kamusMulai(DATA){
 var $=function(id){return document.getElementById(id)};
-var q=$("q"),sugg=$("sugg"),entry=$("entry"),grid=$("grid"),az=$("az");
+var q=$("q"),sugg=$("sugg"),entry=$("entry"),az=$("az");
 var active=-1,matches=[],current=0,letter="";
 var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 /* huruf melayang di latar hero */
@@ -495,20 +486,7 @@ az.appendChild(a);
 });
 var sa=document.createElement("a");sa.textContent="Semua";sa.href="/huruf/";sa.setAttribute("data-all","");
 az.appendChild(sa);
-function urut(a,b){return String(a.w).localeCompare(String(b.w),"id")||(+a.h||0)-(+b.h||0)}
-function drawGrid(){
-var semua=(letter?DATA.filter(function(d){return d.H===letter}):DATA.slice()).sort(urut);
-$("count").textContent=semua.length+" kata"+(letter?" berawalan "+letter:" dari seluruh kamus");
-grid.innerHTML=semua.map(function(d){
-return '<button class="item" type="button" data-id="'+esc(d.id)+'" title="'+esc(rd(d))+'"><b>'+lab(d)+'</b></button>';
-}).join("")+'<p class="lanjut"><a href="/huruf/'+(letter?letter.toLowerCase()+"/":"")+'">Buka halaman '+(letter?"huruf "+letter:"semua huruf")+' \u2192</a></p>';
-}
-grid.addEventListener("click",function(e){
-var it=e.target.closest(".item");
-if(!it)return;
-pick(it.getAttribute("data-id"),false);
-$("atas").scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
-});
+$("count").textContent=DATA.length+" kata dalam "+letters.length+" huruf";
 $("rand").addEventListener("click",function(){
 var i;do{i=Math.floor(Math.random()*DATA.length)}while(i===current&&DATA.length>1);
 q.value="";closeSugg();show(i,"Kata acak");
@@ -516,7 +494,7 @@ q.value="";closeSugg();show(i,"Kata acak");
 /* awal */
 var day=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5);
 if(!window.__khi)show(day%DATA.length,"Kata hari ini"); /* cadangan bila kata-hari-ini.json gagal dimuat */
-drawGrid();drawRecent();
+drawRecent();
 }
 /* Kata hari ini: dibaca dari kata-hari-ini.json (berkas khusus berisi entri lengkap), tidak bergantung pada API.
 Satu kata per hari, berganti tiap tengah malam waktu setempat. */
