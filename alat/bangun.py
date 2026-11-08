@@ -89,6 +89,13 @@ tulis("404.html", pasang(s, f"Halaman tidak ditemukan · {NAMA}", seo("Halaman t
 # 3. halaman statis per kata
 wb = load_workbook([f for f in os.listdir(".") if f.endswith(".xlsx")][0], read_only=True, data_only=True)
 rows = list(wb["Entri"].iter_rows(values_only=True)); H = {n: i for i, n in enumerate(rows[0])}
+def kunci_kata(s):
+    return re.sub(r"\s+", " ", str(s or "")).strip().casefold()
+
+ID_KATA = {}
+for rr in rows[1:]:
+    if rr[H["id"]] and rr[H["kata_kepala"]]:
+        ID_KATA.setdefault(kunci_kata(rr[H["kata_kepala"]]), str(rr[H["id"]]).strip())
 tmpl = re.sub(r"<!--seo-->.*?<!--/seo-->\n?", "", open("entri/index.html", encoding="utf-8").read(), flags=re.S)
 for d in os.listdir("entri"):
     if os.path.isdir(f"entri/{d}"): shutil.rmtree(f"entri/{d}")
@@ -102,6 +109,12 @@ for r in rows[1:]:
     if not arti and not rj: continue            # tanpa arti/rujukan = isi tipis: jangan diindeks
     lab = w + (f" ({h})" if h else "")
     isi = arti or (f"Lihat: {rj}" if rj else "")
+    ref_items = [x.strip() for x in re.split(r"[;,]", rj) if x.strip()]
+    ref_html = "".join(
+        f'<a href="/entri/{e(ID_KATA[kunci_kata(x)])}/">{e(x)}</a>'
+        if kunci_kata(x) in ID_KATA else f'<span>{e(x)}</span>'
+        for x in ref_items
+    )
     judul = f"{lab} – arti dan contoh kalimat bahasa Aceh · {NAMA}"
     bagus = [x for x in ex if x[0] and x[1] and not re.match(r"^[\s–—-]", x[0])]
     desk = f"Arti kata “{lab}” dalam bahasa Aceh: {potong(isi, 130).rstrip('.')}." + (f" Contoh: {potong(bagus[0][0], 60)} = {potong(bagus[0][1], 60)}" if bagus else "")
@@ -116,6 +129,8 @@ for r in rows[1:]:
     ganti = [('<h1 id="word"></h1>', f'<h1 id="word">{sup}{e(w)}</h1>'),
              ('id="bg" aria-hidden="true"></div>', f'id="bg" aria-hidden="true">{e(w)}</div>'),
              ('<p class="def" id="def"></p>', f'<p class="def" id="def">{e(isi)}</p>'),
+             ('<section class="blk" id="refblk" hidden>', f'<section class="blk" id="refblk"{" " if ref_items else " hidden"}>'),
+             ('<div class="ref-links" id="refs"></div>', f'<div class="ref-links" id="refs">{ref_html}</div>'),
              ('<div class="xs" id="exs"></div>', '<div class="xs" id="exs">' + "".join(f'<div><p class="ex">{e(a)}</p><p class="tr">{e(b)}</p></div>' for a, b in ex) + '</div>'),
              ('<section class="blk" id="histblk">', '<section class="blk" id="histblk" hidden>'),
              ('<div class="say" id="say"></div>', f'<div class="say" id="say">{("<span class=syl>varian: "+e(v)+"</span>") if v else ""}</div>')]
