@@ -267,11 +267,57 @@ function bacaData() {
   return { ok: true, entri: entriList, riwayat: riwayat };
 }
 function bacaKontributor() {
-  var K = sheet('Kontributor'), n = lastRow(K, 1), list = [];
-  if (n > 1) K.getRange(2, 1, n - 1, 9).getDisplayValues().forEach(function (r) {
-    if (!r[0]) return;
-    var j = r[3];
-    list.push({ username: r[0], n: r[1], r: r[2], j: j, kata: Number(r[4]) || 0, sunting: Number(r[5]) || 0, verif: Number(r[6]) || 0, streak: Number(r[7]) || 0, poin: Number(r[8]) || 0 });
+  // Statistik dihitung langsung dari Riwayat (log permanen), bukan dari
+  // rumus/angka cache pada sheet Kontributor yang bisa tertinggal atau nol.
+  var profil = {}, urut = [];
+  function kunci(u) { return String(u || '').trim().toLowerCase(); }
+  function siapkan(u, nama, peran, bergabung, streak) {
+    var key = kunci(u);
+    if (!key) return null;
+    if (!profil[key]) {
+      profil[key] = { username: String(u).trim(), n: nama || String(u).trim(), r: peran || 'kontributor',
+        j: bergabung || '', kata: 0, sunting: 0, verif: 0, streak: Number(streak) || 0 };
+      urut.push(key);
+    } else {
+      if (nama) profil[key].n = nama;
+      if (peran) profil[key].r = peran;
+      if (bergabung) profil[key].j = bergabung;
+      if (streak !== undefined && streak !== '') profil[key].streak = Number(streak) || 0;
+    }
+    return profil[key];
+  }
+
+  // Ambil identitas akun agar nama dan peran tetap konsisten.
+  var P = sheet('Pengguna'), np = lastRow(P, 1);
+  if (np > 1) P.getRange(2, 1, np - 1, 5).getDisplayValues().forEach(function (r) {
+    if (r[0]) siapkan(r[0], r[1], r[2], '', 0);
+  });
+
+  // Pertahankan tanggal bergabung dan streak yang sudah tersimpan.
+  var K = sheet('Kontributor'), nk = lastRow(K, 1);
+  if (nk > 1) K.getRange(2, 1, nk - 1, 9).getDisplayValues().forEach(function (r) {
+    if (r[0]) siapkan(r[0], r[1], r[2], r[3], r[7]);
+  });
+
+  // Riwayat adalah sumber hitung utama: satu baris untuk setiap perubahan.
+  var R = sheet('Riwayat'), nr = lastRow(R, 1);
+  if (nr > 1) R.getRange(2, 1, nr - 1, 9).getValues().forEach(function (r) {
+    var username = String(r[2] || '').trim();
+    var aksi = String(r[4] || '').trim().toLowerCase();
+    if (!username) return;
+    var p = siapkan(username, username, 'kontributor', '', 0);
+    if (aksi === 'tambah') p.kata++;
+    else if (aksi === 'sunting') p.sunting++;
+    else if (aksi === 'verif' || aksi === 'verifikasi') p.verif++;
+  });
+
+  var list = urut.map(function (key) {
+    var p = profil[key];
+    p.poin = p.kata * 3 + p.sunting + p.verif * 2;
+    return p;
+  }).filter(function (p) {
+    // Akun tanpa kontribusi tetap ditampilkan jika sudah tercatat di sheet Kontributor.
+    return p.kata || p.sunting || p.verif || kunci(p.username);
   });
   return { ok: true, kontributor: list };
 }
