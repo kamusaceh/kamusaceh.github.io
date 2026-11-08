@@ -598,7 +598,7 @@ function paint(){
 var b=$("loginBtn");
 if(token){
 b.innerHTML=ICON+"<span></span>";
-b.lastChild.textContent=nama?nama.split(" ")[0]:"Profil";
+b.lastChild.textContent=nama||"Profil";
 b.classList.add("hb-user");
 b.setAttribute("aria-label","Buka profil");
 }else{
