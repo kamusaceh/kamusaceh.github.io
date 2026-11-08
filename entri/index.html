@@ -102,6 +102,7 @@ h1 span{display:inline-block;animation:drop .8s cubic-bezier(.2,1.3,.4,1) both;a
 @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 .lab{font-family:var(--mono);font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
 .def{font-size:1.5rem;line-height:1.4;margin:0}
+.def-ref-label{font-size:.82em;color:var(--muted);font-weight:700;margin-right:5px}.def-ref-link{display:inline-flex;align-items:center;gap:4px;color:var(--accent);font-weight:800;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}.def-ref-link:hover{color:var(--ink)}.ref-icon{width:.78em;height:.78em;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}.def-ref-text{font-weight:700}.def-ref-sep{color:var(--muted)}
 .ex{margin:0;padding-left:16px;border-left:4px solid var(--mark);font-family:var(--display);font-size:1.5rem;font-weight:500;line-height:1.3;letter-spacing:-.01em}
 .ex b{color:var(--accent);font-weight:800}
 .tr{margin:12px 0 0 20px;font-style:italic;color:var(--muted);font-size:1.1rem}
@@ -317,8 +318,13 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
     hh.innerHTML=(d.h?'<sup class="hm">'+esc(d.h)+'</sup>':"")+d.w.split("").map(function(ch,i){return '<span aria-hidden="true" style="--i:'+i+'">'+esc(ch)+'</span>'}).join("");
     $("bg").textContent=d.w;
     $("say").innerHTML=(d.v?'<span class="syl">varian: '+esc(d.v)+'</span>':'')+'<span class="cls">'+esc(d.c||JNS[d.j]||d.j)+'</span>';
-    $("def").textContent=d.d||(d.r?"Lihat: "+d.r:"Belum ada arti.");
     var refItems=(d.r||"").split(/[;,]/).map(function(x){return x.trim()}).filter(Boolean);
+    var defRefHtml=refItems.map(function(word){
+      var target=ids.find(function(k){return String(DATA[k].w||"").trim().toLowerCase()===word.toLowerCase()});
+      var icon='<svg class="ref-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M5 5h6v6"/></svg>';
+      return target?'<a class="def-ref-link" href="/entri/'+encodeURIComponent(target)+'/" data-spa>'+icon+esc(word)+'</a>':'<span class="def-ref-text">'+esc(word)+'</span>';
+    }).join('<span class="def-ref-sep">, </span>');
+    $("def").innerHTML=d.d?esc(d.d):(refItems.length?'<span class="def-ref-label">Rujuk:</span> '+defRefHtml:"Belum ada arti.");
     var refHtml=refItems.map(function(word){
       var target=ids.find(function(k){return String(DATA[k].w||"").trim().toLowerCase()===word.toLowerCase()});
       return target?'<a href="/entri/'+encodeURIComponent(target)+'/" data-spa>'+esc(word)+'</a>':'<span>'+esc(word)+'</span>';
