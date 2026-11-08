@@ -168,15 +168,14 @@ section{padding-block:36px}
 h2{font-family:var(--display);font-weight:800;font-stretch:85%;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-.03em;line-height:1.05;margin:0;text-wrap:balance}
 .tag{font-family:var(--mono);font-size:.78rem;color:var(--muted);letter-spacing:.06em}
 .az{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:26px}
-.az button{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--display);font-weight:700;font-size:1rem;cursor:pointer;transition:transform .18s cubic-bezier(.3,1.6,.5,1),background .2s,color .2s}
-.az button:hover:not(:disabled){transform:translateY(-4px) rotate(-4deg);border-color:var(--accent)}
-.az button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.az button:disabled{opacity:.3;cursor:default}
+.az a{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--display);font-weight:700;font-size:1rem;cursor:pointer;transition:transform .18s cubic-bezier(.3,1.6,.5,1),background .2s,color .2s}
+.az a:hover:not([aria-disabled="true"]){transform:translateY(-4px) rotate(-4deg);border-color:var(--accent)}
+.az a[aria-disabled="true"]{opacity:.3;cursor:default;pointer-events:none}
 .grid{display:flex;flex-wrap:wrap;gap:8px}
 .item{width:auto;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:inherit;line-height:1.4;padding:6px 14px;cursor:pointer;min-width:0;transition:border-color .2s,transform .18s}
 .item:hover,.item:focus-visible{border-color:var(--accent);transform:translateY(-2px)}
 .item b{font-family:var(--display);font-size:1.05rem;font-weight:800;letter-spacing:-.02em}
-.az button[data-all]{width:auto;padding:0 16px}
+.az a[data-all]{width:auto;padding:0 16px}
 .lanjut{flex-basis:100%;margin:12px 0 0}
 .lanjut a{color:var(--accent);font-weight:600;text-decoration:none}
 .lanjut a:hover{text-decoration:underline}
@@ -222,7 +221,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
 @media (max-width:480px){
 .field{padding-left:14px}
 .field button{padding:12px 14px}
-.az button{width:36px;height:36px}
+.az a{width:36px;height:36px}.az a[data-all]{width:auto}
 .card{padding:22px 20px}
 }
 @media (prefers-reduced-motion:reduce){
@@ -317,7 +316,7 @@ padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-righ
 <h2>Jelajahi menurut huruf</h2>
 <span class="tag" id="count">isi kamus dari xlsx</span>
 </div>
-<div class="az" id="az" role="group" aria-label="Filter huruf awal"></div>
+<nav class="az" id="az" aria-label="Buka daftar kata menurut huruf"></nav>
 <div class="grid" id="grid"></div>
 </section>
 <!-- <section id="fitur">
@@ -489,20 +488,13 @@ document.addEventListener("click",function(e){if(!e.target.closest(".search"))cl
 /* indeks A-Z dan daftar */
 var letters=[];
 DATA.forEach(function(d){var c=d.H;if(letters.indexOf(c)<0)letters.push(c)});
-function tekan(){
-az.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(letter?x.textContent===letter&&!x.hasAttribute("data-all"):x.hasAttribute("data-all")))});
-drawGrid();
-}
 "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(function(c){
-var b=document.createElement("button");b.type="button";b.textContent=c;
-b.setAttribute("aria-pressed","false");
-if(letters.indexOf(c)<0)b.disabled=true;
-b.onclick=function(){letter=(letter===c)?"":c;tekan()};
-az.appendChild(b);
+var a=document.createElement("a");a.textContent=c;a.href="/huruf/"+c.toLowerCase()+"/";
+if(letters.indexOf(c)<0){a.setAttribute("aria-disabled","true");a.tabIndex=-1}
+az.appendChild(a);
 });
-var sb=document.createElement("button");sb.type="button";sb.textContent="Semua";sb.setAttribute("data-all","");sb.setAttribute("aria-pressed","true");
-sb.onclick=function(){letter="";tekan()};
-az.appendChild(sb);
+var sa=document.createElement("a");sa.textContent="Semua";sa.href="/huruf/";sa.setAttribute("data-all","");
+az.appendChild(sa);
 function urut(a,b){return String(a.w).localeCompare(String(b.w),"id")||(+a.h||0)-(+b.h||0)}
 function drawGrid(){
 var semua=(letter?DATA.filter(function(d){return d.H===letter}):DATA.slice()).sort(urut);
