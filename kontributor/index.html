@@ -427,7 +427,7 @@ function kamusMulai(RAW){
     var term=$("find").value.trim().toLowerCase(),key=$("sort").value;
     var list=PEOPLE.filter(function(p){return !term||(p.n+" "+p.r).toLowerCase().indexOf(term)>=0})
       .sort(function(a,b){return b[key]-a[key]});
-    $("count").textContent=list.length+" dari "+PEOPLE.length+" kontributor · dari xlsx";
+    $("count").textContent=list.length+" dari "+PEOPLE.length+" kontributor";
     $("grid").innerHTML=list.length?list.map(card).join(""):'<div class="none">Tidak ada kontributor yang cocok dengan pencarian.</div>';
   }
   $("find").addEventListener("input",draw);
