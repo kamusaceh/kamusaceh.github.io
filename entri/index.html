@@ -195,6 +195,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
 .hist .hd{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;font-size:.95rem}
 .hist .ac{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;background:var(--accent);color:var(--accent-ink);padding:2px 10px;border-radius:999px}
 .hist .mt{color:var(--muted);font-size:.88rem}
+.hist .author{color:inherit;text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px;font-weight:700}.hist .author:hover{color:var(--accent)}.hist .author:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
 .hist .sm{margin:6px 0 0;font-size:1rem}
 .hist .df{margin:6px 0 0;font-size:.92rem;color:var(--muted)}
 .hist .df del{color:var(--muted)}
@@ -350,9 +351,10 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
       }
       return out.join("<br>");
     }
+    function profilUrl(n){var s=String(n||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");return s?"/profil/"+encodeURIComponent(s)+"/":""}
     function item(v){
       var df=v.b&&v.x?diff(v.b,v.x):"";
-      return '<li class="'+(v.a==="tambah"?"":"ed")+'"><div class="hd"><span class="ac">'+esc(v.a)+'</span><b>'+esc(v.u)+'</b><span class="mt">'+esc(fmtT(v.t))+' · '+esc(v.r)+'</span></div>'+
+      return '<li class="'+(v.a==="tambah"?"":"ed")+'"><div class="hd"><span class="ac">'+esc(v.a)+'</span>'+(profilUrl(v.u)?'<a class="author" href="'+profilUrl(v.u)+'">'+esc(v.u)+'</a>':'<b>'+esc(v.u)+'</b>')+'<span class="mt">'+esc(fmtT(v.t))+' · '+esc(v.r)+'</span></div>'+
         (v.s?'<p class="sm">'+esc(v.s)+'</p>':'')+(v.m?'<p class="df">Membatalkan '+esc(v.m)+'</p>':'')+(df?'<p class="df">'+df+'</p>':'')+'</li>';
     }
     var LIM=3;
