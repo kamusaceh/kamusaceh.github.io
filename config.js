@@ -2,7 +2,7 @@
    KONFIGURASI SERVER (satu-satunya yang perlu Anda isi)
    Tempel URL aplikasi web Google Apps Script, yang berakhiran /exec
    ============================================================== */
-var KAMUS_API = "https://script.google.com/macros/s/AKfycbx1ssf2Jkdv2lLWRa0c1b1MxUmtZMfLqWk_-RYC3h_V9ewzHyx1HKyWpy7PmSKkHmwC/exec";
+var KAMUS_API = "https://script.google.com/macros/s/AKfycbxPoMCrgS2n1llCN5F-xU4KFXg8fx9OrOSSvLYmYoacL2SCzVK8RVBePIr76nOlOnde/exec";
 var KAMUS_CONFIG = { loginUrl: KAMUS_API, addWordUrl: KAMUS_API, dataUrl: KAMUS_API };
 
 function kamusGalat(pesan) {
