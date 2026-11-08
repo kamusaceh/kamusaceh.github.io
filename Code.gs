@@ -296,7 +296,7 @@ function bacaKontributor() {
   // Pertahankan tanggal bergabung dan streak yang sudah tersimpan.
   var K = sheet('Kontributor'), nk = lastRow(K, 1);
   if (nk > 1) K.getRange(2, 1, nk - 1, 9).getDisplayValues().forEach(function (r) {
-    if (r[0]) siapkan(r[0], r[1], r[2], r[3], r[7]);
+    if (r[0]) { var p = siapkan(r[0], r[1], r[2], r[3], r[7]); if (p) p.terdaftar = true; }
   });
 
   // Riwayat adalah sumber hitung utama: satu baris untuk setiap perubahan.
@@ -306,6 +306,7 @@ function bacaKontributor() {
     var aksi = String(r[4] || '').trim().toLowerCase();
     if (!username) return;
     var p = siapkan(username, username, 'kontributor', '', 0);
+    p.adaAktivitas = true;
     if (aksi === 'tambah') p.kata++;
     else if (aksi === 'sunting') p.sunting++;
     else if (aksi === 'verif' || aksi === 'verifikasi') p.verif++;
@@ -317,7 +318,9 @@ function bacaKontributor() {
     return p;
   }).filter(function (p) {
     // Akun tanpa kontribusi tetap ditampilkan jika sudah tercatat di sheet Kontributor.
-    return p.kata || p.sunting || p.verif || kunci(p.username);
+    var tampil = !!(p.terdaftar || p.adaAktivitas);
+    delete p.terdaftar; delete p.adaAktivitas;
+    return tampil;
   });
   return { ok: true, kontributor: list };
 }
