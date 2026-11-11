@@ -430,7 +430,10 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
     remove:function(id){
       var g=guard();if(g){alert(g.pesan);return}
       var o=DATA[id];if(!o||!confirm("Hapus kata \""+o.w+(o.h?" ("+o.h+")":"")+"\"? Riwayatnya tetap tersimpan."))return;
-      commit("hapus",o,snap(o),"Menghapus "+o.w).then(function(r){if(r.ok){history.pushState(null,"","/entri/");render()}else alert(r.pesan||"Gagal menghapus.")});
+      var bd=$("btn-del"),bh=bd?bd.innerHTML:"";
+      function pulih(){if(bd){bd.innerHTML=bh;bd.disabled=false;bd.removeAttribute("aria-busy")}}
+      if(bd){bd.innerHTML='<span class="spin" aria-hidden="true"></span>Menghapus\u2026';bd.disabled=true;bd.setAttribute("aria-busy","true")}
+      commit("hapus",o,snap(o),"Menghapus "+o.w).then(function(r){if(r.ok){history.pushState(null,"","/entri/");render()}else alert(r.pesan||"Gagal menghapus.")}).then(pulih,pulih);
     }
   };
   $("btn-edit").onclick=function(){if(window.KAMUS_UI)window.KAMUS_UI.edit(DATA[curKey()])};
