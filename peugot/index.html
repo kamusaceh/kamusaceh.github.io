@@ -1,31 +1,59 @@
 <!DOCTYPE html>
 <html lang="id"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Rumoh · Kata Aceh (Koran)</title>
+<title>Peugot · Kata Aceh (Koran)</title>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}html,body{height:100%;margin:0;background:#000}
 body{display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}
 .st{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
 canvas{height:100%;max-width:100%;aspect-ratio:9/16;cursor:pointer;display:block}
-.bar{display:flex;align-items:center;justify-content:center;gap:12px;padding:10px;background:#000;color:#aaa;font-size:13px}
+.bar{display:flex;align-items:center;justify-content:center;gap:12px;padding:10px;background:#000;color:#aaa;font-size:13px;flex-wrap:wrap}
 .chip{display:inline-block!important;box-shadow:none!important;padding:6px 12px;font-size:13px;background:#222;color:#ddd;border:2px solid #444}
 .chip.on{background:#f2f0e8;color:#111;border-color:#111}
 button{font:800 14px system-ui,sans-serif;background:#f2f0e8;color:#111;border:3px solid #111;box-shadow:3px 3px 0 #e10600;padding:9px 16px;cursor:pointer;display:none}
 button:disabled{opacity:.6;cursor:wait}
-.set label{font-weight:700;color:#ddd}
-.set input{font:600 14px system-ui,sans-serif;background:#f2f0e8;color:#111;border:3px solid #111;box-shadow:3px 3px 0 #e10600;padding:7px 10px;width:190px;max-width:55vw}
+button.rs{display:inline-block!important;box-shadow:none;padding:8px 12px;font-size:13px;align-self:end}
+.pn{background:#111;color:#ddd;font-size:13px;max-height:46vh;overflow:auto;border-top:1px solid #333}
+.pn summary{cursor:pointer;padding:10px;text-align:center;font-weight:700;color:#aaa}
+.gr{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;padding:4px 12px 14px}
+.gr label{display:flex;flex-direction:column;gap:4px;font-weight:700}
+.gr .full{grid-column:1/-1}
+.gr .ck{flex-direction:row;align-items:center;gap:8px}
+.gr input[type=text],.gr textarea{font:600 14px system-ui,sans-serif;background:#f2f0e8;color:#111;border:3px solid #111;padding:7px 10px;width:100%}
+.gr textarea{resize:vertical}
+.gr input[type=color]{width:100%;height:36px;padding:0;border:3px solid #111;background:none}
+.gr input[type=range]{width:100%}
 </style></head><body>
 <div class="st"><canvas id="cv" width="1080" height="1920"></canvas></div>
 <div class="bar" id="chips"></div>
-<div class="bar set"><label for="akun">⚙ Nama akun</label><input id="akun" type="text" maxlength="30" autocomplete="off" spellcheck="false" placeholder="@kamusaceh"></div>
+<details class="pn" id="pn"><summary>⚙ Pengaturan</summary>
+<div class="gr">
+ <label>Nama akun (baris berjalan atas)<input id="s_akun" type="text" maxlength="30" autocomplete="off" spellcheck="false" placeholder="@kamusaceh"></label>
+ <label class="ck"><input id="s_tk" type="checkbox"> Tampilkan baris berjalan atas</label>
+ <label>Judul seri<input id="s_seri" type="text" maxlength="30" autocomplete="off" spellcheck="false"></label>
+ <label>Kata (Aceh)<input id="s_kata" type="text" maxlength="20" autocomplete="off" spellcheck="false"></label>
+ <label>Arti<input id="s_arti" type="text" maxlength="30" autocomplete="off" spellcheck="false"></label>
+ <label>Teks stempel sumber (kosong = sembunyikan)<input id="s_stamp" type="text" maxlength="40" autocomplete="off" spellcheck="false"></label>
+ <label class="full">Contoh kalimat (satu per baris, format: Aceh | Indonesia, maksimal 8)<textarea id="s_ex" rows="6" spellcheck="false"></textarea></label>
+ <label>Warna latar<input id="s_bg" type="color"></label>
+ <label>Warna aksen<input id="s_ac" type="color"></label>
+ <label>Warna teks<input id="s_ink" type="color"></label>
+ <label>Kecepatan <span id="s_spv">1×</span><input id="s_sp" type="range" min="0.5" max="2" step="0.1"></label>
+ <label class="ck"><input id="s_loop" type="checkbox"> Putar otomatis berulang</label>
+ <button class="rs" id="s_reset" type="button">Atur ulang</button>
+</div></details>
 <div class="bar"><button id="dl">⬇ Unduh video</button><span id="stt">Berputar otomatis. Ketuk video untuk mulai dari awal</span></div>
 <script>
+const DEF={akun:"@kamusaceh",tk:true,seri:"KATA ACEH",kata:"Rumoh",arti:"rumah",stamp:"SUMBER: KAMUS ACEH–INDONESIA",
+ex:"Lon jak u rumoh. | Saya pergi ke rumah.\nRumoh nyoe rayeuk. | Rumah ini besar.\nRumoh gata jroh. | Rumah kamu bagus.\nRumoh lon jeuh. | Rumah saya jauh.\nLon hana di rumoh. | Saya tidak ada di rumah.",
+bg:"#f2f0e8",ac:"#e10600",ink:"#111111",sp:1,loop:true};
+const S=Object.assign({},DEF);
+try{const o=JSON.parse(localStorage.getItem("peugot_set")||"null");if(o)Object.assign(S,o);else{const a=localStorage.getItem("peugot_akun");if(a)S.akun=a}}catch(e){}
 const P={bg:'#f2f0e8',wc:'#e10600',sh:'#e10600',sb:'#e10600',sf:'#fff',tb:'#e10600',tf:'#fff',ink:'#111'};
-const AKUN0="@kamusaceh";let akun=AKUN0;
-try{const s=localStorage.getItem("peugot_akun");if(s)akun=s}catch(e){}
-const W=100,H=177.78,T_END=18.2,FONT="system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif";
-const EX=[["Lon jak u rumoh.","Saya pergi ke rumah."],["Rumoh nyoe rayeuk.","Rumah ini besar."],["Rumoh gata jroh.","Rumah kamu bagus."],["Rumoh lon jeuh.","Rumah saya jauh."],["Lon hana di rumoh.","Saya tidak ada di rumah."]];
+const W=100,H=177.78,FONT="system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif";
+function parseEx(){const a=String(S.ex||"").split("\n").map(l=>l.trim()).filter(Boolean).slice(0,8).map(l=>{const i=l.indexOf("|");return i<0?[l,""]:[l.slice(0,i).trim(),l.slice(i+1).trim()]});return a.length?a:[["",""]]}
+let EX=parseEx();
 const cv=document.getElementById("cv"),cx=cv.getContext("2d");
 const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
 const bk=p=>{p=cl(p);const c1=2.2,c3=c1+1;return 1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2)};
@@ -38,17 +66,26 @@ function ticker(y,rev,str,t){
  let x=rev?-wU+o:-o;for(;x<W;x+=wU)cx.fillText(u,x,y+5.1);
 }
 const CD=3.6;
+const tEnd=()=>(EX.length-1)*CD+3.8;
 function card(tt,ci){
  const ex=EX[ci];
- cx.fillStyle=P.ink;cx.font=F(800,3.2);LS(.16,3.2);cx.fillText("KATA ACEH",8,33);
+ cx.fillStyle=P.ink;cx.font=F(800,3.2);LS(.16,3.2);cx.fillText(String(S.seri||"").toUpperCase(),8,33);
+ const L=[...String(S.kata||"").toUpperCase()];
  cx.font=F(900,24);LS(0,24);
- const L="RUMOH".split(""),ws=L.map(c=>cx.measureText(c).width-1.2);let x=8;
+ let tot=0;L.forEach(c=>{tot+=cx.measureText(c).width-1.2});
+ const fs=Math.min(24,24*84/Math.max(tot,1)),k=fs/24;
+ cx.font=F(900,fs);LS(0,fs);
+ const ws=L.map(c=>cx.measureText(c).width-1.2*k);let x=8;
+ const step=Math.min(.1,.5/Math.max(L.length,1));
  const sk=(tt>.9&&tt<1.25)?Math.sin((tt-.9)*60)*(1-(tt-.9)/.35):0;
- L.forEach((c,i)=>{const p=cl((tt-(.1+i*.1))/.35);if(p>0){const e=bk(p);cx.save();cx.globalAlpha=cl(p*3);
-  cx.translate(x+ws[i]/2+sk,64-9-14*(1-e));cx.rotate(-8*Math.PI/180*(1-e));cx.scale(1+.6*(1-e),1+.6*(1-e));
-  cx.fillStyle=P.wc;cx.fillText(c,-ws[i]/2,9);cx.restore()}x+=ws[i]});
+ L.forEach((c,i)=>{const p=cl((tt-(.1+i*step))/.35);if(p>0){const e=bk(p);cx.save();cx.globalAlpha=cl(p*3);
+  cx.translate(x+ws[i]/2+sk,64-9*k-14*(1-e));cx.rotate(-8*Math.PI/180*(1-e));cx.scale(1+.6*(1-e),1+.6*(1-e));
+  cx.fillStyle=P.wc;cx.fillText(c,-ws[i]/2,9*k);cx.restore()}x+=ws[i]});
+ const at=S.arti?"= "+S.arti:"";
  cx.fillStyle=P.ink;cx.font=F(800,9);LS(0,9);
- cx.fillText("= rumah".slice(0,cl(Math.floor((tt-.8)/.07),0,7)),8,77);
+ const as=Math.min(9,9*84/Math.max(cx.measureText(at).width,1));
+ cx.font=F(800,as);LS(0,as);
+ cx.fillText(at.slice(0,cl(Math.floor((tt-.8)/.07),0,at.length)),8,77);
  const bx=8,by=88,bw=84,bh=38,bp=cl((tt-1.2)/.35);
  if(bp>0){const e=bk(bp);cx.save();cx.globalAlpha=cl(bp*6);
   cx.translate(bx+bw/2-3*(1-e),by+bh/2+3*(1-e));cx.rotate(-1.5*Math.PI/180*(1-e));cx.translate(-bx-bw/2,-by-bh/2);
@@ -57,13 +94,13 @@ function card(tt,ci){
   cx.fillStyle=P.ink;cx.font=F(800,3.2);LS(.16,3.2);cx.fillText("CONTOH "+(ci+1)+"/"+EX.length,bx+5,by+7.5);
   cx.fillRect(bx+5,by+22.5,bw-10,.5);cx.restore()}
  if(tt>1.5){
-  cx.fillStyle=P.ink;cx.font=F(800,10);LS(0,10);const sz=Math.min(6.8,10*70/cx.measureText(ex[0]).width);
+  cx.fillStyle=P.ink;cx.font=F(800,10);LS(0,10);const sz=Math.min(6.8,10*70/Math.max(cx.measureText(ex[0]).width,1));
   cx.font=F(800,sz);LS(0,sz);cx.fillText(ex[0].slice(0,cl(Math.floor((tt-1.5)/.05),0,ex[0].length)),bx+5,by+19);
   const r=cl((tt-2.5)/.4);cx.globalAlpha=.75*r;cx.font=F(400,4.8);LS(0,4.8);cx.fillText(ex[1],bx+5,by+31+(1-r));cx.globalAlpha=1}
  const sp=cl((tt-2.3)/.4);
- if(sp>0){const e=bk(sp),tx="SUMBER: KAMUS ACEH–INDONESIA";cx.save();cx.font=F(800,3);LS(.08,3);
+ if(sp>0&&S.stamp){const e=bk(sp),tx=S.stamp;cx.save();cx.font=F(800,3);LS(.08,3);
   const w=cx.measureText(tx).width+6;
-  cx.globalAlpha=cl(sp*3);cx.translate(8+w/2,139);cx.rotate((8-10*e)*Math.PI/180);const k=1+1.4*(1-e);cx.scale(k,k);
+  cx.globalAlpha=cl(sp*3);cx.translate(8+w/2,139);cx.rotate((8-10*e)*Math.PI/180);const kk=1+1.4*(1-e);cx.scale(kk,kk);
   cx.fillStyle=P.sb;cx.fillRect(-w/2,-3,w,6);cx.fillStyle=P.sf;cx.fillText(tx,-w/2+3,1);cx.restore()}
 }
 function draw(t){
@@ -73,20 +110,28 @@ function draw(t){
  const ox=(mode<0&&ci<n-1&&tt>3.35)?-110*Math.pow(cl((tt-3.35)/.25),2):0;
  cx.save();cx.translate(ox,0);card(tt,ci);cx.restore();
  cx.globalAlpha=1;
- for(let k=0;k<n;k++){cx.globalAlpha=k===ci?1:.25;cx.fillStyle=P.ink;cx.fillRect(35+k*6,158,4,4)}
- cx.globalAlpha=1;ticker(0,false,akun+" ✦",t);
+ for(let k=0;k<n;k++){cx.globalAlpha=k===ci?1:.25;cx.fillStyle=P.ink;cx.fillRect(50-n*3+k*6,158,4,4)}
+ cx.globalAlpha=1;if(S.tk&&S.akun)ticker(0,false,S.akun+" ✦",t);
 }
 let mode=-1,t0=performance.now(),rec=null,dls=null,busy=false;
 const btn=document.getElementById("dl"),stt=document.getElementById("stt"),chips=document.getElementById("chips");
-chips.innerHTML=["Semua","Card 1","Card 2","Card 3","Card 4","Card 5"].map((l,i)=>`<button class="chip${i?"":" on"}" data-m="${i-1}">${l}</button>`).join("");
-function setMode(m){mode=m;t0=performance.now();[...chips.children].forEach((c,i)=>c.classList.toggle("on",i-1===m));btn.textContent=m<0?"⬇ Unduh video (5 card)":"⬇ Unduh Card "+(m+1)}
+const dur=()=>mode<0?tEnd():4.4;
+function buildChips(){chips.innerHTML=["Semua",...EX.map((_,i)=>"Card "+(i+1))].map((l,i)=>`<button class="chip${i-1===mode?" on":""}" data-m="${i-1}">${l}</button>`).join("")}
+function updBtn(){btn.textContent=mode<0?"⬇ Unduh video ("+EX.length+" card)":"⬇ Unduh Card "+(mode+1)}
+function setMode(m){mode=m;t0=performance.now();buildChips();updBtn()}
 chips.onclick=e=>{const m=e.target.dataset?e.target.dataset.m:undefined;if(m!==undefined&&!busy)setMode(+m)};
-setMode(-1);
-const inp=document.getElementById("akun");inp.value=akun;
-inp.oninput=()=>{let v=inp.value.trim();if(!v)v=AKUN0;if(v[0]!=="@")v="@"+v;akun=v;try{localStorage.setItem("peugot_akun",akun)}catch(e){}};
-function frame(now){const t=(now-t0)/1000;draw(t);
- if(!busy&&t>=(mode<0?T_END:4.4)+1.2)t0=now;
- if(rec&&t>=(mode<0?T_END:4.4)+.5){rec.stop();rec=null}
+const FD={akun:"s_akun",seri:"s_seri",kata:"s_kata",arti:"s_arti",stamp:"s_stamp",ex:"s_ex",bg:"s_bg",ac:"s_ac",ink:"s_ink",sp:"s_sp",tk:"s_tk",loop:"s_loop"};
+const el=k=>document.getElementById(FD[k]);
+function fill(){for(const k in FD){const e=el(k);if(e.type==="checkbox")e.checked=!!S[k];else e.value=S[k]}document.getElementById("s_spv").textContent=(+S.sp)+"×"}
+function apply(){P.bg=S.bg;P.ink=S.ink;P.wc=P.sh=P.sb=P.tb=S.ac;const n=EX.length;EX=parseEx();if(EX.length!==n){if(mode>=EX.length)mode=-1;buildChips();updBtn()}}
+function save(){try{localStorage.setItem("peugot_set",JSON.stringify(S))}catch(e){}}
+function read(){for(const k in FD){const e=el(k);let v=e.type==="checkbox"?e.checked:(e.type==="range"?parseFloat(e.value):e.value);if(k==="akun"){v=v.trim();if(v&&v[0]!=="@")v="@"+v}S[k]=v}document.getElementById("s_spv").textContent=(+S.sp)+"×"}
+document.getElementById("pn").addEventListener("input",()=>{read();apply();save()});
+document.getElementById("s_reset").onclick=()=>{Object.assign(S,DEF);fill();apply();save()};
+fill();apply();setMode(-1);
+function frame(now){const t=(now-t0)/1000*S.sp;draw(t);
+ if(!busy&&S.loop&&t>=dur()+1.2)t0=now;
+ if(rec&&t>=dur()+.5){rec.stop();rec=null}
  requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
 cv.onclick=()=>{if(!busy)t0=performance.now()};
@@ -95,12 +140,13 @@ if(window.MediaRecorder&&cv.captureStream&&window.claude&&claude.use){
 }
 btn.onclick=()=>{
  if(busy||!dls)return;busy=true;btn.disabled=true;const m=mode;stt.textContent="Merekam… biarkan tab ini terbuka";
+ const slug=String(S.kata||"kata").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"kata";
  const mt=["video/mp4;codecs=avc1","video/webm;codecs=vp9","video/webm"].find(m=>MediaRecorder.isTypeSupported(m))||"";
  const r=new MediaRecorder(cv.captureStream(30),mt?{mimeType:mt,videoBitsPerSecond:8e6}:{}),ch=[];
  r.ondataavailable=e=>{if(e.data.size)ch.push(e.data)};
  r.onstop=async()=>{
   const ext=mt.startsWith("video/mp4")?"mp4":"webm";
-  try{await dls.save({filename:"rumoh-kata-aceh-koran"+(m<0?"":"-card"+(m+1))+"."+ext,data:new Blob(ch,{type:mt||"video/webm"})});stt.textContent="Selesai. Video berputar otomatis"}
+  try{await dls.save({filename:"kata-aceh-"+slug+(m<0?"":"-card"+(m+1))+"."+ext,data:new Blob(ch,{type:mt||"video/webm"})});stt.textContent="Selesai. Video berputar otomatis"}
   catch(e){stt.textContent=(e&&e.code==="declined")?"Penyimpanan dibatalkan":"Gagal menyimpan video"}
   busy=false;btn.disabled=false};
  t0=performance.now();r.start();rec=r;
