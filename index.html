@@ -168,7 +168,7 @@ section{padding-block:36px}
 h2{font-family:var(--display);font-weight:800;font-stretch:85%;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-.03em;line-height:1.05;margin:0;text-wrap:balance}
 .tag{font-family:var(--mono);font-size:.78rem;color:var(--muted);letter-spacing:.06em}
 .az{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:26px}
-.az a{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--display);font-weight:700;font-size:1rem;cursor:pointer;transition:transform .18s cubic-bezier(.3,1.6,.5,1),background .2s,color .2s}
+.az a{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--display);font-weight:700;font-size:1rem;cursor:pointer;transition:transform .18s cubic-bezier(.3,1.6,.5,1),background .2s,color .2s,opacity .3s}
 .az a:hover:not([aria-disabled="true"]){transform:translateY(-4px) rotate(-4deg);border-color:var(--accent)}
 .az a[aria-disabled="true"]{opacity:.3;cursor:default;pointer-events:none}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
@@ -308,7 +308,7 @@ padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-righ
 <h2>Jelajahi menurut huruf</h2>
 <span class="tag" id="count">isi kamus dari xlsx</span>
 </div>
-<nav class="az" id="az" aria-label="Buka daftar kata menurut huruf"></nav>
+<nav class="az" id="az" aria-label="Buka daftar kata menurut huruf"><a href="/huruf/a/">A</a><a href="/huruf/b/">B</a><a href="/huruf/c/">C</a><a href="/huruf/d/">D</a><a href="/huruf/e/">E</a><a href="/huruf/f/">F</a><a href="/huruf/g/">G</a><a href="/huruf/h/">H</a><a href="/huruf/i/">I</a><a href="/huruf/j/">J</a><a href="/huruf/k/">K</a><a href="/huruf/l/">L</a><a href="/huruf/m/">M</a><a href="/huruf/n/">N</a><a href="/huruf/o/">O</a><a href="/huruf/p/">P</a><a href="/huruf/q/">Q</a><a href="/huruf/r/">R</a><a href="/huruf/s/">S</a><a href="/huruf/t/">T</a><a href="/huruf/u/">U</a><a href="/huruf/v/">V</a><a href="/huruf/w/">W</a><a href="/huruf/x/">X</a><a href="/huruf/y/">Y</a><a href="/huruf/z/">Z</a><a href="/huruf/" data-all>Semua</a></nav>
 </section>
 <!-- <section id="fitur">
 <div class="sec-head"><h2>Dibuat untuk mencari cepat</h2></div>
@@ -479,13 +479,11 @@ document.addEventListener("click",function(e){if(!e.target.closest(".search"))cl
 /* indeks A-Z dan daftar */
 var letters=[];
 DATA.forEach(function(d){var c=d.H;if(letters.indexOf(c)<0)letters.push(c)});
-"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(function(c){
-var a=document.createElement("a");a.textContent=c;a.href="/huruf/"+c.toLowerCase()+"/";
-if(letters.indexOf(c)<0){a.setAttribute("aria-disabled","true");a.tabIndex=-1}
-az.appendChild(a);
+/* tautan A-Z sudah ada di HTML sejak awal; setelah data dicek, tandai huruf yang kosong */
+Array.prototype.forEach.call(az.querySelectorAll("a:not([data-all])"),function(a){
+if(letters.indexOf(a.textContent)<0){a.setAttribute("aria-disabled","true");a.tabIndex=-1}
+else{a.removeAttribute("aria-disabled");a.removeAttribute("tabindex")}
 });
-var sa=document.createElement("a");sa.textContent="Semua";sa.href="/huruf/";sa.setAttribute("data-all","");
-az.appendChild(sa);
 $("count").textContent=DATA.length+" kata dalam "+letters.length+" huruf";
 $("rand").addEventListener("click",function(){
 var i;do{i=Math.floor(Math.random()*DATA.length)}while(i===current&&DATA.length>1);
