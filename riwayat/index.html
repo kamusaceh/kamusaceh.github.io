@@ -275,7 +275,7 @@ a.hmore{display:inline-block;text-decoration:none}
   function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
   var CLS={n:"Nomina (kata benda)",a:"Adjektiva (kata sifat)",v:"Verba (kata kerja)",adv:"Adverbia (kata keterangan)"},JNS={kata:"Kata",bunyi:"Bunyi",rujukan:"Rujukan",nama_diri:"Nama diri"};
   var LB={kata:"Kata",homonim:"Homonim",varian:"Varian",jenis_entri:"Jenis",kelas:"Kelas",arti:"Arti",rujukan:"Rujukan",status_qc:"Status"};
-  function fmtT(t){try{return new Date(t).toLocaleString("id-ID",{dateStyle:"medium",timeStyle:"short"})}catch(e){return t}}
+  function fmtT(t){try{var d=new Date(t);if(isNaN(d))return t;var p=function(n){return String(n).padStart(2,"0")};return p(d.getHours())+":"+p(d.getMinutes())+" \u00b7 "+p(d.getDate())+"/"+p(d.getMonth()+1)+"/"+d.getFullYear()}catch(e){return t}}
   function diff(b,x){
     var o,n,out=[];try{o=JSON.parse(b);n=JSON.parse(x)}catch(e){return ""}
     Object.keys(LB).forEach(function(k){if((o[k]||"")!==(n[k]||""))out.push(LB[k]+": <del>"+esc(o[k]||"(kosong)")+"</del> → <ins>"+esc(n[k]||"(kosong)")+"</ins>")});

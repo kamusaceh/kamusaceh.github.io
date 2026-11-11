@@ -339,7 +339,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
     $("more").innerHTML=(function(){var i=ids.indexOf(key),a=Math.max(0,Math.min(i-6,ids.length-13));return ids.slice(a,a+13).filter(function(k){return k!==key})})().map(function(k){return '<a href="/entri/'+encodeURIComponent(k)+'/" data-spa>'+lab(DATA[k])+'</a>'}).join("");
 
     var hs=(HIST[key]||[]).slice().sort(function(a,b){return a.t<b.t?1:a.t>b.t?-1:0}),shown=false;
-    function fmtT(t){try{return new Date(t).toLocaleString("id-ID",{dateStyle:"medium",timeStyle:"short"})}catch(e){return t}}
+    function fmtT(t){try{var d=new Date(t);if(isNaN(d))return t;var p=function(n){return String(n).padStart(2,"0")};return p(d.getHours())+":"+p(d.getMinutes())+" \u00b7 "+p(d.getDate())+"/"+p(d.getMonth()+1)+"/"+d.getFullYear()}catch(e){return t}}
     var LB={kata:"Kata",homonim:"Homonim",varian:"Varian",jenis_entri:"Jenis",kelas:"Kelas",arti:"Arti",rujukan:"Rujukan",status_qc:"Status"};
     function diff(b,x){
       var o,n,out=[];try{o=JSON.parse(b);n=JSON.parse(x)}catch(e){return ""}
