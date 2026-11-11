@@ -13,12 +13,17 @@ canvas{height:100%;max-width:100%;aspect-ratio:9/16;cursor:pointer;display:block
 .chip.on{background:#f2f0e8;color:#111;border-color:#111}
 button{font:800 14px system-ui,sans-serif;background:#f2f0e8;color:#111;border:3px solid #111;box-shadow:3px 3px 0 #e10600;padding:9px 16px;cursor:pointer;display:none}
 button:disabled{opacity:.6;cursor:wait}
+.set label{font-weight:700;color:#ddd}
+.set input{font:600 14px system-ui,sans-serif;background:#f2f0e8;color:#111;border:3px solid #111;box-shadow:3px 3px 0 #e10600;padding:7px 10px;width:190px;max-width:55vw}
 </style></head><body>
 <div class="st"><canvas id="cv" width="1080" height="1920"></canvas></div>
 <div class="bar" id="chips"></div>
-<div class="bar"><button id="dl">⬇ Unduh video</button><span id="stt">Ketuk video untuk memutar ulang</span></div>
+<div class="bar set"><label for="akun">⚙ Nama akun</label><input id="akun" type="text" maxlength="30" autocomplete="off" spellcheck="false" placeholder="@kamusaceh"></div>
+<div class="bar"><button id="dl">⬇ Unduh video</button><span id="stt">Berputar otomatis. Ketuk video untuk mulai dari awal</span></div>
 <script>
 const P={bg:'#f2f0e8',wc:'#e10600',sh:'#e10600',sb:'#e10600',sf:'#fff',tb:'#e10600',tf:'#fff',ink:'#111'};
+const AKUN0="@kamusaceh";let akun=AKUN0;
+try{const s=localStorage.getItem("peugot_akun");if(s)akun=s}catch(e){}
 const W=100,H=177.78,T_END=18.2,FONT="system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif";
 const EX=[["Lon jak u rumoh.","Saya pergi ke rumah."],["Rumoh nyoe rayeuk.","Rumah ini besar."],["Rumoh gata jroh.","Rumah kamu bagus."],["Rumoh lon jeuh.","Rumah saya jauh."],["Lon hana di rumoh.","Saya tidak ada di rumah."]];
 const cv=document.getElementById("cv"),cx=cv.getContext("2d");
@@ -69,7 +74,7 @@ function draw(t){
  cx.save();cx.translate(ox,0);card(tt,ci);cx.restore();
  cx.globalAlpha=1;
  for(let k=0;k<n;k++){cx.globalAlpha=k===ci?1:.25;cx.fillStyle=P.ink;cx.fillRect(35+k*6,158,4,4)}
- cx.globalAlpha=1;ticker(0,false,"RUMOH ✦ RUMAH ✦ RUMOH ✦ RUMAH ✦",t);ticker(H-7.5,true,"BASA ACEH ✦ KAMUS ACEH–INDONESIA ✦",t);
+ cx.globalAlpha=1;ticker(0,false,akun+" ✦",t);
 }
 let mode=-1,t0=performance.now(),rec=null,dls=null,busy=false;
 const btn=document.getElementById("dl"),stt=document.getElementById("stt"),chips=document.getElementById("chips");
@@ -77,7 +82,10 @@ chips.innerHTML=["Semua","Card 1","Card 2","Card 3","Card 4","Card 5"].map((l,i)
 function setMode(m){mode=m;t0=performance.now();[...chips.children].forEach((c,i)=>c.classList.toggle("on",i-1===m));btn.textContent=m<0?"⬇ Unduh video (5 card)":"⬇ Unduh Card "+(m+1)}
 chips.onclick=e=>{const m=e.target.dataset?e.target.dataset.m:undefined;if(m!==undefined&&!busy)setMode(+m)};
 setMode(-1);
+const inp=document.getElementById("akun");inp.value=akun;
+inp.oninput=()=>{let v=inp.value.trim();if(!v)v=AKUN0;if(v[0]!=="@")v="@"+v;akun=v;try{localStorage.setItem("peugot_akun",akun)}catch(e){}};
 function frame(now){const t=(now-t0)/1000;draw(t);
+ if(!busy&&t>=(mode<0?T_END:4.4)+1.2)t0=now;
  if(rec&&t>=(mode<0?T_END:4.4)+.5){rec.stop();rec=null}
  requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
@@ -92,7 +100,7 @@ btn.onclick=()=>{
  r.ondataavailable=e=>{if(e.data.size)ch.push(e.data)};
  r.onstop=async()=>{
   const ext=mt.startsWith("video/mp4")?"mp4":"webm";
-  try{await dls.save({filename:"rumoh-kata-aceh-koran"+(m<0?"":"-card"+(m+1))+"."+ext,data:new Blob(ch,{type:mt||"video/webm"})});stt.textContent="Selesai. Ketuk video untuk memutar ulang"}
+  try{await dls.save({filename:"rumoh-kata-aceh-koran"+(m<0?"":"-card"+(m+1))+"."+ext,data:new Blob(ch,{type:mt||"video/webm"})});stt.textContent="Selesai. Video berputar otomatis"}
   catch(e){stt.textContent=(e&&e.code==="declined")?"Penyimpanan dibatalkan":"Gagal menyimpan video"}
   busy=false;btn.disabled=false};
  t0=performance.now();r.start();rec=r;
