@@ -68,7 +68,7 @@ function ticker(y,rev,str,t){
 const CD=3.6;
 const tEnd=()=>(EX.length-1)*CD+3.8;
 function card(tt,ci){
- const ex=EX[ci];
+ const ex=EX[ci]||["",""];
  cx.fillStyle=P.ink;cx.font=F(800,3.2);LS(.16,3.2);cx.fillText(String(S.seri||"").toUpperCase(),8,33);
  const L=[...String(S.kata||"").toUpperCase()];
  cx.font=F(900,24);LS(0,24);
@@ -106,7 +106,8 @@ function card(tt,ci){
 function draw(t){
  cx.setTransform(10.8,0,0,10.8,0,0);cx.globalAlpha=1;cx.textBaseline="alphabetic";cx.textAlign="left";
  cx.fillStyle=P.bg;cx.fillRect(0,0,W,H);
- const n=EX.length,ci=mode<0?Math.min(n-1,Math.floor(t/CD)):mode,tt=mode<0?t-ci*CD:t;
+ const n=EX.length;if(mode>=n)mode=-1;
+ const ci=cl(mode<0?Math.floor(t/CD)||0:mode,0,n-1),tt=mode<0?Math.max(0,t-ci*CD):t;
  const ox=(mode<0&&ci<n-1&&tt>3.35)?-110*Math.pow(cl((tt-3.35)/.25),2):0;
  cx.save();cx.translate(ox,0);card(tt,ci);cx.restore();
  cx.globalAlpha=1;
@@ -129,7 +130,7 @@ function read(){for(const k in FD){const e=el(k);let v=e.type==="checkbox"?e.che
 document.getElementById("pn").addEventListener("input",()=>{read();apply();save()});
 document.getElementById("s_reset").onclick=()=>{Object.assign(S,DEF);fill();apply();save()};
 fill();apply();setMode(-1);
-function frame(now){const t=(now-t0)/1000*S.sp;draw(t);
+function frame(now){const t=Math.max(0,(now-t0)/1000*(+S.sp||1));draw(t);
  if(!busy&&S.loop&&t>=dur()+1.2)t0=now;
  if(rec&&t>=dur()+.5){rec.stop();rec=null}
  requestAnimationFrame(frame)}
