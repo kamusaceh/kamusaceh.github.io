@@ -485,7 +485,7 @@ Array.prototype.forEach.call(az.querySelectorAll("a:not([data-all])"),function(a
 if(letters.indexOf(a.textContent)<0){a.setAttribute("aria-disabled","true");a.tabIndex=-1}
 else{a.removeAttribute("aria-disabled");a.removeAttribute("tabindex")}
 });
-$("count").textContent=DATA.length+" kata dalam "+letters.length+" huruf";
+$("count").textContent=DATA.length+" kata";
 $("rand").addEventListener("click",function(){
 var i;do{i=Math.floor(Math.random()*DATA.length)}while(i===current&&DATA.length>1);
 q.value="";closeSugg();show(i,"Kata acak");
@@ -704,5 +704,6 @@ if(mq.addEventListener)mq.addEventListener("change",sinkron);
 sinkron();
 })();
 </script>
+<script src="/kelas-tip.js" defer></script>
 </body>
 </html>
