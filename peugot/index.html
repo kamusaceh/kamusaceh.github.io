@@ -11,7 +11,7 @@ canvas{height:100%;max-width:100%;aspect-ratio:9/16;cursor:pointer;display:block
 .bar{display:flex;align-items:center;justify-content:center;gap:12px;padding:10px;background:#000;color:#aaa;font-size:13px;flex-wrap:wrap}
 .chip{display:inline-block!important;box-shadow:none!important;padding:6px 12px;font-size:13px;background:#222;color:#ddd;border:2px solid #444}
 .chip.on{background:#f2f0e8;color:#111;border-color:#111}
-button{font:800 14px system-ui,sans-serif;background:#f2f0e8;color:#111;border:3px solid #111;box-shadow:3px 3px 0 #e10600;padding:9px 16px;cursor:pointer;display:none}
+button{font:800 14px system-ui,sans-serif;background:#f2f0e8;color:#111;border:3px solid #111;box-shadow:3px 3px 0 #e10600;padding:9px 16px;cursor:pointer}
 button:disabled{opacity:.6;cursor:wait}
 button.rs{display:inline-block!important;box-shadow:none;padding:8px 12px;font-size:13px;align-self:end}
 .pn{background:#111;color:#ddd;font-size:13px;max-height:46vh;overflow:auto;border-top:1px solid #333}
@@ -137,17 +137,24 @@ function frame(now){const t=Math.max(0,(now-t0)/1000*(+S.sp||1));draw(t);
 requestAnimationFrame(frame);
 cv.onclick=()=>{if(!busy)t0=performance.now()};
 if(window.MediaRecorder&&cv.captureStream&&window.claude&&claude.use){
- claude.use("downloads").then(d=>{if(d){dls=d;btn.style.display="inline-block"}}).catch(()=>{});
+ claude.use("downloads").then(d=>{if(d)dls=d}).catch(()=>{});
+}
+async function saveVid(name,blob){
+ if(dls){await dls.save({filename:name,data:blob});return}
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;
+ document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),15000);
 }
 btn.onclick=()=>{
- if(busy||!dls)return;busy=true;btn.disabled=true;const m=mode;stt.textContent="Merekam… biarkan tab ini terbuka";
+ if(busy)return;
+ if(!window.MediaRecorder||!cv.captureStream){stt.textContent="Browser ini tidak mendukung perekaman video";return}
+ busy=true;btn.disabled=true;const m=mode;stt.textContent="Merekam… biarkan tab ini terbuka";
  const slug=String(S.kata||"kata").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"kata";
  const mt=["video/mp4;codecs=avc1","video/webm;codecs=vp9","video/webm"].find(m=>MediaRecorder.isTypeSupported(m))||"";
  const r=new MediaRecorder(cv.captureStream(30),mt?{mimeType:mt,videoBitsPerSecond:8e6}:{}),ch=[];
  r.ondataavailable=e=>{if(e.data.size)ch.push(e.data)};
  r.onstop=async()=>{
   const ext=mt.startsWith("video/mp4")?"mp4":"webm";
-  try{await dls.save({filename:"kata-aceh-"+slug+(m<0?"":"-card"+(m+1))+"."+ext,data:new Blob(ch,{type:mt||"video/webm"})});stt.textContent="Selesai. Video berputar otomatis"}
+  try{await saveVid("kata-aceh-"+slug+(m<0?"":"-card"+(m+1))+"."+ext,new Blob(ch,{type:mt||"video/webm"}));stt.textContent="Selesai. Video tersimpan"}
   catch(e){stt.textContent=(e&&e.code==="declined")?"Penyimpanan dibatalkan":"Gagal menyimpan video"}
   busy=false;btn.disabled=false};
  t0=performance.now();r.start();rec=r;
