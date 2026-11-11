@@ -79,6 +79,22 @@ a{color:inherit}
 .theme:hover{border-color:var(--accent)}
 
 /* kata raksasa */
+.esearch{position:relative;max-width:520px;margin-top:6px;z-index:6}
+.esearch .field{display:flex;align-items:center;gap:10px;background:var(--surface);border:2px solid var(--ink);border-radius:16px;padding:2px 16px;box-shadow:4px 4px 0 var(--ink);transition:transform .2s,box-shadow .2s,border-color .2s}
+.esearch .field:focus-within{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--accent);border-color:var(--accent)}
+.esearch .field svg{flex:none;color:var(--muted)}
+.esearch .field input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font-family:var(--display);font-size:1.1rem;font-weight:500;padding:11px 0;outline:none}
+.esearch .field input::placeholder{color:var(--muted);opacity:.8}
+.sugg{position:absolute;left:0;right:0;top:calc(100% + 12px);background:var(--surface);border:2px solid var(--ink);border-radius:16px;margin:0;padding:6px;list-style:none;z-index:20;box-shadow:var(--shadow);transform-origin:top;animation:sgpop .2s ease-out}
+.sugg[hidden]{display:none}
+@keyframes sgpop{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.sugg{animation:none}}
+.sugg li{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer;font-family:var(--display);font-weight:600}
+.sugg .sw{flex:none;max-width:60%;overflow-wrap:anywhere}
+.sugg li small{font-family:var(--text,inherit);font-weight:400;color:var(--muted);font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.sugg li[aria-selected="true"],.sugg li:hover{background:var(--bg)}
+.sugg .none{cursor:default;color:var(--muted);font-weight:400}
+.sugg mark{background:var(--mark);color:#0E2520;border-radius:3px;padding:0 1px}
 .hero{position:relative;padding-block:40px 36px;clip-path:inset(0 0 0 -16px)}
 .bgword{position:absolute;right:-2%;top:50%;transform:translateY(-50%);font-family:var(--display);font-weight:800;font-stretch:75%;font-size:clamp(9rem,30vw,22rem);line-height:1;color:var(--accent);opacity:.06;pointer-events:none;user-select:none;white-space:nowrap;animation:slide 14s ease-in-out infinite alternate}
 @keyframes slide{from{transform:translate(0,-50%)}to{transform:translate(-4%,-50%)}}
@@ -214,6 +230,13 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
   </header>
 
   <main>
+    <div class="esearch" id="cari" role="search">
+      <div class="field">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="q" type="text" role="combobox" aria-expanded="false" aria-controls="sugg" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Cari kata lain" aria-label="Cari kata">
+      </div>
+      <ul class="sugg" id="sugg" role="listbox" hidden></ul>
+    </div>
     <div class="hero">
       <div class="bgword" id="bg" aria-hidden="true">ampèh</div>
       <p class="eyebrow"><i></i>Entri kamus Aceh–Indonesia</p>
@@ -436,6 +459,70 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
       OPS=[];try{localStorage.removeItem("kamus-crud")}catch(x){}render();
     }).catch(function(){kamusGalat(u?"":"Server belum disambungkan. Isi KAMUS_API di config.js.")});
   });
+  /* ===== pencarian dengan saran ===== */
+  (function(){
+    var q=$("q"),sugg=$("sugg"),matches=[],active=-1;
+    function ring(d){return d.d||(d.r?"Lihat: "+d.r:"")}
+    function hl(text,term){
+      var i=term?text.toLowerCase().indexOf(term):-1;
+      if(i<0)return esc(text);
+      return esc(text.slice(0,i))+"<mark>"+esc(text.slice(i,i+term.length))+"</mark>"+esc(text.slice(i+term.length));
+    }
+    function cari(raw){
+      var t=norm(raw).trim(),lc=raw.trim().toLowerCase(),a=[],b=[];
+      if(!t&&!lc)return[];
+      Object.keys(DATA).forEach(function(k){
+        var d=DATA[k],w=norm(d.w),v=norm(d.v||"");
+        if(t&&(w.indexOf(t)===0||v.indexOf(t)===0))a.push(d);
+        else if((t&&(w.indexOf(t)>0||v.indexOf(t)>0))||(lc&&(d.d||"").toLowerCase().indexOf(lc)>=0))b.push(d);
+      });
+      return a.concat(b).slice(0,6);
+    }
+    function tutup(){sugg.hidden=true;q.setAttribute("aria-expanded","false");q.removeAttribute("aria-activedescendant");active=-1}
+    function tampil(){
+      var raw=q.value;
+      if(!raw.trim()){tutup();return}
+      if(!Object.keys(DATA).length){sugg.innerHTML='<li class="none" role="option">Memuat data\u2026</li>';matches=[];active=-1;sugg.hidden=false;q.setAttribute("aria-expanded","true");return}
+      var lc=raw.trim().toLowerCase();
+      matches=cari(raw);active=matches.length?0:-1;
+      sugg.innerHTML=matches.length?matches.map(function(d,i){
+        return '<li role="option" id="sg'+i+'" data-id="'+esc(d.id)+'" aria-selected="'+(i===0)+'"><span class="sw">'+(d.h?'<sup class="hm">'+esc(d.h)+'</sup>':'')+hl(d.w,lc)+'</span><small>'+esc(ring(d))+'</small></li>';
+      }).join(""):'<li class="none" role="option">Kata tidak ditemukan</li>';
+      if(active>=0)q.setAttribute("aria-activedescendant","sg"+active);else q.removeAttribute("aria-activedescendant");
+      sugg.hidden=false;q.setAttribute("aria-expanded","true");
+    }
+    function tanda(){
+      Array.prototype.forEach.call(sugg.children,function(li,i){li.setAttribute("aria-selected",String(i===active))});
+      if(active>=0)q.setAttribute("aria-activedescendant","sg"+active);
+    }
+    function pilih(id){
+      if(!DATA[id])return;
+      try{var r=JSON.parse(localStorage.getItem("kamusku-recent")||"[]").filter(function(x){return x!==id});r.unshift(id);localStorage.setItem("kamusku-recent",JSON.stringify(r.slice(0,5)))}catch(e){}
+      q.value="";tutup();q.blur();
+      history.pushState(null,"","/entri/"+encodeURIComponent(id)+"/");render();window.scrollTo(0,0);
+    }
+    function kirim(){
+      if(!q.value.trim())return;
+      tampil();
+      var t=q.value.trim().toLowerCase();
+      var tepat=Object.keys(DATA).filter(function(k){return DATA[k].w.toLowerCase()===t})[0];
+      var m=(active>0?matches[active]:null)||(tepat?DATA[tepat]:null)||matches[0];
+      if(m)pilih(m.id);
+    }
+    q.addEventListener("input",tampil);
+    q.addEventListener("focus",tampil);
+    q.addEventListener("keydown",function(e){
+      if(e.key==="ArrowDown"&&matches.length){e.preventDefault();active=(active+1)%matches.length;tanda()}
+      else if(e.key==="ArrowUp"&&matches.length){e.preventDefault();active=(active-1+matches.length)%matches.length;tanda()}
+      else if(e.key==="Enter"){e.preventDefault();kirim()}
+      else if(e.key==="Escape"){tutup()}
+    });
+    sugg.addEventListener("mousedown",function(e){
+      var li=e.target.closest("li[data-id]");
+      if(li){e.preventDefault();pilih(li.getAttribute("data-id"))}
+    });
+    document.addEventListener("click",function(e){if(!e.target.closest(".esearch"))tutup()});
+  })();
   window.addEventListener("popstate",render);
   document.addEventListener("click",function(e){
     var a=e.target.closest("a[data-spa]");
