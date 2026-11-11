@@ -171,6 +171,7 @@ h2{font-family:var(--display);font-weight:800;font-stretch:85%;font-size:clamp(1
 .az a{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--display);font-weight:700;font-size:1rem;cursor:pointer;transition:transform .18s cubic-bezier(.3,1.6,.5,1),background .2s,color .2s,opacity .3s}
 .az a:hover:not([aria-disabled="true"]){transform:translateY(-4px) rotate(-4deg);border-color:var(--accent)}
 .az a[aria-disabled="true"]{opacity:.3;cursor:default;pointer-events:none}
+.az a[data-all]{width:auto;padding:0 16px;white-space:nowrap}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 /* features */
 .feat{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
