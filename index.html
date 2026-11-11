@@ -598,8 +598,8 @@ function urlProfil(){return "/profil/"+slugProfil(username||"")+"/"}
 function paint(){
 var b=$("loginBtn");
 if(token){
-b.innerHTML=ICON+"<span></span>";
-b.lastChild.textContent=nama||"Profil";
+b.innerHTML="<span></span>"+ICON;
+b.firstChild.textContent=nama||"Profil";
 b.classList.add("hb-user");
 b.setAttribute("aria-label","Buka profil");
 }else{

@@ -153,6 +153,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
 .hb{font-family:var(--display);font-weight:700;font-size:.9rem;padding:8px 16px;border-radius:999px;border:2px solid var(--ink);background:var(--surface);color:var(--ink);cursor:pointer;transition:transform .2s cubic-bezier(.3,1.6,.5,1),box-shadow .2s}
 .hb:hover{transform:translateY(-2px);box-shadow:3px 3px 0 var(--ink)}
 .hb-add{background:var(--accent);color:var(--accent-ink)}
+.hb-user{display:inline-flex;align-items:center;gap:8px}.hb-user svg{flex:none}
 .theme-btn{display:inline-grid;place-items:center;width:40px;height:40px;padding:0}
 .theme-btn svg{display:block}
 .theme-btn .i-sun{display:none}
@@ -499,12 +500,24 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
   var CFG=KAMUS_CONFIG;
   var $=function(id){return document.getElementById(id)};
   var md=$("md"),fl=$("f-login"),fa=$("f-add"),last=null,pending=null,token=null,nama="",editId=null,keepForm=false;
-  try{token=sessionStorage.getItem("kamus-token");nama=sessionStorage.getItem("kamus-nama")||""}catch(e){}
+  var username="";
+try{token=sessionStorage.getItem("kamus-token");nama=sessionStorage.getItem("kamus-nama")||"";username=sessionStorage.getItem("kamus-username")||""}catch(e){}
+var ICON='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>';
+function slugProfil(s){return String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
+function urlProfil(){return username?"/profil/"+slugProfil(username)+"/":"/kontributor/"}
 
   function paint(){
     var b=$("loginBtn");
-    b.textContent=token?"Keluar"+(nama?" ("+nama.split(" ")[0]+")":""):"Login";
-    b.setAttribute("aria-label",token?"Keluar dari akun":"Masuk ke akun");
+    if(token){
+b.innerHTML="<span></span>"+ICON;
+b.firstChild.textContent=nama||"Profil";
+b.classList.add("hb-user");
+b.setAttribute("aria-label","Buka profil");
+}else{
+b.textContent="Login";
+b.classList.remove("hb-user");
+b.setAttribute("aria-label","Masuk ke akun");
+}
   }
   function msg(el,text,ok){el.textContent=text||"";el.className="md-msg"+(ok?" ok":"");el.hidden=!text}
   function exRow(e,t){
@@ -537,11 +550,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
     btn.addEventListener("click",function(){
       var w=btn.getAttribute("data-open");
       if(w==="login"){
-        if(token){
-          token=null;nama="";
-          try{sessionStorage.removeItem("kamus-token");sessionStorage.removeItem("kamus-nama")}catch(e){}
-          paint();
-        }else{pending=null;show("login",btn)}
+        if(token){location.href=urlProfil()}else{pending=null;show("login",btn)}
       }else{
         if(CFG.loginUrl&&!token){pending="add";show("login",btn);msg($("ms-login"),"Masuk dulu untuk menambah kata.")}
         else show("add",btn);
@@ -557,8 +566,8 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
     go.disabled=true;
     post(CFG.loginUrl,{aksi:"login",user:u,pass:p}).then(function(d){
       if(d&&d.ok){
-        token=d.token||"ok";nama=d.nama||u;
-        try{sessionStorage.setItem("kamus-token",token);sessionStorage.setItem("kamus-nama",nama)}catch(e){}
+        token=d.token||"ok";nama=d.nama||u;username=u;
+        try{sessionStorage.setItem("kamus-token",token);sessionStorage.setItem("kamus-nama",nama);sessionStorage.setItem("kamus-username",username)}catch(e){}
         $("lg-pass").value="";paint();
         if(pending==="add"){pending=null;show("add",last)}else hide();
       }else msg(m,(d&&d.pesan)||"Nama pengguna atau kata sandi salah.");
