@@ -326,6 +326,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
   var $=function(id){return document.getElementById(id)};
   function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 
+  function masuk(){try{return!!sessionStorage.getItem("kamus-token")}catch(e){return false}}
   function pathKey(){return decodeURIComponent((location.pathname.match(/^\/entri\/([^\/]+)/)||[])[1]||(location.hash||"").slice(1))}
   function render(){
     var ids=Object.keys(DATA);
@@ -347,7 +348,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
     var stem=d.w.slice(0,Math.max(3,d.w.length-2)),re=new RegExp("([A-Za-z]*"+stem+"[A-Za-z]*)","i");
     $("exs").innerHTML=d.x.map(function(o){return '<div><p class="ex">'+esc(o.e).replace(re,"<b>$1</b>")+'</p><p class="tr">'+esc(o.t)+'</p></div>'}).join("");
     $("exs").parentNode.hidden=!d.x.length;
-    var f=[["Jenis entri",JNS[d.j]||d.j],["Kelas kata",d.c?(CLS[d.c]||d.c):""],["Homonim",d.h],["Varian",d.v],["Rujukan",d.r],["Jumlah revisi",(HIST[key]||[]).length],["Status",d.q?d.q.replace(/;/g,", ").replace(/_/g," "):""]];
+    var f=[["Jenis entri",JNS[d.j]||d.j],["Kelas kata",d.c?(CLS[d.c]||d.c):""],["Homonim",d.h],["Varian",d.v],["Rujukan",d.r],["Jumlah revisi",(HIST[key]||[]).length],["Status",masuk()&&d.q?d.q.replace(/;/g,", ").replace(/_/g," "):""]];
     $("facts").innerHTML=f.filter(function(r){return r[1]!==""}).map(function(r){return "<dt>"+r[0]+"</dt><dd>"+esc(r[1])+"</dd>"}).join("");
     $("more").innerHTML=(function(){var i=ids.indexOf(key),a=Math.max(0,Math.min(i-6,ids.length-13));return ids.slice(a,a+13).filter(function(k){return k!==key})})().map(function(k){return '<a href="/entri/'+encodeURIComponent(k)+'/" data-spa>'+lab(DATA[k])+'</a>'}).join("");
 
@@ -356,7 +357,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
     var LB={kata:"Kata",homonim:"Homonim",varian:"Varian",jenis_entri:"Jenis",kelas:"Kelas",arti:"Arti",rujukan:"Rujukan",status_qc:"Status"};
     function diff(b,x){
       var o,n,out=[];try{o=JSON.parse(b);n=JSON.parse(x)}catch(e){return ""}
-      Object.keys(LB).forEach(function(k){if((o[k]||"")!==(n[k]||""))out.push(LB[k]+": <del>"+esc(o[k]||"(kosong)")+"</del> → <ins>"+esc(n[k]||"(kosong)")+"</ins>")});
+      Object.keys(LB).forEach(function(k){if(k==="status_qc"&&!masuk())return;if((o[k]||"")!==(n[k]||""))out.push(LB[k]+": <del>"+esc(o[k]||"(kosong)")+"</del> → <ins>"+esc(n[k]||"(kosong)")+"</ins>")});
       var oc=o.contoh||[],nc=n.contoh||[],L=Math.max(oc.length,nc.length);
       for(var i=0;i<L;i++){
         var a=oc[i]||{},c=nc[i]||{};
@@ -529,6 +530,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
     if(!a||e.metaKey||e.ctrlKey||e.shiftKey||e.button)return;
     e.preventDefault();history.pushState(null,"",a.getAttribute("href"));render();window.scrollTo(0,0);
   });
+  window.addEventListener("kamus-masuk",function(){render()});
   render();
 })();
 </script>
@@ -658,7 +660,7 @@ b.setAttribute("aria-label","Masuk ke akun");
       if(d&&d.ok){
         token=d.token||"ok";nama=d.nama||u;username=u;
         try{sessionStorage.setItem("kamus-token",token);sessionStorage.setItem("kamus-nama",nama);sessionStorage.setItem("kamus-username",username)}catch(e){}
-        $("lg-pass").value="";paint();
+        $("lg-pass").value="";paint();try{window.dispatchEvent(new Event("kamus-masuk"))}catch(e){}
         if(pending==="add"){pending=null;show("add",last)}else hide();
       }else msg(m,(d&&d.pesan)||"Nama pengguna atau kata sandi salah.");
     }).catch(function(){msg(m,"Tidak dapat menghubungi server. Coba lagi nanti.")}).then(function(){go.disabled=false});
