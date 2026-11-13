@@ -555,6 +555,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
       <label class="fld"><span>Kata sandi</span><input id="lg-pass" type="password" autocomplete="current-password"></label>
       <p class="md-msg" id="ms-login" role="status" hidden></p>
       <button class="md-submit" id="lg-go" type="submit">Masuk</button>
+      <div id="g-wrap" hidden><p class="md-sub" style="text-align:center;margin:14px 0 8px">atau</p><div id="g-btn" style="display:flex;justify-content:center"></div></div>
     </form>
 
     <form id="f-add" hidden>
@@ -636,6 +637,7 @@ b.setAttribute("aria-label","Masuk ke akun");
     fl.hidden=which!=="login";fa.hidden=which!=="add";
     msg($("ms-login"),"");msg($("ms-add"),"");
     md.hidden=false;document.body.style.overflow="hidden";
+    if(which==="login")gSiap();
     var first=which==="login"?$("lg-user"):$("ad-w");
     setTimeout(function(){first.focus()},30);
   }
@@ -650,6 +652,38 @@ b.setAttribute("aria-label","Masuk ke akun");
   }
   function post(url,body){
     return fetch(url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)}).then(function(r){return r.json()});
+  }
+
+  /* Login dengan Google (Google Identity Services). Aktif hanya bila KAMUS_CONFIG.googleClientId terisi di config.js. */
+  var gMuat=false;
+  function gSiap(){
+    var id=CFG.googleClientId,w=$("g-wrap");
+    if(!id||!CFG.loginUrl||!w)return;
+    function pasang(){
+      if(!window.google||!google.accounts||!google.accounts.id)return;
+      google.accounts.id.initialize({client_id:id,callback:gMasuk});
+      google.accounts.id.renderButton($("g-btn"),{theme:"outline",size:"large",text:"signin_with",shape:"pill",width:280,locale:"id"});
+      w.hidden=false;
+    }
+    if(window.google&&window.google.accounts){pasang();return}
+    if(gMuat)return;gMuat=true;
+    var s=document.createElement("script");s.src="https://accounts.google.com/gsi/client";s.async=true;
+    s.onload=pasang;s.onerror=function(){gMuat=false};
+    document.head.appendChild(s);
+  }
+  function gMasuk(r){
+    var m=$("ms-login");
+    if(!r||!r.credential){msg(m,"Login Google dibatalkan.");return}
+    msg(m,"Memeriksa akun Google…",true);
+    post(CFG.loginUrl,{aksi:"login_google",credential:r.credential}).then(function(d){
+      if(d&&d.ok){
+        token=d.token||"ok";nama=d.nama||d.username||"";username=d.username||nama;
+        try{sessionStorage.setItem("kamus-token",token);sessionStorage.setItem("kamus-nama",nama);sessionStorage.setItem("kamus-username",username)}catch(e){}
+        paint();try{window.dispatchEvent(new Event("kamus-masuk"))}catch(e){}
+        msg(m,"");
+        if(pending==="add"){pending=null;show("add",last)}else hide();
+      }else msg(m,(d&&d.pesan)||"Email Google ini belum terdaftar.");
+    }).catch(function(){msg(m,"Tidak dapat menghubungi server. Coba lagi nanti.")});
   }
 
   document.querySelectorAll("[data-open]").forEach(function(btn){

@@ -3,7 +3,9 @@
    Tempel URL aplikasi web Google Apps Script, yang berakhiran /exec
    ============================================================== */
 var KAMUS_API = "https://script.google.com/macros/s/AKfycbxPoMCrgS2n1llCN5F-xU4KFXg8fx9OrOSSvLYmYoacL2SCzVK8RVBePIr76nOlOnde/exec";
-var KAMUS_CONFIG = { loginUrl: KAMUS_API, addWordUrl: KAMUS_API, dataUrl: KAMUS_API };
+/* googleClientId: isi dengan OAuth Client ID (berakhiran .apps.googleusercontent.com) agar tombol "Masuk dengan Google" muncul.
+   Kosong = tombol disembunyikan. Nilai yang sama harus diisi di CFG.GOOGLE_CLIENT_ID pada Code.gs. */
+var KAMUS_CONFIG = { loginUrl: KAMUS_API, addWordUrl: KAMUS_API, dataUrl: KAMUS_API, googleClientId: "" };
 
 function kamusGalat(pesan) {
   var el = document.getElementById("kamus-galat");

@@ -17,7 +17,7 @@ Catatan referensi untuk server Kamus Aceh. Dokumen ini hanya pengetahuan; kode l
 | `Aktivitas` | Log aksi: waktu, username, jenis, id_kata, detail, id_revisi |
 | `Riwayat` | Revisi: id_revisi, waktu, username, id_kata, aksi, ringkasan, sebelum, sesudah, membatalkan |
 | `Kontributor` | Statistik per pengguna (kata, sunting, verif, streak, poin; berisi rumus) |
-| `Pengguna` | username, nama, peran, hash_sandi, garam |
+| `Pengguna` | username, nama, peran, hash_sandi, garam, email (email dipakai untuk login Google) |
 | `Ringkasan`, `Riwayat_Perkata` | Berisi rumus; dibuat otomatis oleh menu "Siapkan sheet" |
 
 Kolom wajib di `Entri`: `id, huruf, kata_kepala, homonim, varian, jenis_entri, tipe_kata, arti_indonesia, rujukan, status_qc, kunci_cari, sumber, metode_input, waktu_input, dibuat_oleh, waktu_update, diubah_oleh, diverifikasi_oleh, waktu_verifikasi`, ditambah `contoh_1..25` dan `arti_1..25`.
@@ -32,6 +32,7 @@ Semua POST dikirim sebagai teks JSON (`Content-Type: text/plain`).
 | GET | `?aksi=kontributor` | `{ok, kontributor:[{username,n,r,j,kata,sunting,verif,streak,poin}]}` |
 | GET | `?aksi=ping` | `{ok, waktu}` |
 | POST | `login` (`user`, `pass`) | `{ok, token, nama, peran}` |
+| POST | `login_google` (`credential`) | `{ok, token, nama, peran, username}` |
 | POST | `keluar` (`token`) | `{ok}` |
 | POST | `tambah_kata` (`token`, `data`) | `{ok, id, pesan}` |
 | POST | `sunting_kata` (`token`, `id`, `data`) | `{ok, pesan}` |
@@ -67,3 +68,11 @@ Bentuk ringkas entri pada `?aksi=data`: `id, w` (kata), `H` (huruf), `j` (jenis)
 ## Hubungan dengan bagian lain repo
 
 - `alat/bangun.py` membaca xlsx yang sama untuk membuat halaman statis `entri/<id>/`, `sitemap.xml`, dan `robots.txt`. Perubahan lewat web hanya masuk ke Spreadsheet, jadi xlsx di repo perlu diekspor ulang sebelum menjalankan skrip itu.
+
+## Login dengan Google
+1. Google Cloud Console > APIs & Services > Credentials > Create credentials > OAuth client ID > Web application.
+2. Authorized JavaScript origins: `https://kamusaceh.github.io` (tambahkan domain lain bila ada). Redirect URI tidak perlu diisi.
+3. Salin Client ID (berakhiran `.apps.googleusercontent.com`) ke dua tempat: `googleClientId` di `config.js` dan `CFG.GOOGLE_CLIENT_ID` di `Code.gs`.
+4. Di spreadsheet jalankan `siapkanSheet()` (menambah kolom `email`), lalu isi email lewat menu Kamus Aceh > Atur email Google pengguna.
+5. Deploy ulang Apps Script sebagai versi baru dan setujui izin baru (akses layanan eksternal, dipakai untuk memeriksa token ke Google).
+Hanya email yang tercantum di sheet `Pengguna` yang bisa masuk; email lain ditolak. Tombol Google disembunyikan selama `googleClientId` kosong.

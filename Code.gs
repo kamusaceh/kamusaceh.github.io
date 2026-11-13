@@ -17,6 +17,7 @@
  *   GET  ?aksi=data         -> {ok, entri:[...], riwayat:{id:[...]}}     (format langsung dipakai halaman web)
  *   GET  ?aksi=kontributor  -> {ok, kontributor:[{username,n,r,j,kata,sunting,verif,streak,poin}]}
  *   POST {aksi:"login", user, pass}                  -> {ok, token, nama, peran}
+ *   POST {aksi:"login_google", credential}           -> {ok, token, nama, peran, username}  (email harus ada di sheet Pengguna)
  *   POST {aksi:"keluar", token}
  *   POST {aksi:"tambah_kata",   token, data}
  *   POST {aksi:"sunting_kata",  token, id, data}
@@ -29,6 +30,7 @@ var CFG = {
   ZONA: 'Asia/Jakarta',
   SESI_DETIK: 21600,      // masa berlaku token: 6 jam
   GAGAL_MAKS: 5,          // gagal login berturut-turut sebelum diblokir 10 menit
+  GOOGLE_CLIENT_ID: '',   // OAuth Client ID untuk 'Masuk dengan Google' (kosong = dinonaktifkan)
   PANJANG_MAKS: 2000,     // batas panjang tiap isian
   MAKS_RIWAYAT: 1000,     // baris Riwayat yang dibaca rumus bantu
   MAKS_PERKATA: 20        // kolom riwayat_N di Riwayat_Perkata
@@ -49,7 +51,7 @@ var HEAD = {
   Aktivitas:   ['waktu', 'username', 'jenis', 'id_kata', 'detail', 'id_revisi'],
   Riwayat:     ['id_revisi', 'waktu', 'username', 'id_kata', 'aksi', 'ringkasan', 'sebelum', 'sesudah', 'membatalkan'],
   Kontributor: ['username', 'nama', 'peran', 'bergabung', 'kata', 'sunting', 'verif', 'streak', 'poin'],
-  Pengguna:    ['username', 'nama', 'peran', 'hash_sandi', 'garam']
+  Pengguna:    ['username', 'nama', 'peran', 'hash_sandi', 'garam', 'email']
 };
 
 /* ===================== utilitas ===================== */
@@ -240,6 +242,38 @@ function opLogin(q) {
   return { ok: false, pesan: 'Nama pengguna atau kata sandi salah.' };
 }
 
+/* Login Google: token ID dari Google Identity Services diperiksa ke Google, lalu emailnya dicocokkan
+   dengan kolom email di sheet Pengguna. Email yang belum terdaftar ditolak (tidak ada akun otomatis). */
+function opLoginGoogle(q) {
+  if (!CFG.GOOGLE_CLIENT_ID) return { ok: false, pesan: 'Login Google belum diaktifkan di server.' };
+  var cred = String(q.credential || '');
+  if (!cred || cred.length > 4096) return { ok: false, pesan: 'Token Google tidak valid.' };
+  var info;
+  try {
+    var r = UrlFetchApp.fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(cred), { muteHttpExceptions: true });
+    if (r.getResponseCode() !== 200) return { ok: false, pesan: 'Token Google tidak valid atau kedaluwarsa.' };
+    info = JSON.parse(r.getContentText());
+  } catch (x) { return { ok: false, pesan: 'Tidak dapat memeriksa akun Google. Coba lagi.' }; }
+  var iss = String(info.iss || '');
+  if (info.aud !== CFG.GOOGLE_CLIENT_ID || (iss !== 'accounts.google.com' && iss !== 'https://accounts.google.com') ||
+      String(info.email_verified) !== 'true' || Number(info.exp) * 1000 < Date.now()) return { ok: false, pesan: 'Token Google tidak valid.' };
+  var email = String(info.email || '').trim().toLowerCase();
+  if (!email) return { ok: false, pesan: 'Token Google tidak valid.' };
+  var c = CacheService.getScriptCache(), key = 'gagal:g:' + email, g = Number(c.get(key) || 0);
+  if (g >= CFG.GAGAL_MAKS) return { ok: false, pesan: 'Terlalu banyak percobaan. Coba lagi 10 menit lagi.' };
+  var P = sheet('Pengguna'), n = lastRow(P, 1), v = n > 1 ? P.getRange(2, 1, n - 1, 6).getValues() : [];
+  for (var i = 0; i < v.length; i++) {
+    if (String(v[i][5]).trim().toLowerCase() === email) {
+      var tk = Utilities.getUuid(), peran = String(v[i][2]).toLowerCase();
+      c.put(tk, JSON.stringify({ u: String(v[i][0]), nama: String(v[i][1]), peran: peran }), CFG.SESI_DETIK);
+      c.remove(key);
+      return { ok: true, token: tk, nama: String(v[i][1]), peran: peran, username: String(v[i][0]) };
+    }
+  }
+  c.put(key, String(g + 1), 600);
+  return { ok: false, pesan: 'Email Google ini belum terdaftar. Hubungi admin untuk menambahkannya.' };
+}
+
 /* ===================== titik masuk web ===================== */
 function doGet(e) {
   try {
@@ -329,6 +363,7 @@ function doPost(e) {
   try { q = JSON.parse(e.postData.contents); } catch (x) { return out({ ok: false, pesan: 'Permintaan tidak valid.' }); }
   try {
     if (q.aksi === 'login') return out(opLogin(q));
+    if (q.aksi === 'login_google') return out(opLoginGoogle(q));
     var c = CacheService.getScriptCache(), raw = q.token && c.get(q.token);
     if (q.aksi === 'keluar') { if (q.token) c.remove(q.token); return out({ ok: true }); }
     if (!raw) return out({ ok: false, pesan: 'Sesi habis. Masuk lagi.' });
@@ -353,6 +388,7 @@ function onOpen() {
     .addItem('Siapkan sheet', 'siapkanSheet')
     .addItem('Tambah pengguna', 'menuTambahPengguna')
     .addItem('Ubah sandi pengguna', 'menuUbahSandi')
+    .addItem('Atur email Google pengguna', 'menuAturEmail')
     .addToUi();
 }
 function tanya(judul, teks) {
@@ -369,7 +405,8 @@ function menuTambahPengguna() {
   var P = sheet('Pengguna'), n = lastRow(P, 1), v = n > 1 ? P.getRange(2, 1, n - 1, 1).getValues() : [];
   for (var i = 0; i < v.length; i++) if (String(v[i][0]).toLowerCase() === user.toLowerCase()) return SpreadsheetApp.getUi().alert('Nama pengguna sudah ada.');
   var garam = Utilities.getUuid().replace(/-/g, '').slice(0, 16);
-  tulis(P, n + 1, [user, nama, peran, hash(garam, sandi), garam]);
+  var email = (tanya('Tambah pengguna', 'Email Google untuk login Google (boleh dikosongkan):') || '').toLowerCase();
+  tulis(P, n + 1, [user, nama, peran, hash(garam, sandi), garam, email]);
   SpreadsheetApp.getUi().alert('Pengguna ditambahkan.');
 }
 function menuUbahSandi() {
@@ -381,6 +418,18 @@ function menuUbahSandi() {
     var garam = Utilities.getUuid().replace(/-/g, '').slice(0, 16);
     var r = P.getRange(i + 2, 4, 1, 2); r.setNumberFormat('@'); r.setValues([[hash(garam, sandi), garam]]);
     return SpreadsheetApp.getUi().alert('Kata sandi diperbarui.');
+  }
+  SpreadsheetApp.getUi().alert('Pengguna tidak ditemukan.');
+}
+
+function menuAturEmail() {
+  var user = tanya('Atur email Google', 'Nama pengguna:'); if (!user) return;
+  var email = (tanya('Atur email Google', 'Email Google (kosongkan untuk menghapus):') || '').trim().toLowerCase();
+  var P = sheet('Pengguna'), n = lastRow(P, 1), v = n > 1 ? P.getRange(2, 1, n - 1, 6).getValues() : [];
+  if (email) for (var j = 0; j < v.length; j++) if (String(v[j][5]).trim().toLowerCase() === email && String(v[j][0]).toLowerCase() !== user.toLowerCase()) return SpreadsheetApp.getUi().alert('Email itu sudah dipakai pengguna lain.');
+  for (var i = 0; i < v.length; i++) if (String(v[i][0]).toLowerCase() === user.toLowerCase()) {
+    var r = P.getRange(i + 2, 6); r.setNumberFormat('@'); r.setValue(email);
+    return SpreadsheetApp.getUi().alert(email ? 'Email Google disimpan.' : 'Email Google dihapus.');
   }
   SpreadsheetApp.getUi().alert('Pengguna tidak ditemukan.');
 }
