@@ -32,7 +32,7 @@ h1{font-family:var(--display);font-weight:800;letter-spacing:-.03em;font-size:cl
 .chips a{display:inline-flex;align-items:baseline;gap:6px;font-family:var(--display);font-weight:700;font-size:1rem;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);padding:8px 14px;border-radius:999px}
 .chips a:hover,.chips a:focus-visible{border-color:var(--accent);outline:none}
 .chips small{font-weight:600;color:var(--muted);font-size:.78rem}
-sup.hm{font-family:var(--display);font-weight:800;font-size:.55em;color:var(--accent);margin-left:2px;vertical-align:super}
+sup.hm{font-family:var(--display);font-weight:800;font-size:.55em;color:var(--accent);margin-right:2px;vertical-align:super}
 .entry{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px 20px;margin:0 0 18px;box-shadow:var(--shadow)}
 .entry header{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin:0 0 12px}
 .entry h2{font-family:var(--display);font-weight:800;letter-spacing:-.02em;font-size:2rem;line-height:1.1;margin:0}
@@ -66,14 +66,14 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;backgroun
   <p class="lead">3 entri homonim: ejaan sama, makna dan asal berbeda. Semuanya tampil dalam satu halaman.</p>
 
   <ul class="chips" aria-label="Loncat ke entri">
-    <li><a href="#ama-1">ama<sup class="hm">1</sup> <small>kata benda</small></a></li>
-    <li><a href="#ama-2">ama<sup class="hm">2</sup> <small>keterangan</small></a></li>
-    <li><a href="#ama-3">ama<sup class="hm">3</sup> <small>kata benda</small></a></li>
+    <li><a href="#ama-1"><sup class="hm">1</sup>ama <small>kata benda</small></a></li>
+    <li><a href="#ama-2"><sup class="hm">2</sup>ama <small>keterangan</small></a></li>
+    <li><a href="#ama-3"><sup class="hm">3</sup>ama <small>kata benda</small></a></li>
   </ul>
 
   <article class="entry" id="ama-1">
     <header>
-      <h2 lang="ace">ama<sup class="hm">1</sup></h2>
+      <h2 lang="ace"><sup class="hm">1</sup>ama</h2>
       <span class="cls">kata benda</span>
     </header>
     <p class="def">amar nahi, perintah atau larangan di agama</p>
@@ -93,7 +93,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;backgroun
 
   <article class="entry" id="ama-2">
     <header>
-      <h2 lang="ace">ama<sup class="hm">2</sup></h2>
+      <h2 lang="ace"><sup class="hm">2</sup>ama</h2>
       <span class="cls">keterangan</span>
     </header>
     <p class="def">– ba'du, kemudian setelah itu (lazim dipergunakan dl hik dll)</p>
@@ -112,7 +112,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;backgroun
 
   <article class="entry" id="ama-3">
     <header>
-      <h2 lang="ace">ama<sup class="hm">3</sup></h2>
+      <h2 lang="ace"><sup class="hm">3</sup>ama</h2>
       <span class="cls">kata benda</span>
     </header>
     <p class="def">'amma, nama juz terakhir di Alquran</p>
@@ -131,7 +131,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;backgroun
     <ul>
       <li>Data diambil dari spreadsheet Kamus Aceh. Tanda "–" di arti dan contoh mewakili kata <i>ama</i>, sesuai tulisan di sumbernya.</li>
       <li>Status verifikasi dan jumlah revisi tidak ditampilkan, karena hanya untuk pengguna yang sudah login.</li>
-      <li>Alamat halaman ini hanya <code>/entri/ama/</code>. Tiap homonim punya jangkar sendiri: <code>#ama-1</code>, <code>#ama-2</code>, <code>#ama-3</code>.</li>
+      <li>Alamat halaman ini hanya <code>/entri/ama/</code>. Nomor homonim ditulis di depan kata (¹ama) agar tidak terbaca sebagai pangkat atau bagian dari kata. Tiap homonim punya jangkar sendiri: <code>#ama-1</code>, <code>#ama-2</code>, <code>#ama-3</code>.</li>
     </ul>
   </aside>
 </div>
