@@ -347,7 +347,7 @@ footer.site li a:hover{opacity:1;border-color:currentColor}
     var stem=d.w.slice(0,Math.max(3,d.w.length-2)),re=new RegExp("([A-Za-z]*"+stem+"[A-Za-z]*)","i");
     $("exs").innerHTML=d.x.map(function(o){return '<div><p class="ex">'+esc(o.e).replace(re,"<b>$1</b>")+'</p><p class="tr">'+esc(o.t)+'</p></div>'}).join("");
     $("exs").parentNode.hidden=!d.x.length;
-    var f=[["Jenis entri",JNS[d.j]||d.j],["Kelas kata",d.c?(CLS[d.c]||d.c):""],["Homonim",d.h],["Varian",d.v],["Rujukan",d.r],["Jumlah huruf",d.w.length],["Jumlah revisi",(HIST[key]||[]).length],["Status",d.q?d.q.replace(/;/g,", ").replace(/_/g," "):""]];
+    var f=[["Jenis entri",JNS[d.j]||d.j],["Kelas kata",d.c?(CLS[d.c]||d.c):""],["Homonim",d.h],["Varian",d.v],["Rujukan",d.r],["Jumlah revisi",(HIST[key]||[]).length],["Status",d.q?d.q.replace(/;/g,", ").replace(/_/g," "):""]];
     $("facts").innerHTML=f.filter(function(r){return r[1]!==""}).map(function(r){return "<dt>"+r[0]+"</dt><dd>"+esc(r[1])+"</dd>"}).join("");
     $("more").innerHTML=(function(){var i=ids.indexOf(key),a=Math.max(0,Math.min(i-6,ids.length-13));return ids.slice(a,a+13).filter(function(k){return k!==key})})().map(function(k){return '<a href="/entri/'+encodeURIComponent(k)+'/" data-spa>'+lab(DATA[k])+'</a>'}).join("");
 
