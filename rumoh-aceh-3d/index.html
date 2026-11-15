@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
   <!-- Three.js r128 & OrbitControls -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -71,6 +71,28 @@
       pointer-events: none;
       background: radial-gradient(circle at center, transparent 55%, rgba(3, 19, 43, 0.72) 100%);
     }
+
+    /* Label bagian 3D */
+    #label-layer { position: fixed; inset: 0; pointer-events: none; z-index: 20; overflow: hidden; }
+    .lbl {
+      position: absolute; left: 0; top: 0; pointer-events: auto; cursor: pointer;
+      white-space: nowrap; font-size: 10px; font-weight: 600; line-height: 1;
+      padding: 3px 6px; border-radius: 6px; will-change: transform;
+      background: rgba(10, 15, 26, 0.84); border: 1px solid rgba(217, 155, 38, 0.6);
+      color: #fde68a; transition: background 0.15s, color 0.15s;
+    }
+    .lbl::after {
+      content: ''; position: absolute; left: 50%; bottom: -5px; width: 5px; height: 5px;
+      margin-left: -2.5px; border-radius: 50%; background: #f59e0b; box-shadow: 0 0 6px rgba(245, 158, 11, 0.9);
+    }
+    .lbl.check { border-style: dashed; border-color: rgba(248, 113, 113, 0.75); color: #fecaca; }
+    .lbl.check::after { background: #f87171; box-shadow: 0 0 6px rgba(248, 113, 113, 0.9); }
+    .lbl:hover, .lbl.active { background: rgba(245, 158, 11, 0.95); color: #111827; }
+    .lcat-chip {
+      padding: 5px 4px; border-radius: 8px; font-size: 10px; border: 1px solid rgba(100, 116, 139, 0.5);
+      background: rgba(30, 41, 59, 0.75); color: #cbd5e1; transition: 0.15s;
+    }
+    .lcat-chip.on { background: rgba(245, 158, 11, 0.2); border-color: rgba(251, 191, 36, 0.55); color: #fde68a; }
   </style>
 </head>
 <body>
@@ -79,6 +101,22 @@
 
   <!-- Vignette saat Mode Blueprint CAD -->
   <div id="blueprint-overlay" class="fixed inset-0 blueprint-vignette hidden z-10"></div>
+
+  <!-- Layer label bagian 3D & kartu info -->
+  <div id="label-layer"></div>
+  <div id="label-card" class="hidden fixed left-3 bottom-[72px] z-30 w-[300px] max-w-[calc(100vw-24px)] museum-panel rounded-2xl p-3 text-xs">
+    <div class="flex items-start justify-between gap-2">
+      <div>
+        <div id="lc-aceh" class="text-sm font-bold text-amber-300"></div>
+        <div id="lc-indo" class="text-[11px] text-slate-400"></div>
+      </div>
+      <button id="lc-close" class="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition" title="Tutup">✕</button>
+    </div>
+    <p id="lc-fungsi" class="mt-2 text-slate-200 leading-relaxed"></p>
+    <div id="lc-badge" class="mt-2 inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full"></div>
+    <p id="lc-note" class="mt-1.5 text-[11px] text-rose-200/90 leading-relaxed"></p>
+    <div id="lc-src" class="mt-2 text-[9.5px] text-slate-500 font-mono-tech"></div>
+  </div>
 
   <!-- Header Kiri Atas: Identitas Museum & Telemetri -->
   <header class="fixed top-3 left-3 sm:top-4 sm:left-4 z-30 flex items-start gap-2 pointer-events-auto">
@@ -92,6 +130,10 @@
       <svg id="icon-eye-closed" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
       </svg>
+    </button>
+  <button id="btn-labels" title="Tampilkan / Sembunyikan Label Bagian"
+      class="museum-panel rounded-xl px-2.5 py-2 text-[11px] font-semibold text-amber-300 hover:border-amber-400/50 transition flex items-center gap-1.5">
+      <span>🏷️</span><span id="btn-labels-text">Label: ON</span>
     </button>
   </header>
 
@@ -204,6 +246,23 @@
           <span>🪟</span>
           <span id="tingkap-text">Buka Daun Tingkap</span>
         </button>
+      </div>
+
+      <!-- 6. Label Bagian -->
+      <div class="pt-1 border-t border-slate-800">
+        <div class="font-semibold text-slate-200 mb-1.5 flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+          Label Bagian
+        </div>
+        <div class="grid grid-cols-2 gap-1.5">
+          <button data-lcat="struktur" class="lcat-chip on">Struktur</button>
+          <button data-lcat="ruang" class="lcat-chip on">Ruang &amp; Lantai</button>
+          <button data-lcat="atap" class="lcat-chip on">Atap</button>
+          <button data-lcat="akses" class="lcat-chip on">Akses &amp; Ornamen</button>
+        </div>
+        <div class="mt-1.5 text-[9.5px] text-slate-400 leading-relaxed">
+          Klik label untuk detail. Label bergaris putus merah = istilah atau posisi di model perlu diverifikasi.
+        </div>
       </div>
 
       <div class="text-[9.5px] text-slate-400 font-mono-tech leading-relaxed">
@@ -1867,7 +1926,206 @@
         });
       }
 
+      // --------------------------------------------------------------------------
+      // 12b. TIANG BENDERA DI HALAMAN DEPAN (MERAH PUTIH & BINTANG BULAN)
+      // --------------------------------------------------------------------------
+      const flagMeshes = [];
+      const FLAG_W = 1.6, FLAG_H = 1.0;
+
+      function makeFlagTexture(kind) {
+        const W = 640, H = 400;
+        const c = document.createElement('canvas');
+        c.width = W; c.height = H;
+        const ctx = c.getContext('2d');
+        if (kind === 'id') {
+          // Sang Saka Merah Putih: merah di atas, putih di bawah
+          ctx.fillStyle = '#d6001c'; ctx.fillRect(0, 0, W, H / 2);
+          ctx.fillStyle = '#f5f5f5'; ctx.fillRect(0, H / 2, W, H / 2);
+        } else {
+          // Bendera Bintang Bulan: dasar merah, lajur putih-hitam atas & bawah, bulan sabit & bintang putih
+          ctx.fillStyle = '#d3161c'; ctx.fillRect(0, 0, W, H);
+          ctx.fillStyle = '#f5f5f5'; ctx.fillRect(0, 0, W, 16); ctx.fillRect(0, H - 16, W, 16);
+          ctx.fillStyle = '#111111'; ctx.fillRect(0, 16, W, 60); ctx.fillRect(0, H - 76, W, 60);
+          const cx = W / 2 - 14, cy = H / 2;
+          ctx.fillStyle = '#f5f5f5';
+          ctx.beginPath(); ctx.arc(cx, cy, 84, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#d3161c';
+          ctx.beginPath(); ctx.arc(cx + 24, cy, 70, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#f5f5f5';
+          ctx.beginPath();
+          for (let k = 0; k < 10; k++) {
+            const rr = k % 2 === 0 ? 30 : 12;
+            const ang = -Math.PI / 2 + (k * Math.PI) / 5;
+            const px = cx + 62 + Math.cos(ang) * rr, py = cy + Math.sin(ang) * rr;
+            if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+          }
+          ctx.closePath(); ctx.fill();
+        }
+        const tex = new THREE.CanvasTexture(c);
+        tex.encoding = THREE.sRGBEncoding;
+        tex.anisotropy = 4;
+        return tex;
+      }
+
+      function buildFlagpoles() {
+        const poleMat = new THREE.MeshStandardMaterial({ color: 0xd9d6cf, roughness: 0.38, metalness: 0.6 });
+        const goldMat = new THREE.MeshStandardMaterial({ color: 0xd4a017, roughness: 0.35, metalness: 0.7 });
+        const baseMat = new THREE.MeshStandardMaterial({ color: 0x8d8f90, roughness: 0.92 });
+        const ropeMat = new THREE.MeshStandardMaterial({ color: 0xe9e4d6, roughness: 0.9 });
+        const poleH = 7.0, zPole = 10.6;
+        const defs = [
+          { x: 3.7, kind: 'id', ph: 0.0 },
+          { x: 5.6, kind: 'gam', ph: 1.4 }
+        ];
+        defs.forEach((d) => {
+          const g = new THREE.Group();
+          g.position.set(d.x, 0, zPole);
+          g.rotation.y = -0.10; // sedikit serong agar tidak kaku
+          const add = (mesh) => { mesh.castShadow = true; mesh.receiveShadow = true; g.add(mesh); return mesh; };
+
+          add(new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.42, 0.18, 20), baseMat)).position.y = 0.09;
+          add(new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.30, 0.26, 20), baseMat)).position.y = 0.31;
+          add(new THREE.Mesh(new THREE.CylinderGeometry(0.036, 0.058, poleH, 14), poleMat)).position.y = 0.44 + poleH / 2 - 0.44;
+          add(new THREE.Mesh(new THREE.SphereGeometry(0.085, 14, 10), goldMat)).position.y = poleH + 0.07;
+          add(new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.052, 0.05, 12), goldMat)).position.y = poleH - 0.03;
+          // tali penarik bendera
+          const rope = add(new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, poleH - 1.0, 5), ropeMat));
+          rope.position.set(0.075, (poleH - 1.0) / 2 + 0.6, 0.045);
+
+          // kain bendera: bidang bersegmen yang dianimasikan oleh angin
+          const geo = new THREE.PlaneGeometry(FLAG_W, FLAG_H, 28, 14);
+          geo.translate(FLAG_W / 2, 0, 0);
+          const flag = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
+            map: makeFlagTexture(d.kind), roughness: 0.85, side: THREE.DoubleSide
+          }));
+          flag.position.set(0.05, poleH - 0.18 - FLAG_H / 2, 0);
+          flag.castShadow = true;
+          flag.receiveShadow = true;
+          g.add(flag);
+          flagMeshes.push({ geo, base: geo.attributes.position.array.slice(), ph: d.ph });
+
+          envGroup.add(g);
+        });
+      }
+
+      function updateFlags(t) {
+        flagMeshes.forEach((f) => {
+          const pos = f.geo.attributes.position;
+          for (let i = 0; i < pos.count; i++) {
+            const bx = f.base[i * 3], by = f.base[i * 3 + 1];
+            const k = bx / FLAG_W;
+            const phase = k * 6.2 - t * 3.4 + f.ph + by * 1.3;
+            const wave = Math.sin(phase) * 0.11 * k + Math.sin(k * 11 - t * 5.1 + f.ph * 0.7) * 0.025 * k;
+            const x = bx * (1 - 0.05 * k * Math.abs(Math.sin(phase)));
+            const y = by - 0.10 * k * k - 0.02 * Math.sin(k * 4 - t * 2.2 + f.ph);
+            pos.setXYZ(i, x, y, wave);
+          }
+          pos.needsUpdate = true;
+          f.geo.computeVertexNormals();
+        });
+      }
+
+      // --------------------------------------------------------------------------
+      // 12c. PALANG NAMA RUMOH ACEH (AKSARA JAWI) — OLEH ALI AKBAR
+      // --------------------------------------------------------------------------
+      function buildSignboard() {
+        const W = 1024, H = 420;
+        const c = document.createElement('canvas');
+        c.width = W; c.height = H;
+        const ctx = c.getContext('2d');
+        const tex = new THREE.CanvasTexture(c);
+        tex.encoding = THREE.sRGBEncoding;
+        tex.anisotropy = 8;
+
+        const paint = () => {
+          ctx.clearRect(0, 0, W, H);
+          ctx.fillStyle = '#3a2111';
+          ctx.fillRect(0, 0, W, H);
+          for (let i = 0; i < 130; i++) {
+            const y = (i * 53) % H;
+            ctx.strokeStyle = 'rgba(15,7,2,' + (0.07 + (i % 6) * 0.025) + ')';
+            ctx.lineWidth = 1 + (i % 3) * 0.7;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.bezierCurveTo(W * 0.3, y + ((i % 5) - 2) * 2, W * 0.6, y - ((i % 7) - 3) * 2, W, y + (i % 4));
+            ctx.stroke();
+          }
+          // bingkai emas ganda + tali puntir di antaranya
+          ctx.strokeStyle = '#d9a441'; ctx.lineWidth = 6; ctx.strokeRect(16, 16, W - 32, H - 32);
+          ctx.lineWidth = 2; ctx.strokeRect(36, 36, W - 72, H - 72);
+          ctx.lineWidth = 2.5;
+          for (let x = 48; x < W - 48; x += 20) {
+            [26, H - 26].forEach((y) => {
+              ctx.beginPath(); ctx.moveTo(x - 5, y + 4); ctx.lineTo(x + 5, y - 4); ctx.stroke();
+            });
+          }
+
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          // judul Jawi: Rumoh Aceh
+          ctx.direction = 'rtl';
+          ctx.font = '700 150px Amiri, "Noto Naskh Arabic", "Traditional Arabic", serif';
+          ctx.fillStyle = 'rgba(10,4,1,0.85)';
+          ctx.fillText('رومه اچيه', W / 2 + 4, 124);
+          ctx.fillStyle = '#f4c95d';
+          ctx.fillText('رومه اچيه', W / 2, 120);
+          // judul Latin
+          ctx.direction = 'ltr';
+          if ('letterSpacing' in ctx) ctx.letterSpacing = '10px';
+          ctx.font = '600 40px Inter, sans-serif';
+          ctx.fillStyle = '#ead9b3';
+          ctx.fillText('RUMOH ACEH', W / 2 + 5, 216);
+          if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+          // garis pemisah
+          ctx.strokeStyle = 'rgba(217,164,65,0.8)'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(W * 0.3, 256); ctx.lineTo(W * 0.7, 256); ctx.stroke();
+          // pembuat: Jawi lalu Latin
+          ctx.direction = 'rtl';
+          ctx.font = '700 56px Amiri, "Noto Naskh Arabic", "Traditional Arabic", serif';
+          ctx.fillStyle = '#f4c95d';
+          ctx.fillText('اوليه علي اكبر', W / 2, 308);
+          ctx.direction = 'ltr';
+          ctx.font = '600 30px Inter, sans-serif';
+          ctx.fillStyle = '#d8c79f';
+          ctx.fillText('Oleh: Ali Akbar', W / 2, 364);
+        };
+        paint();
+        if (document.fonts && document.fonts.load) {
+          Promise.all([
+            document.fonts.load('700 120px Amiri', 'رومه'),
+            document.fonts.load('600 40px Inter', 'Rumoh')
+          ]).then(() => { paint(); tex.needsUpdate = true; }).catch(() => {});
+        }
+
+        const g = new THREE.Group();
+        g.position.set(-6.0, 0, 11.5);
+        g.rotation.y = 0.14;
+        const add = (mesh, x, y, z) => {
+          mesh.castShadow = true; mesh.receiveShadow = true;
+          mesh.position.set(x, y, z);
+          g.add(mesh);
+          return mesh;
+        };
+        const faceMat = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.6 });
+        const sideMat = mats.seumantok;
+        // urutan sisi BoxGeometry: +X, -X, +Y, -Y, +Z (depan), -Z (belakang)
+        add(new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.98, 0.07),
+          [sideMat, sideMat, sideMat, sideMat, faceMat, sideMat]), 0, 1.45, 0);
+        // dua tiang kayu ulin
+        [-1.22, 1.22].forEach((px) => {
+          add(new THREE.Mesh(new THREE.BoxGeometry(0.13, 2.05, 0.13), mats.ulin), px, 1.025, -0.02);
+        });
+        // lis ukir atas & bawah papan
+        add(new THREE.Mesh(new THREE.BoxGeometry(2.56, 0.14, 0.11), mats.carving), 0, 2.01, 0.01);
+        add(new THREE.Mesh(new THREE.BoxGeometry(2.56, 0.10, 0.11), mats.carving), 0, 0.92, 0.01);
+        // atap rumbia kecil pelindung papan
+        add(new THREE.Mesh(new THREE.BoxGeometry(2.9, 0.06, 0.85), mats.rumbia), 0, 2.22, 0.06).rotation.x = 0.2;
+        envGroup.add(g);
+      }
+
       // Bangun seluruh komponen arsitektural
+      buildSignboard();
+      buildFlagpoles();
       buildEnvironment();
       buildDimensionGrid();
       buildLayer1FoundationAndYupMoh();
@@ -2202,6 +2460,149 @@
         document.getElementById('tingkap-text').textContent = tkOpen ? 'Tutup Daun Tingkap' : 'Buka Daun Tingkap';
       });
 
+      // --------------------------------------------------------------------------
+      // 19. LABEL BAGIAN 3D (istilah Aceh, fungsi, status verifikasi sumber)
+      // --------------------------------------------------------------------------
+      const LAYER_KEY = {
+        l1: 'l1_foundation', l2: 'l2_pillarsBeams', l3: 'l3_floorSystem',
+        l4: 'l4_wallsRooms', l5: 'l5_roofTruss', l6: 'l6_roofCover'
+      };
+      // L(id, kategori, nama Aceh, nama Indonesia, fungsi, posisi, lapisan, toggle, sumber, catatan verifikasi)
+      const LABELS = [];
+      function L(id, cat, aceh, indo, fungsi, pos, layer, needs, src, note) {
+        LABELS.push({ id, cat, aceh, indo, fungsi, pos, layer: LAYER_KEY[layer], needs, src, note: note || null });
+      }
+      const S_WID = 'Wikipedia ID', S_WEN = 'Wikipedia EN', S_USTJ = 'Median USTJ', S_IAIN = 'IAIN Langsa';
+
+      // STRUKTUR
+      L('tameh', 'struktur', 'Tamèh', 'Tiang', 'Tiang penyangga badan rumah. Jumlahnya 16, 24, atau 32 untuk rumah 3, 5, atau 7 ruang. Rumah ini memakai 24 tiang.', [6.5, 3.4, 4.2], 'l2', null, S_WID + ', ' + S_USTJ + ', ' + S_IAIN);
+      L('tameh_raja', 'struktur', 'Tamèh Raja', 'Tiang Raja', 'Tiang utama berukuran lebih besar di dekat pintu masuk, berpasangan dengan Tamèh Putroe.', [-1.3, 3.3, 1.4], 'l2', null, S_WID + ', ' + S_WEN + ', ' + S_IAIN, 'Posisi di model (deret inti rumah) belum terverifikasi. Sumber Indonesia menyebut sisi kanan pintu masuk, sumber Inggris menyebut sisi utara.');
+      L('tameh_putroe', 'struktur', 'Tamèh Putroe', 'Tiang Putri', 'Tiang utama pasangan Tamèh Raja, di sisi kiri pintu masuk.', [1.3, 3.3, -1.4], 'l2', null, S_WID + ', ' + S_WEN + ', ' + S_IAIN, 'Posisi di model belum terverifikasi. Sumber Inggris menyebut sisi selatan, dan di sana tiang ini disisipi sedikit emas.');
+      L('gaki_tameh', 'struktur', 'Keunaleueng Tamèh', 'Alas tiang (batu umpak)', 'Alas kaki tiang dari batu sungai agar tiang tidak amblas ke tanah.', [6.5, 0.6, 4.2], 'l1', null, S_WID + ', ' + S_IAIN);
+      L('puteng', 'struktur', 'Puténg Tamèh', 'Ujung tiang (tenon)', 'Ujung tiang yang dipahat untuk menyambung balok.', [6.5, 4.8, 4.2], 'l2', null, S_IAIN);
+      L('rok', 'struktur', 'Rôk', 'Balok pengunci memanjang', 'Balok pengunci yang memperkuat sambungan antarujung balok.', [3.0, 2.25, 4.2], 'l2', null, S_IAIN + ', ' + S_USTJ);
+      L('toi', 'struktur', 'Tôi', 'Balok pengunci melintang', 'Balok pengunci yang tegak lurus terhadap Rôk.', [6.5, 2.25, 2.3], 'l2', null, S_IAIN + ', ' + S_USTJ);
+      L('bajoe', 'struktur', 'Bajoe (Paseuk)', 'Pasak kayu', 'Pasak yang mengunci Rôk dan Tôi pada pahatan tiang. Rumah dibangun tanpa paku.', [-1.15, 2.2, 4.2], 'l2', null, S_IAIN + ', ' + S_WID, 'Model memakai istilah "Paseuk". Istilah ini tidak ditemukan di sumber, yang menyebut pasak sebagai "bajoe".');
+      L('lhue', 'struktur', 'Lhue', 'Balok penyangga lantai', 'Balok rangka yang menopang papan lantai.', [3.25, 2.33, 2.8], 'l3', null, S_IAIN);
+
+      // RUANG & LANTAI
+      L('aleue', 'ruang', 'Aleue', 'Lantai papan', 'Lantai dari papan berbilah kecil, diikat tanpa paku.', [4.9, 2.45, 2.8], 'l3', 'floor', S_WID + ', ' + S_IAIN);
+      L('seuramoe_keue', 'ruang', 'Seuramoè Keuë', 'Serambi depan', 'Serambi tanpa sekat untuk menerima tamu, mengaji, dan tempat tidur anak laki-laki. Dianggap ruang publik atau "laki-laki".', [0, 3.1, 2.8], 'l3', 'floor', S_WID + ', ' + S_WEN);
+      L('rambat', 'ruang', 'Rambat', 'Lorong tengah', 'Lorong di bagian tengah rumah, dihampari tikar pandan dan dipakai serbaguna.', [0, 3.7, 0], 'l4', 'walls', S_WEN + ', ' + S_USTJ, 'Model menyebut zona ini "Tungai", istilah yang tidak ditemukan di sumber. Sumber memakai seuramoè teungoh atau rumoh inong.');
+      L('rumoh_inong', 'ruang', 'Rumoh Inong', 'Bilik utama', 'Bilik inti rumah di bagian tengah. Bagian paling penting dan lantainya lebih tinggi (sekitar setengah meter) dari serambi lain.', [-3.9, 4.3, 0], 'l4', 'walls', S_WID + ', ' + S_WEN);
+      L('anjong', 'ruang', 'Anjông', 'Bilik anak perempuan', 'Bilik anak perempuan di sisi timur. Pengantin baru menempati Rumoh Inong, sementara orang tua pindah ke sini.', [3.9, 4.3, 0], 'l4', 'walls', S_WID + ', ' + S_WEN);
+      L('seuramoe_likot', 'ruang', 'Seuramoè Likôt', 'Serambi belakang', 'Serambi tanpa sekat, sama tinggi dengan serambi depan. Dipakai makan bersama, menenun, dan urusan keluarga. Dianggap ruang "perempuan".', [0, 3.1, -2.8], 'l3', 'floor', S_WID + ', ' + S_WEN);
+      L('rumoh_dapu', 'ruang', 'Rumoh Dapu', 'Dapur', 'Bangunan dapur tambahan di belakang, lantainya lebih rendah dari serambi belakang.', [-1.3, 2.8, -5.4], 'l3', 'floor', S_WID + ', ' + S_USTJ);
+      L('meuyup', 'ruang', 'Meuyup Rumoh', 'Kolong rumah', 'Ruang di bawah rumah panggung. Dipakai bermain anak, kandang hewan, menenun, dan menyimpan jeungki serta krông padé.', [1.5, 1.4, -1.5], 'l1', null, S_WID + ', ' + S_USTJ);
+      L('krong_pade', 'ruang', 'Krông Padé', 'Lumbung padi', 'Lumbung penyimpan padi, di bawah atau di samping rumah.', [-5.15, 2.8, 0], 'l1', null, S_WEN + ', ' + S_USTJ);
+
+      // ATAP
+      L('bara_panyang', 'atap', 'Bara Panyang', 'Balok pengunci memanjang atas', 'Balok pengunci memanjang di puncak tiang.', [-3.0, 4.55, 4.2], 'l5', null, S_IAIN + ', ' + S_USTJ);
+      L('bara_linteueng', 'atap', 'Bara Linteueng', 'Balok pengunci melintang atas', 'Balok pengunci melintang di puncak tiang.', [6.5, 4.55, -2.0], 'l5', null, S_IAIN + ', ' + S_USTJ);
+      L('diri', 'atap', 'Diri', 'Tiang kuda-kuda', 'Tiang tegak kuda-kuda penopang balok wuwung.', [3.9, 7.4, 0], 'l5', null, S_IAIN, 'Model menulis "Deuri". Sumber memakai "diri".');
+      L('gaseue', 'atap', 'Gaseue Gantong', 'Kaki kuda-kuda', 'Kaki kuda-kuda yang membentuk lereng atap.', [1.3, 6.5, -2.3], 'l5', null, S_IAIN, 'Model memakai "gaseue" untuk usuk atap. Sumber menyebut "gaseue gantong" sebagai kaki kuda-kuda.');
+      L('tuleueng', 'atap', 'Tuleueng Rueng', 'Balok wuwung', 'Balok bubungan tempat kaso bersandar. Dibuat dari kayu ringan agar tidak membebani atap.', [0, 9.0, 0], 'l5', null, S_WID + ', ' + S_IAIN);
+      L('beuleubah', 'atap', 'Beuleubah', 'Reng bambu', 'Bilah bambu tempat menyemat atap.', [-2.0, 6.6, 2.2], 'l5', null, S_USTJ);
+      L('taloe', 'atap', 'Taloe', 'Tali pengikat atap', 'Tali ijuk, rotan, atau kulit waru pengikat atap. Atap bisa dilepas cepat saat terjadi kebakaran.', [3.9, 6.45, 2.2], 'l6', null, S_USTJ + ', ' + S_WEN, 'Model menyebut "Taloe Jôk". Istilah itu tidak ditemukan di sumber.');
+      L('rumbia', 'atap', 'Atap Rumbia', 'Atap daun rumbia', 'Penutup atap dari daun rumbia: ringan, sejuk, dan mudah dilepas saat kebakaran.', [-3.5, 5.45, 3.6], 'l6', 'roof', S_WID + ', ' + S_WEN);
+      L('tulak_angen', 'atap', 'Tulak Angèn', 'Dinding segitiga kerawang', 'Bidang segitiga di ujung atap yang berlubang untuk ventilasi silang. Miring ke luar dan dihias ukiran.', [7.0, 6.0, 0], 'l6', 'walls', S_IAIN + ', ' + S_WEN);
+
+      // AKSES & ORNAMEN
+      L('tangga', 'akses', 'Tangga', 'Tangga utama', 'Tangga utama di depan rumah. Jumlah anak tangga selalu ganjil dan dipercaya membawa keberuntungan.', [-2.6, 1.7, 6.4], 'l4', null, S_WID + ', ' + S_USTJ, 'Model menyebut "Reunyeun" untuk tangga ini. Istilah itu tidak ditemukan di sumber.');
+      L('seulasa', 'akses', 'Seulasa', 'Teras depan beratap', 'Teras depan beratap di ujung tangga, sebelum masuk ke pintu.', [-2.6, 3.0, 4.8], 'l4', null, S_WEN, 'Hanya disebut singkat di satu sumber (Inggris).');
+      L('pinto', 'akses', 'Pintô', 'Pintu', 'Pintu dibuat rendah (120–150 cm) agar tamu menunduk sebagai tanda hormat. Model: 135 cm.', [-2.6, 3.95, 4.2], 'l4', 'walls', S_WID + ', ' + S_USTJ);
+      L('tingkap', 'akses', 'Tingkap', 'Jendela', 'Jendela berukuran kecil, dengan jendela utama di sisi rumah.', [0, 3.9, 4.2], 'l4', 'walls', S_WID);
+      L('binteh', 'akses', 'Bintéh', 'Dinding papan', 'Dinding papan keras berukir. Semakin banyak ukiran, semakin tinggi status sosial pemilik.', [3.9, 3.3, 4.2], 'l4', 'walls', S_WID + ', ' + S_IAIN);
+      L('kindang', 'akses', 'Kindang', 'Tumpuan dinding luar', 'Tempat bertumpu dinding luar.', [-3.2, 2.55, 4.24], 'l4', 'walls', S_IAIN, 'Di model digambarkan sebagai lis ukir di kaki dinding.');
+      L('peulangan', 'akses', 'Peulangan', 'Tumpuan dinding dalam', 'Tempat bertumpu dinding dalam.', [3.2, 4.3, 4.24], 'l4', 'walls', S_IAIN, 'Di model digambarkan sebagai lis ukir di atas dinding luar, sehingga fungsi sebenarnya perlu dicek.');
+      L('ukiran', 'akses', 'Ukiran', 'Ragam hias', 'Motif seperti Pucôk Reubông (pertumbuhan), Oen Ranub (penghormatan), Awan Meucanek (kemuliaan), dan Taloe Meuputa (ikatan sosial).', [-3.9, 4.85, 1.4], 'l4', 'walls', 'Jurnal Surau (ornamen masjid Pidie)', 'Makna motif berasal dari kajian masjid, bukan rumoh. Perlu dicek ke sumber khusus Rumoh Aceh.');
+
+      const lblLayer = document.getElementById('label-layer');
+      const lblCard = document.getElementById('label-card');
+      const lblState = { on: true, cats: { struktur: true, ruang: true, atap: true, akses: true }, active: null };
+
+      function showLabelCard(l) {
+        lblState.active = l;
+        document.getElementById('lc-aceh').textContent = l.aceh;
+        document.getElementById('lc-indo').textContent = l.indo;
+        document.getElementById('lc-fungsi').textContent = l.fungsi;
+        const badge = document.getElementById('lc-badge');
+        const note = document.getElementById('lc-note');
+        if (l.note) {
+          badge.textContent = 'Perlu diverifikasi';
+          badge.className = 'mt-2 inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-200 border border-rose-400/40';
+          note.textContent = l.note;
+          note.style.display = 'block';
+        } else {
+          badge.textContent = 'Sesuai sumber';
+          badge.className = 'mt-2 inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-200 border border-emerald-400/40';
+          note.textContent = '';
+          note.style.display = 'none';
+        }
+        document.getElementById('lc-src').textContent = 'Sumber: ' + l.src;
+        LABELS.forEach((x) => x.el.classList.toggle('active', x === l));
+      }
+
+      function closeLabelCard() {
+        lblState.active = null;
+        LABELS.forEach((x) => x.el.classList.remove('active'));
+      }
+
+      LABELS.forEach((l) => {
+        l.base = new THREE.Vector3(l.pos[0], l.pos[1], l.pos[2]);
+        const el = document.createElement('div');
+        el.className = 'lbl' + (l.note ? ' check' : '');
+        el.textContent = l.aceh;
+        el.addEventListener('click', (e) => { e.stopPropagation(); showLabelCard(l); });
+        lblLayer.appendChild(el);
+        l.el = el;
+        l.shown = true;
+      });
+
+      document.getElementById('lc-close').addEventListener('click', closeLabelCard);
+
+      function setLabelsOn(on) {
+        lblState.on = on;
+        document.getElementById('btn-labels-text').textContent = on ? 'Label: ON' : 'Label: OFF';
+        if (!on) closeLabelCard();
+      }
+      document.getElementById('btn-labels').addEventListener('click', () => setLabelsOn(!lblState.on));
+
+      document.querySelectorAll('.lcat-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          const k = chip.dataset.lcat;
+          lblState.cats[k] = !lblState.cats[k];
+          chip.classList.toggle('on', lblState.cats[k]);
+          if (lblState.active && !lblState.cats[lblState.active.cat]) closeLabelCard();
+        });
+      });
+
+      const _lp = new THREE.Vector3();
+      function updateLabels() {
+        const W = window.innerWidth, H = window.innerHeight;
+        const vis = lblState.on && !state.hudHidden;
+        LABELS.forEach((l) => {
+          let show = vis && lblState.cats[l.cat] && (!l.needs || state.layers[l.needs]);
+          if (show) {
+            _lp.copy(l.base);
+            _lp.y += constructionLayers[l.layer].position.y;
+            _lp.project(camera);
+            if (_lp.z > 1 || Math.abs(_lp.x) > 1.05 || Math.abs(_lp.y) > 1.05) {
+              show = false;
+            } else {
+              const px = (_lp.x * 0.5 + 0.5) * W;
+              const py = (-_lp.y * 0.5 + 0.5) * H;
+              l.el.style.transform = 'translate(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px) translate(-50%,-100%)';
+            }
+          }
+          if (l.shown !== show) {
+            l.shown = show;
+            l.el.style.display = show ? '' : 'none';
+          }
+        });
+        lblCard.classList.toggle('hidden', !lblState.active || state.hudHidden);
+      }
+
       const clock = new THREE.Clock();
 
       function animate() {
@@ -2218,6 +2619,8 @@
 
         updateJoineryAnimation(dt);
         updateTingkap(dt);
+        updateFlags(clock.elapsedTime);
+        updateLabels();
         updateKeyboardNav(dt);
         controls.update();
         renderer.render(scene, camera);
