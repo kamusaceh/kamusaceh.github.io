@@ -2535,24 +2535,65 @@
         });
       });
 
+      // Label hanya tampil jika terlihat langsung dari kamera: sinar dari kamera ke titik label diuji terhadap
+      // seluruh bagian model yang sedang terlihat, lalu label yang tertutup benda lain disembunyikan.
       const _lp = new THREE.Vector3();
+      const _rayDir = new THREE.Vector3();
+      const _raycaster = new THREE.Raycaster();
+      const OCC_TOL = 0.22;      // label yang menempel pada permukaan bendanya sendiri tetap dianggap terlihat
+      const OCC_PER_FRAME = 6;   // jumlah label yang diuji per frame (bergiliran) agar tetap ringan
+      let _occluders = [], _occFrame = 0, _occCursor = 0;
+
+      function chainVisible(o) {
+        for (; o; o = o.parent) { if (!o.visible) return false; }
+        return true;
+      }
+
+      function rebuildOccluders() {
+        _occluders = allTrackedMeshes.filter((m) =>
+          chainVisible(m) && !(state.renderMode === 'xray' && m.userData.role === 'cladding'));
+      }
+
+      function checkOcclusion(l) {
+        _rayDir.copy(l.wp).sub(camera.position);
+        const dist = _rayDir.length();
+        if (dist < 0.001) { l.occ = false; return; }
+        _rayDir.divideScalar(dist);
+        _raycaster.set(camera.position, _rayDir);
+        _raycaster.far = dist;
+        const hits = _raycaster.intersectObjects(_occluders, false);
+        l.occ = hits.length > 0 && hits[0].distance < dist - OCC_TOL;
+      }
+
       function updateLabels() {
         const W = window.innerWidth, H = window.innerHeight;
         const vis = lblState.on && !state.hudHidden;
+        if (vis) {
+          if (++_occFrame % 20 === 1) rebuildOccluders();
+          for (let k = 0; k < OCC_PER_FRAME; k++) {
+            const l = LABELS[_occCursor];
+            _occCursor = (_occCursor + 1) % LABELS.length;
+            if (l.wp && l.onscreen) checkOcclusion(l);
+          }
+        }
         LABELS.forEach((l) => {
           let show = vis && lblState.cats[l.cat] && (!l.needs || state.layers[l.needs]);
+          l.onscreen = false;
           if (show) {
-            _lp.copy(l.base);
-            _lp.y += constructionLayers[l.layer].position.y;
-            _lp.project(camera);
+            if (!l.wp) l.wp = new THREE.Vector3();
+            l.wp.copy(l.base);
+            l.wp.y += constructionLayers[l.layer].position.y;
+            _lp.copy(l.wp).project(camera);
             if (_lp.z > 1 || Math.abs(_lp.x) > 1.05 || Math.abs(_lp.y) > 1.05) {
               show = false;
             } else {
+              l.onscreen = true;
               const px = (_lp.x * 0.5 + 0.5) * W;
               const py = (-_lp.y * 0.5 + 0.5) * H;
               l.el.style.transform = 'translate(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px) translate(-50%,-100%)';
             }
           }
+          if (show && l.occ) show = false;
           if (l.shown !== show) {
             l.shown = show;
             l.el.style.display = show ? '' : 'none';
