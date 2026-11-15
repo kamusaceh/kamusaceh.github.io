@@ -1,0 +1,2232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Rumoh Aceh Tradisional (5 Ruweueng / 24 Tameh) — Visualisasi Arsitektur 3D Museum</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <!-- Three.js r128 & OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      background-color: #080d17;
+      color: #f1f5f9;
+      user-select: none;
+    }
+    .font-mono-tech { font-family: 'JetBrains Mono', monospace; }
+
+    /* Scrollbar halus */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.35); }
+    ::-webkit-scrollbar-thumb { background: rgba(217, 155, 38, 0.45); border-radius: 9999px; }
+
+    /* Panel Glassmorphism Museum Gelap */
+    .museum-panel {
+      background: rgba(10, 15, 26, 0.84);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(217, 155, 38, 0.26);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    /* Slider Bongkar Konstruksi */
+    input[type="range"].cad-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.35), rgba(245, 158, 11, 0.65));
+      outline: none;
+    }
+    input[type="range"].cad-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: #f59e0b;
+      border: 2px solid #090e1a;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.85);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    input[type="range"].cad-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.18);
+    }
+
+    /* Overlay Blueprint Grid */
+    .blueprint-vignette {
+      pointer-events: none;
+      background: radial-gradient(circle at center, transparent 55%, rgba(3, 19, 43, 0.72) 100%);
+    }
+  </style>
+</head>
+<body>
+  <!-- Kanvas 3D Utama -->
+  <div id="canvas-container" class="fixed inset-0 w-full h-full"></div>
+
+  <!-- Vignette saat Mode Blueprint CAD -->
+  <div id="blueprint-overlay" class="fixed inset-0 blueprint-vignette hidden z-10"></div>
+
+  <!-- Header Kiri Atas: Identitas Museum & Telemetri -->
+  <header class="fixed top-3 left-3 sm:top-4 sm:left-4 z-30 flex items-start gap-2 pointer-events-auto">
+    <!-- Tombol Sembunyikan Seluruh HUD -->
+    <button id="btn-toggle-hud" title="Sembunyikan / Tampilkan Antarmuka"
+      class="museum-panel rounded-xl p-2.5 text-slate-200 hover:text-amber-400 hover:border-amber-400/50 transition flex items-center justify-center">
+      <svg id="icon-eye-open" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+      </svg>
+      <svg id="icon-eye-closed" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+      </svg>
+    </button>
+  </header>
+
+  <!-- Panel Kontrol CAD Kanan (Dapat Dilipat) -->
+  <aside id="cad-drawer" class="fixed top-3 right-3 sm:top-4 sm:right-4 z-30 w-[270px] sm:w-[300px] max-h-[calc(100vh-92px)] flex flex-col museum-panel rounded-2xl overflow-hidden transition-all duration-300">
+    <!-- Header Drawer -->
+    <div class="px-3.5 py-2.5 border-b border-slate-700/60 flex items-center justify-between bg-slate-950/60">
+      <div class="flex items-center gap-2">
+        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+        <span class="text-xs font-semibold tracking-wide uppercase text-slate-100">Kontrol Arsitektur & CAD</span>
+      </div>
+      <button id="btn-collapse-drawer" class="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition" title="Lipat / Buka Panel">
+        <svg id="chevron-drawer" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Isi Drawer -->
+    <div id="drawer-body" class="p-3.5 space-y-3.5 overflow-y-auto text-xs">
+      <!-- 1. Slider Bongkar Konstruksi (Exploded View 0% - 100%) -->
+      <div class="bg-slate-950/55 p-2.5 rounded-xl border border-slate-800">
+        <div class="flex items-center justify-between mb-1.5">
+          <label for="explode-slider" class="font-semibold text-slate-100 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+            Bongkar Konstruksi
+          </label>
+          <span id="explode-val" class="font-mono-tech text-[11px] font-bold text-amber-300 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-400/30">0%</span>
+        </div>
+        <input id="explode-slider" type="range" min="0" max="100" value="0" class="cad-slider" />
+        <div class="flex justify-between text-[9px] text-slate-400 mt-1 font-mono-tech">
+          <span>Utuh (0%)</span>
+          <span>6 Lapis Struktur (100%)</span>
+        </div>
+      </div>
+
+      <!-- 2. 3 Mode Visual -->
+      <div>
+        <div class="font-semibold text-slate-200 mb-1.5 flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+          Mode Visualisasi
+        </div>
+        <div class="grid grid-cols-3 gap-1.5">
+          <button data-render="realistic" class="render-btn active px-2 py-2 rounded-xl text-[10px] leading-tight font-medium bg-amber-500/25 text-amber-200 border border-amber-400/50 transition text-center">
+            Arsitektural Realistis
+          </button>
+          <button data-render="blueprint" class="render-btn px-2 py-2 rounded-xl text-[10px] leading-tight font-medium bg-slate-800/75 text-slate-300 border border-slate-700/70 hover:border-slate-500 transition text-center">
+            Blueprint CAD Teknis
+          </button>
+          <button data-render="xray" class="render-btn px-2 py-2 rounded-xl text-[10px] leading-tight font-medium bg-slate-800/75 text-slate-300 border border-slate-700/70 hover:border-slate-500 transition text-center">
+            X-Ray Struktur
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. Tombol Toggle Lapisan -->
+      <div>
+        <div class="font-semibold text-slate-200 mb-1.5 flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          Toggle Lapisan Konstruksi
+        </div>
+        <div class="grid grid-cols-2 gap-1.5">
+          <button data-layer="roof" class="layer-toggle active flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] bg-emerald-500/20 text-emerald-200 border border-emerald-400/40 transition">
+            <span>Atap Rumbia</span>
+            <span class="status-dot w-2 h-2 rounded-full bg-emerald-400"></span>
+          </button>
+          <button data-layer="walls" class="layer-toggle active flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] bg-emerald-500/20 text-emerald-200 border border-emerald-400/40 transition">
+            <span>Dinding Luar</span>
+            <span class="status-dot w-2 h-2 rounded-full bg-emerald-400"></span>
+          </button>
+          <button data-layer="floor" class="layer-toggle active flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] bg-emerald-500/20 text-emerald-200 border border-emerald-400/40 transition">
+            <span>Lantai Aleue</span>
+            <span class="status-dot w-2 h-2 rounded-full bg-emerald-400"></span>
+          </button>
+          <button data-layer="dimensions" class="layer-toggle col-span-2 flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] bg-slate-800/75 text-slate-300 border border-slate-700/70 transition">
+            <span>Grid Dimensi Meter (CAD)</span>
+            <span class="status-dot w-2 h-2 rounded-full bg-slate-500"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4. Pencahayaan Lingkungan -->
+      <div>
+        <div class="font-semibold text-slate-200 mb-1.5 flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+          Pencahayaan & Suasana
+        </div>
+        <div class="grid grid-cols-3 gap-1.5">
+          <button data-time="day" class="time-btn active py-1.5 rounded-xl text-[11px] font-medium bg-sky-500/25 text-sky-200 border border-sky-400/50 transition">
+            ☀️ Siang
+          </button>
+          <button data-time="sunset" class="time-btn py-1.5 rounded-xl text-[11px] font-medium bg-slate-800/75 text-slate-300 border border-slate-700/70 transition">
+            🌅 Senja
+          </button>
+          <button data-time="night" class="time-btn py-1.5 rounded-xl text-[11px] font-medium bg-slate-800/75 text-slate-300 border border-slate-700/70 transition">
+            🏮 Malam
+          </button>
+        </div>
+      </div>
+
+      <!-- 5. Simulasi Interaktif Sambungan Pasak -->
+      <div class="pt-1 border-t border-slate-800">
+        <button id="btn-drawer-joinery" class="w-full py-2 px-2.5 rounded-xl text-[11px] font-semibold bg-slate-800/90 hover:bg-amber-500/20 text-amber-300 border border-amber-400/35 transition flex items-center justify-center gap-1.5">
+          <span>🔩</span>
+          <span id="drawer-joinery-text">Tarik Pasak (Paseuk) Rôk–Toi</span>
+        </button>
+        <button id="btn-tingkap" class="w-full mt-1.5 py-2 px-2.5 rounded-xl text-[11px] font-semibold bg-slate-800/90 hover:bg-amber-500/20 text-amber-300 border border-amber-400/35 transition flex items-center justify-center gap-1.5">
+          <span>🪟</span>
+          <span id="tingkap-text">Buka Daun Tingkap</span>
+        </button>
+      </div>
+
+      <div class="text-[9.5px] text-slate-400 font-mono-tech leading-relaxed">
+        Putar: Drag • Zoom: Scroll/Pinch • Geser: Klik Kanan / 2-Jari • WASD: Jelajah
+      </div>
+    </div>
+  </aside>
+
+  <!-- Bilah Bawah: 6 Preset Kamera Cepat -->
+  <nav id="camera-bar" class="fixed bottom-3 left-3 right-3 z-30 flex justify-center pointer-events-none">
+    <div class="museum-panel rounded-2xl p-1.5 flex items-center gap-1.5 overflow-x-auto max-w-full pointer-events-auto">
+      <button data-cam="iso" class="cam-btn active shrink-0 px-3 py-2 rounded-xl text-[11px] font-medium bg-amber-500/25 text-amber-200 border border-amber-400/50 transition">
+        1. Isometrik Keseluruhan
+      </button>
+      <button data-cam="section" class="cam-btn shrink-0 px-3 py-2 rounded-xl text-[11px] font-medium bg-slate-800/75 text-slate-300 border border-slate-700/60 hover:border-slate-500 transition">
+        2. Potongan Melintang Pelana
+      </button>
+      <button data-cam="facade" class="cam-btn shrink-0 px-3 py-2 rounded-xl text-[11px] font-medium bg-slate-800/75 text-slate-300 border border-slate-700/60 hover:border-slate-500 transition">
+        3. Fasad Depan (Reunyeun, Seulasa & Pinto)
+      </button>
+      <button data-cam="tungai" class="cam-btn shrink-0 px-3 py-2 rounded-xl text-[11px] font-medium bg-slate-800/75 text-slate-300 border border-slate-700/60 hover:border-slate-500 transition">
+        4. Interior Tungai (+45cm & Rambat)
+      </button>
+      <button data-cam="yupmoh" class="cam-btn shrink-0 px-3 py-2 rounded-xl text-[11px] font-medium bg-slate-800/75 text-slate-300 border border-slate-700/60 hover:border-slate-500 transition">
+        5. Kolong Yup Moh & Krông Padé
+      </button>
+      <button data-cam="joinery" class="cam-btn shrink-0 px-3 py-2 rounded-xl text-[11px] font-medium bg-slate-800/75 text-slate-300 border border-slate-700/60 hover:border-slate-500 transition">
+        6. Close-Up Puting-Lobang (Rôk–Toi–Paseuk)
+      </button>
+    </div>
+  </nav>
+
+  <script>
+    /**
+     * ============================================================================
+     * RUMOH ACEH TRADISIONAL (5 RUWEUENG / 24 TAMEH) — VISUALISASI ARSITEKTUR 3D
+     * Referensi Ilmiah:
+     * - Hadjad, A. dkk. (1984) Arsitektur Tradisional Daerah Istimewa Aceh
+     * - Taqiuddin, M.Z. (Jurnal Koridor USU) Sistem Struktur Konstruksi Rumoh Aceh
+     * - Dokumentasi Terukur Rumoh T. Tjhik Mat Said (Jurnal IPLBI) & Disbudpar Aceh
+     * ============================================================================
+     */
+    (function () {
+      'use strict';
+
+      // --------------------------------------------------------------------------
+      // 1. PARAMETER DIMENSI ARSITEKTUR TERUKUR (1 UNIT = 1 METER)
+      //    Orientasi:
+      //    - Sumbu X: Barat (-X) <-> Timur (+X), 5 Ruweueng = 6 deret tiang (5 bentang × 2.60m) = 13.00m
+      //    - Sumbu Z: Belakang/Selatan (-Z) <-> Depan/Utara (+Z), 4 deret tiang (3 bentang × 2.80m) = 8.40m
+      // --------------------------------------------------------------------------
+      const SPEC = {
+        colX: [-6.50, -3.90, -1.30, 1.30, 3.90, 6.50], // 6 deret (5 Ruweueng @ 2.60m)
+        colZ: [4.20, 1.40, -1.40, -4.20],              // 4 deret (3 bentang @ 2.80m)
+        elevGround: 0.00,
+        elevTeunamba: 0.30,   // Gundukan tanah tapak +0.30m
+        elevGakiTop: 0.48,    // Puncak batu umpak sungai Gaki Tameh
+        elevVeranda: 2.40,    // Seuramoe Keue & Seuramoe Likôt (+2.40m)
+        elevTungai: 2.85,     // Tungai / Seuramoe Teungoh (+2.85m -> naik +0.45m)
+        elevDapu: 2.05,       // Rumoh Dapu (+2.05m -> turun -0.35m dari Seuramoe Likôt)
+        eavesBeamY: 4.35,     // Sumbu tengah Bara Panyang & Bara Linteung (tinggi balok 0.16m -> sisi atas +4.43m; puting tiang +4.54m); juga dasar Tulak Angèn
+        coreColTopY: 6.45,    // Elevasi puncak Tameh deret tengah (Z = ±1.40m)
+        ridgeY: 8.75,         // Elevasi Tuleung Rueng (bubungan atap pelana ~45°)
+        tulakTiltOut: 0.85,   // Kemiringan keluar Tulak Angèn di puncak Timur & Barat
+        pintoHeight: 1.35,    // Tinggi bukaan Pinto rendah 135 cm
+        seulasaX: -2.60       // Posisi Seulasa & Reunyeun agak ke sisi Barat fasad depan
+      };
+
+      // State global kontrol interaktif
+      const state = {
+        explode: 0,
+        renderMode: 'realistic', // 'realistic' | 'blueprint' | 'xray'
+        layers: {
+          roof: true,
+          walls: true,
+          floor: true,
+          dimensions: false
+        },
+        timeOfDay: 'day',
+        joineryOpen: false,
+        joineryProgress: 0,
+        hudHidden: false
+      };
+
+      // --------------------------------------------------------------------------
+      // 2. INISIALISASI SCENE, KAMERA, RENDERER & PENCAHAYAAN
+      // --------------------------------------------------------------------------
+      const container = document.getElementById('canvas-container');
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x9bc4e2);
+      scene.fog = new THREE.FogExp2(0x9bc4e2, 0.010);
+
+      const camera = new THREE.PerspectiveCamera(44, window.innerWidth / window.innerHeight, 0.08, 240);
+      camera.position.set(15.2, 9.4, 17.2);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.06;
+      container.appendChild(renderer.domElement);
+
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.065;
+      controls.maxPolarAngle = Math.PI * 0.492;
+      controls.minDistance = 0.75; // Memungkinkan zoom sangat dekat ke sambungan Puting-Lobang
+      controls.maxDistance = 52;
+      controls.target.set(0, 3.3, 0);
+      controls.update();
+
+      // Pencahayaan Matahari & Lingkungan
+      const hemiLight = new THREE.HemisphereLight(0xe0f2fe, 0x3b4d2b, 0.74);
+      scene.add(hemiLight);
+
+      const sunLight = new THREE.DirectionalLight(0xfff5db, 1.38);
+      sunLight.position.set(19, 27, 17);
+      sunLight.castShadow = true;
+      sunLight.shadow.mapSize.width = 2048;
+      sunLight.shadow.mapSize.height = 2048;
+      sunLight.shadow.camera.near = 2;
+      sunLight.shadow.camera.far = 80;
+      const dShad = 18;
+      sunLight.shadow.camera.left = -dShad;
+      sunLight.shadow.camera.right = dShad;
+      sunLight.shadow.camera.top = dShad;
+      sunLight.shadow.camera.bottom = -dShad;
+      sunLight.shadow.bias = -0.00045;
+      scene.add(sunLight);
+
+      // Lampu Lentera Interior Hangat
+      const interiorLights = [];
+      const lanternCoords = [
+        [0, 3.85, 2.8],     // Seuramoe Keue
+        [-3.9, 4.25, 0.0],  // Rumoh Inong
+        [3.9, 4.25, 0.0],   // Anjong
+        [0, 3.85, -2.8],    // Seuramoe Likôt
+        [-1.3, 3.25, -5.4]  // Rumoh Dapu
+      ];
+      lanternCoords.forEach(([lx, ly, lz]) => {
+        const pl = new THREE.PointLight(0xff9b38, 0.25, 9.5, 1.6);
+        pl.position.set(lx, ly, lz);
+        scene.add(pl);
+        interiorLights.push(pl);
+      });
+
+      // --------------------------------------------------------------------------
+      // 3. TEKSTUR PROSEDURAL HTML5 CANVAS (KAYU, UKIRAN ACEH, RUMBIA, ANYAMAN)
+      // --------------------------------------------------------------------------
+      function makeWoodTexture(baseColor, grainColor, withPlanks = false, verticalPlanks = false) {
+        const c = document.createElement('canvas');
+        c.width = 512;
+        c.height = 512;
+        const ctx = c.getContext('2d');
+
+        ctx.fillStyle = baseColor;
+        ctx.fillRect(0, 0, 512, 512);
+
+        // Serat kayu
+        for (let i = 0; i < 460; i++) {
+          const pos = Math.random() * 512;
+          const thick = 1 + Math.random() * 2.2;
+          ctx.fillStyle = grainColor;
+          ctx.globalAlpha = 0.07 + Math.random() * 0.14;
+          ctx.beginPath();
+          if (verticalPlanks) {
+            ctx.moveTo(pos, 0);
+            ctx.bezierCurveTo(pos + (Math.random() - 0.5) * 12, 170, pos + (Math.random() - 0.5) * 12, 340, pos, 512);
+            ctx.lineTo(pos + thick, 512);
+            ctx.lineTo(pos + thick, 0);
+          } else {
+            ctx.moveTo(0, pos);
+            ctx.bezierCurveTo(170, pos + (Math.random() - 0.5) * 12, 340, pos + (Math.random() - 0.5) * 12, 512, pos);
+            ctx.lineTo(512, pos + thick);
+            ctx.lineTo(0, pos + thick);
+          }
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // Sambungan bilah papan (Aleue atau dinding papan vertikal)
+        if (withPlanks) {
+          const count = 8;
+          const step = 512 / count;
+          for (let p = 0; p < count; p++) {
+            ctx.globalAlpha = 0.62;
+            ctx.fillStyle = '#120a04';
+            if (verticalPlanks) {
+              ctx.fillRect(p * step, 0, 3, 512);
+              ctx.globalAlpha = 0.12;
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(p * step + 3, 0, 1.5, 512);
+            } else {
+              ctx.fillRect(0, p * step, 512, 3);
+              ctx.globalAlpha = 0.12;
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(0, p * step + 3, 512, 1.5);
+            }
+          }
+        }
+
+        const tex = new THREE.CanvasTexture(c);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.encoding = THREE.sRGBEncoding;
+        return tex;
+      }
+
+      // Tekstur Ukiran Khas Aceh: relief kayu alami (Pucôk Reubông, Bungong Seulanga, Oen Ranub, Awan Meucanek)
+      function makeAcehCarvingTexture(piercedOpenwork = false) {
+        // Ukiran relief kayu Aceh: flora dominan (Pucôk Reubông, Bungong Seulanga, Oen Ranub, sulur),
+        // Awan Meucanek, tali puntir (Taloe Meuputa). Kayu tidak diwarnai; aksen merah hanya di putik bunga.
+        const W = 1024, H = 256;
+        const c = document.createElement('canvas');
+        c.width = W;
+        c.height = H;
+        const ctx = c.getContext('2d');
+
+        const base = piercedOpenwork ? '#4a2c15' : '#5e3a1d';
+        const face = piercedOpenwork ? '#6d4222' : '#80522a';
+        const hole = '#030508';
+
+        ctx.fillStyle = base;
+        ctx.fillRect(0, 0, W, H);
+        // serat kayu halus
+        for (let i = 0; i < 90; i++) {
+          const y = (i * 37) % H;
+          ctx.strokeStyle = 'rgba(25,12,4,' + (0.05 + (i % 5) * 0.015) + ')';
+          ctx.lineWidth = 1 + (i % 3) * 0.6;
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.bezierCurveTo(W * 0.3, y + 3, W * 0.6, y - 3, W, y + 1);
+          ctx.stroke();
+        }
+
+        // Pemahat: bayangan gelap + sorot terang + permukaan timbul
+        function relief(path, width, fill) {
+          ctx.lineJoin = 'round';
+          ctx.lineCap = 'round';
+          ctx.save();
+          ctx.translate(1.8, 1.8);
+          ctx.strokeStyle = 'rgba(15,7,2,0.85)';
+          ctx.lineWidth = width + 1.5;
+          path(); ctx.stroke();
+          if (fill) { ctx.fillStyle = 'rgba(15,7,2,0.85)'; path(); ctx.fill(); }
+          ctx.restore();
+          ctx.save();
+          ctx.translate(-1, -1);
+          ctx.strokeStyle = 'rgba(255,225,175,0.32)';
+          ctx.lineWidth = width;
+          path(); ctx.stroke();
+          ctx.restore();
+          ctx.strokeStyle = face;
+          ctx.lineWidth = width;
+          path(); ctx.stroke();
+          if (fill) { ctx.fillStyle = face; path(); ctx.fill(); }
+        }
+        function cutout(path) {
+          ctx.fillStyle = hole;
+          path(); ctx.fill();
+          ctx.strokeStyle = 'rgba(255,225,175,0.30)';
+          ctx.lineWidth = 2;
+          path(); ctx.stroke();
+        }
+
+        // 1. Taloe Meuputa (tali puntir) sebagai bingkai atas & bawah
+        [14, H - 14].forEach((y) => {
+          ctx.strokeStyle = 'rgba(15,7,2,0.8)';
+          ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(0, y - 8); ctx.lineTo(W, y - 8); ctx.moveTo(0, y + 8); ctx.lineTo(W, y + 8); ctx.stroke();
+          for (let x = 6; x < W; x += 16) {
+            relief(() => { ctx.beginPath(); ctx.moveTo(x - 6, y + 6); ctx.lineTo(x + 6, y - 6); }, 5, false);
+          }
+        });
+
+        // 2. Pucôk Reubông: deretan tunas bambu meruncing atas & bawah
+        const shootW = 42;
+        const nShoot = Math.floor(W / shootW);
+        for (let i = 0; i < nShoot; i++) {
+          const x0 = i * shootW + 4;
+          const xm = x0 + (shootW - 8) / 2;
+          const x1 = x0 + shootW - 8;
+          [1, -1].forEach((dir) => {
+            const yb = dir === 1 ? 34 : H - 34;
+            const yt = dir === 1 ? 92 : H - 92;
+            relief(() => {
+              ctx.beginPath();
+              ctx.moveTo(x0, yb);
+              ctx.quadraticCurveTo(x0 + 2, (yb + yt) / 2, xm, yt);
+              ctx.quadraticCurveTo(x1 - 2, (yb + yt) / 2, x1, yb);
+              ctx.closePath();
+            }, 2.5, true);
+            // alur tengah tunas
+            ctx.strokeStyle = 'rgba(20,9,3,0.75)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(xm, yb - dir * 4);
+            ctx.lineTo(xm, yt + dir * 14);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(xm - 7, yb - dir * 10);
+            ctx.quadraticCurveTo(xm - 5, yb - dir * 24, xm, yt + dir * 22);
+            ctx.moveTo(xm + 7, yb - dir * 10);
+            ctx.quadraticCurveTo(xm + 5, yb - dir * 24, xm, yt + dir * 22);
+            ctx.stroke();
+          });
+        }
+
+        // 3. Pita tengah: sulur bergelombang + Bungong Seulanga + Oen Ranub, atau Awan Meucanek (kerawang)
+        const midY = H / 2;
+        const unit = 128;
+        const nUnit = W / unit;
+        function vine(x) { return midY + Math.sin((x / unit) * Math.PI * 2) * 16; }
+
+        relief(() => {
+          ctx.beginPath();
+          for (let x = 0; x <= W; x += 8) {
+            const y = vine(x);
+            if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          }
+        }, 5, false);
+
+        for (let u = 0; u < nUnit; u++) {
+          const cx = u * unit + unit / 2;
+          const cy = vine(cx);
+
+          if (piercedOpenwork) {
+            // Tulak Angèn: lubang tembus berbagai bentuk (awan, hati, segitiga, bintang) bergantian
+            const kind = u % 4;
+            if (kind === 0) {
+              // Awan Meucanek: gulungan awan kerawang
+              cutout(() => {
+                ctx.beginPath();
+                ctx.arc(cx - 26, cy + 4, 15, 0, Math.PI * 2);
+                ctx.arc(cx + 2, cy - 8, 20, 0, Math.PI * 2);
+                ctx.arc(cx + 30, cy + 4, 14, 0, Math.PI * 2);
+                ctx.rect(cx - 40, cy + 4, 82, 12);
+              });
+              relief(() => {
+                ctx.beginPath();
+                ctx.arc(cx + 2, cy - 8, 9, Math.PI * 0.2, Math.PI * 1.6);
+              }, 3, false);
+            } else if (kind === 1) {
+              // Hati
+              cutout(() => {
+                ctx.beginPath();
+                ctx.moveTo(cx, cy + 20);
+                ctx.bezierCurveTo(cx - 38, cy - 2, cx - 18, cy - 30, cx, cy - 10);
+                ctx.bezierCurveTo(cx + 18, cy - 30, cx + 38, cy - 2, cx, cy + 20);
+                ctx.closePath();
+              });
+            } else if (kind === 2) {
+              // Segitiga
+              cutout(() => {
+                ctx.beginPath();
+                ctx.moveTo(cx, cy - 22);
+                ctx.lineTo(cx - 24, cy + 18);
+                ctx.lineTo(cx + 24, cy + 18);
+                ctx.closePath();
+              });
+            } else {
+              // Bintang
+              cutout(() => {
+                ctx.beginPath();
+                for (let k = 0; k < 10; k++) {
+                  const rr = k % 2 === 0 ? 22 : 9;
+                  const ang = -Math.PI / 2 + (k * Math.PI) / 5;
+                  const px = cx + Math.cos(ang) * rr;
+                  const py = cy + Math.sin(ang) * rr;
+                  if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+              });
+            }
+          } else {
+            // Bungong Seulanga: lima kelopak dan putik merah
+            const pr = 15;
+            for (let k = 0; k < 5; k++) {
+              const ang = -Math.PI / 2 + (k * Math.PI * 2) / 5;
+              const px = cx + Math.cos(ang) * pr;
+              const py = cy + Math.sin(ang) * pr;
+              relief(() => { ctx.beginPath(); ctx.ellipse(px, py, 11, 7, ang, 0, Math.PI * 2); }, 2, true);
+            }
+            relief(() => { ctx.beginPath(); ctx.arc(cx, cy, 7, 0, Math.PI * 2); }, 2, true);
+            ctx.fillStyle = '#8f1d1d';
+            ctx.beginPath(); ctx.arc(cx, cy, 3.4, 0, Math.PI * 2); ctx.fill();
+          }
+
+          // Oen Ranub (daun sirih berbentuk hati) di kiri-kanan, miring mengikuti sulur
+          [-1, 1].forEach((sd) => {
+            const lx = cx + sd * 50;
+            const ly = vine(lx) + (sd === 1 ? -14 : 14);
+            relief(() => {
+              ctx.beginPath();
+              ctx.moveTo(lx, ly + 11);
+              ctx.bezierCurveTo(lx - 15, ly + 2, lx - 10, ly - 13, lx, ly - 5);
+              ctx.bezierCurveTo(lx + 10, ly - 13, lx + 15, ly + 2, lx, ly + 11);
+              ctx.closePath();
+            }, 2, true);
+            ctx.strokeStyle = 'rgba(20,9,3,0.75)';
+            ctx.lineWidth = 1.8;
+            ctx.beginPath(); ctx.moveTo(lx, ly + 9); ctx.lineTo(lx, ly - 2); ctx.stroke();
+          });
+
+          // gulungan sulur (spiral) antar unit
+          const sx = u * unit;
+          relief(() => {
+            ctx.beginPath();
+            for (let t = 0; t < Math.PI * 3; t += 0.25) {
+              const rr = 2 + t * 2.2;
+              const px = sx + Math.cos(t + Math.PI) * rr;
+              const py = vine(sx) + (u % 2 === 0 ? -1 : 1) * 24 + Math.sin(t + Math.PI) * rr * 0.9;
+              if (t === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+            }
+          }, 3, false);
+        }
+
+        // Bulan sabit di tengah pada Tulak Angèn (motif religius)
+        if (piercedOpenwork) {
+          cutout(() => {
+            ctx.beginPath();
+            ctx.arc(W / 2, midY, 22, 0.3 * Math.PI, 1.7 * Math.PI, false);
+            ctx.arc(W / 2 + 9, midY, 17, 1.7 * Math.PI, 0.3 * Math.PI, true);
+            ctx.closePath();
+          });
+        }
+
+        const tex = new THREE.CanvasTexture(c);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.ClampToEdgeWrapping;
+        tex.encoding = THREE.sRGBEncoding;
+        return tex;
+      }
+
+      // Tekstur Atap Daun Rumbia (On Rumbia) berlapis
+      function makeRumbiaTexture() {
+        const c = document.createElement('canvas');
+        c.width = 512;
+        c.height = 512;
+        const ctx = c.getContext('2d');
+
+        ctx.fillStyle = '#4c3d28';
+        ctx.fillRect(0, 0, 512, 512);
+
+        const rows = 15;
+        const rowH = 512 / rows;
+        for (let r = 0; r < rows; r++) {
+          const y0 = r * rowH;
+          ctx.fillStyle = '#1f170e';
+          ctx.fillRect(0, y0 + rowH - 5, 512, 5);
+
+          for (let x = 0; x < 512; x += 3.5) {
+            const v = 56 + Math.floor(Math.random() * 44);
+            ctx.strokeStyle = `rgb(${v + 24}, ${v + 12}, ${Math.max(18, v - 16)})`;
+            ctx.lineWidth = 2.1;
+            ctx.beginPath();
+            ctx.moveTo(x, y0);
+            ctx.lineTo(x + (Math.random() - 0.5) * 3, y0 + rowH - 2);
+            ctx.stroke();
+          }
+          // Bilah Beuleubah pengikat
+          ctx.fillStyle = '#6f5534';
+          ctx.fillRect(0, y0 + 5, 512, 2.8);
+        }
+
+        const tex = new THREE.CanvasTexture(c);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(9, 6);
+        tex.encoding = THREE.sRGBEncoding;
+        return tex;
+      }
+
+      // Tekstur Anyaman Bambu & Tikar Pandan
+      function makeWovenTexture(c1, c2, rep = 4) {
+        const c = document.createElement('canvas');
+        c.width = 256;
+        c.height = 256;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = c1;
+        ctx.fillRect(0, 0, 256, 256);
+
+        const cell = 16;
+        for (let y = 0; y < 256; y += cell) {
+          for (let x = 0; x < 256; x += cell) {
+            ctx.fillStyle = ((x + y) / cell) % 2 === 0 ? c1 : c2;
+            ctx.fillRect(x + 1, y + 1, cell - 2, cell - 2);
+            ctx.strokeStyle = 'rgba(18, 10, 4, 0.35)';
+            ctx.strokeRect(x, y, cell, cell);
+          }
+        }
+        const tex = new THREE.CanvasTexture(c);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(rep, rep);
+        tex.encoding = THREE.sRGBEncoding;
+        return tex;
+      }
+
+      // --------------------------------------------------------------------------
+      // 4. KOLEKSI MATERIAL & MANAJER MODE RENDER (REALISTIS / BLUEPRINT / X-RAY)
+      // --------------------------------------------------------------------------
+      const mats = {
+        ulin: new THREE.MeshStandardMaterial({ map: makeWoodTexture('#472916', '#211006'), roughness: 0.66, metalness: 0.04 }),
+        seumantok: new THREE.MeshStandardMaterial({ map: makeWoodTexture('#784824', '#46260f'), roughness: 0.60, metalness: 0.04 }),
+        paseuk: new THREE.MeshStandardMaterial({ color: 0xc88a4b, roughness: 0.52 }),
+        aleue: new THREE.MeshStandardMaterial({ map: makeWoodTexture('#8c5931', '#4d2c14', true, false), roughness: 0.56 }),
+        wallVertical: new THREE.MeshStandardMaterial({ map: makeWoodTexture('#693d1e', '#381d0b', true, true), roughness: 0.62, side: THREE.DoubleSide }),
+        carving: new THREE.MeshStandardMaterial({ map: makeAcehCarvingTexture(false), roughness: 0.50, side: THREE.DoubleSide }),
+        tulakOpenwork: new THREE.MeshStandardMaterial({ map: makeAcehCarvingTexture(true), roughness: 0.50, side: THREE.DoubleSide }),
+        rumbia: new THREE.MeshStandardMaterial({ map: makeRumbiaTexture(), roughness: 0.92, side: THREE.DoubleSide }),
+        taloeJok: new THREE.MeshStandardMaterial({ color: 0x161412, roughness: 0.94 }),
+        bamboo: new THREE.MeshStandardMaterial({ color: 0xb58d4c, roughness: 0.62 }),
+        riverStone: new THREE.MeshStandardMaterial({ color: 0x686e75, roughness: 0.90, metalness: 0.04 }),
+        teunambaSoil: new THREE.MeshStandardMaterial({ color: 0x6b5640, roughness: 0.96 }),
+        terracotta: new THREE.MeshStandardMaterial({ color: 0xa24b2c, roughness: 0.72 }),
+        wovenBamboo: new THREE.MeshStandardMaterial({ map: makeWovenTexture('#c49655', '#875f2c', 4), roughness: 0.80, side: THREE.DoubleSide }),
+        pandanMat: new THREE.MeshStandardMaterial({ map: makeWovenTexture('#dbc082', '#ad8e4c', 6), roughness: 0.76 }),
+        clothRed: new THREE.MeshStandardMaterial({ color: 0x991b1b, roughness: 0.74, side: THREE.DoubleSide }),
+        clothGold: new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.48, metalness: 0.25, side: THREE.DoubleSide }),
+        clothGreen: new THREE.MeshStandardMaterial({ color: 0x166534, roughness: 0.74, side: THREE.DoubleSide }),
+        lanternGlow: new THREE.MeshStandardMaterial({ color: 0xffedd5, emissive: 0xff8c1a, emissiveIntensity: 1.2 }),
+        // Mode Blueprint CAD & X-Ray
+        blueprintFill: new THREE.MeshBasicMaterial({
+          color: 0x072142,
+          transparent: true,
+          opacity: 0.76,
+          polygonOffset: true,
+          polygonOffsetFactor: 1,
+          polygonOffsetUnits: 1
+        }),
+        xrayCladding: new THREE.MeshStandardMaterial({
+          color: 0x7dd3fc,
+          transparent: true,
+          opacity: 0.14,
+          depthWrite: false,
+          side: THREE.DoubleSide
+        }),
+        xrayFrame: new THREE.MeshStandardMaterial({
+          color: 0xf59e0b,
+          emissive: 0x78350f,
+          emissiveIntensity: 0.45,
+          roughness: 0.45
+        })
+      };
+
+      const allTrackedMeshes = [];
+      const blueprintEdges = [];
+      const toggleGroups = {
+        roof: [],
+        walls: [],
+        floor: []
+      };
+
+      /**
+       * Mendaftarkan setiap mesh ke sistem bayangan, mode visual (Blueprint/X-Ray),
+       * dan grup toggle lapisan.
+       */
+      function trackMesh(mesh, role = 'frame', toggleTag = null) {
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        mesh.userData.origMat = mesh.material;
+        mesh.userData.role = role; // 'frame' (rangka utama) | 'cladding' (penutup/dinding/atap) | 'ground'
+        allTrackedMeshes.push(mesh);
+
+        if (toggleTag && toggleGroups[toggleTag]) {
+          toggleGroups[toggleTag].push(mesh);
+        }
+
+        // Garis tepi CAD untuk Mode Blueprint Teknis
+        if (mesh.geometry && mesh.geometry.attributes && mesh.geometry.attributes.position.count < 3600) {
+          const edges = new THREE.EdgesGeometry(mesh.geometry, 26);
+          const line = new THREE.LineSegments(
+            edges,
+            new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.72 })
+          );
+          line.visible = false;
+          mesh.add(line);
+          blueprintEdges.push(line);
+        }
+        return mesh;
+      }
+
+      // --------------------------------------------------------------------------
+      // 5. 6 LAPISAN KONSTRUKSI (UNTUK BONGKAR KONSTRUKSI / EXPLODED VIEW 0-100%)
+      // --------------------------------------------------------------------------
+      const envGroup = new THREE.Group();
+      scene.add(envGroup);
+
+      const constructionLayers = {
+        l1_foundation: new THREE.Group(), // Lapis 1: Pondasi Teunamba', Gaki Tameh & Peralatan Yup Moh
+        l2_pillarsBeams: new THREE.Group(), // Lapis 2: 24 Tameh (Raja & Putroe), Rôk & Toi (+ Paseuk)
+        l3_floorSystem: new THREE.Group(), // Lapis 3: Lhue & Aleue (Gelegar & Papan Lantai)
+        l4_wallsRooms: new THREE.Group(),  // Lapis 4: Dinding Kindang/Binteih, Tungai, Rumoh Dapu, Seulasa, Reunyeun, Pinto
+        l5_roofTruss: new THREE.Group(),   // Lapis 5: Rangka Kuda-Kuda (Bara, Deuri, Tuleung Rueng, Indreng, Gaseue, Beuleubah)
+        l6_roofCover: new THREE.Group()    // Lapis 6: Penutup Atap On Rumbia, Ikatan Taloe Jôk & Tulak Angèn
+      };
+      Object.values(constructionLayers).forEach(g => scene.add(g));
+
+      // Jarak pemisahan vertikal tiap lapisan pada Exploded View 100%
+      const layerExplodeHeight = {
+        l1_foundation: 0.00,
+        l2_pillarsBeams: 1.55,
+        l3_floorSystem: 3.35,
+        l4_wallsRooms: 5.25,
+        l5_roofTruss: 7.45,
+        l6_roofCover: 9.85
+      };
+
+      // Referensi bagian sambungan Puting-Lobang untuk simulasi lepas-pasang pasak
+      const joineryDemoParts = {
+        pegsX: [],
+        pegsZ: [],
+        rokHighlight: null,
+        toiHighlight: null
+      };
+
+      // --------------------------------------------------------------------------
+      // 6. LINGKUNGAN HALAMAN & GRID DIMENSI METER (CAD)
+      // --------------------------------------------------------------------------
+      function buildEnvironment() {
+        // Halaman rumput
+        const lawn = new THREE.Mesh(
+          new THREE.PlaneGeometry(150, 150),
+          new THREE.MeshStandardMaterial({ color: 0x3b592b, roughness: 0.96 })
+        );
+        lawn.rotation.x = -Math.PI / 2;
+        lawn.receiveShadow = true;
+        envGroup.add(lawn);
+
+        // Jalan setapak batu menuju tangga Reunyeun di sisi Barat-depan (X = -2.60)
+        for (let s = 0; s < 8; s++) {
+          const stepStone = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.42 + (s % 2) * 0.06, 0.50, 0.06, 8),
+            mats.riverStone
+          );
+          stepStone.position.set(SPEC.seulasaX + Math.sin(s * 0.6) * 0.14, 0.03, 7.65 + s * 0.85);
+          stepStone.receiveShadow = true;
+          envGroup.add(stepStone);
+        }
+
+        // Penanda Arah Mata Angin (Timur +X, Barat -X, Utara/Depan +Z, Selatan/Belakang -Z)
+        const compass = new THREE.Group();
+        compass.position.set(6.8, 0.03, 6.8);
+        const ring = new THREE.Mesh(
+          new THREE.RingGeometry(0.85, 0.96, 32),
+          new THREE.MeshBasicMaterial({ color: 0xf59e0b, side: THREE.DoubleSide, transparent: true, opacity: 0.7 })
+        );
+        ring.rotation.x = -Math.PI / 2;
+        compass.add(ring);
+
+        const nCone = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.72, 4), new THREE.MeshBasicMaterial({ color: 0xef4444 }));
+        nCone.rotation.x = Math.PI / 2;
+        nCone.position.set(0, 0.02, 0.36);
+        compass.add(nCone);
+
+        const sCone = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.62, 4), new THREE.MeshBasicMaterial({ color: 0xe2e8f0 }));
+        sCone.rotation.x = -Math.PI / 2;
+        sCone.position.set(0, 0.02, -0.32);
+        compass.add(sCone);
+        envGroup.add(compass);
+      }
+
+      // Grid Dimensi Meter CAD (Toggleable)
+      const dimensionGroup = new THREE.Group();
+      dimensionGroup.visible = false;
+      scene.add(dimensionGroup);
+
+      function buildDimensionGrid() {
+        const gridHelper = new THREE.GridHelper(24, 24, 0x38bdf8, 0x1e3a5f);
+        gridHelper.position.y = 0.02;
+        dimensionGroup.add(gridHelper);
+
+        const lineMat = new THREE.LineBasicMaterial({ color: 0x38bdf8 });
+        const accentMat = new THREE.LineBasicMaterial({ color: 0xf59e0b });
+
+        function addDimLine(p1, p2, mat = lineMat) {
+          const geo = new THREE.BufferGeometry().setFromPoints([p1, p2]);
+          dimensionGroup.add(new THREE.Line(geo, mat));
+        }
+
+        // Garis bentang Timur-Barat 13.00 m (5 Ruweueng @ 2.60 m) di depan rumah
+        addDimLine(new THREE.Vector3(-6.50, 0.35, 8.15), new THREE.Vector3(6.50, 0.35, 8.15), accentMat);
+        SPEC.colX.forEach((x) => {
+          addDimLine(new THREE.Vector3(x, 0.35, 7.95), new THREE.Vector3(x, 0.35, 8.35), accentMat);
+        });
+
+        // Garis lebar Utara-Selatan 8.40 m (3 zona @ 2.80 m) di sisi Timur
+        addDimLine(new THREE.Vector3(8.15, 0.35, -4.20), new THREE.Vector3(8.15, 0.35, 4.20), accentMat);
+        SPEC.colZ.forEach((z) => {
+          addDimLine(new THREE.Vector3(7.95, 0.35, z), new THREE.Vector3(8.35, 0.35, z), accentMat);
+        });
+
+        // Garis elevasi vertikal (+0.30m Teunamba', +2.40m Seuramoe, +2.85m Tungai, +8.75m Tuleung Rueng)
+        addDimLine(new THREE.Vector3(7.85, 0.00, 4.20), new THREE.Vector3(7.85, SPEC.ridgeY, 4.20), lineMat);
+        [0.00, SPEC.elevTeunamba, SPEC.elevVeranda, SPEC.elevTungai, SPEC.eavesBeamY, SPEC.ridgeY].forEach((y) => {
+          addDimLine(new THREE.Vector3(7.60, y, 4.20), new THREE.Vector3(8.10, y, 4.20), accentMat);
+        });
+      }
+
+      // --------------------------------------------------------------------------
+      // 7. LAPIS 1: PONDASI TEUNAMBA' (+0.30M), 24 GAKI TAMEH & YUP MOH
+      // --------------------------------------------------------------------------
+      function createRiverStoneMesh(rx = 0.25, ry = 0.18, rz = 0.23) {
+        // Bentuk batu sungai pipih natural dengan sedikit variasi organik
+        const geo = new THREE.SphereGeometry(1, 14, 10);
+        const pos = geo.attributes.position;
+        for (let i = 0; i < pos.count; i++) {
+          let vx = pos.getX(i);
+          let vy = pos.getY(i);
+          let vz = pos.getZ(i);
+          // Pipihkan bagian atas dan bawah agar menyerupai batu umpak sungai alami
+          if (vy > 0.35) vy = 0.35 + (vy - 0.35) * 0.28;
+          if (vy < -0.35) vy = -0.35 + (vy + 0.35) * 0.25;
+          const jitter = 0.92 + 0.14 * Math.sin(vx * 5.1 + vz * 3.7);
+          pos.setXYZ(i, vx * rx * jitter, vy * ry * 1.45, vz * rz * jitter);
+        }
+        geo.computeVertexNormals();
+        return new THREE.Mesh(geo, mats.riverStone);
+      }
+
+      function buildLayer1FoundationAndYupMoh() {
+        // 1. Teunamba': Gundukan tanah tapak ditinggikan +0.30m di atas tanah sekitar (0.00m)
+        const teunambaMain = trackMesh(
+          new THREE.Mesh(new THREE.BoxGeometry(15.2, SPEC.elevTeunamba, 13.8), mats.teunambaSoil),
+          'ground'
+        );
+        teunambaMain.position.set(0, SPEC.elevTeunamba * 0.5, -0.5);
+        constructionLayers.l1_foundation.add(teunambaMain);
+
+        // 2. 24 Gaki Tameh (Batu umpak sungai pipih natural di atas Teunamba', Y = +0.30m s/d +0.48m)
+        SPEC.colX.forEach((x) => {
+          SPEC.colZ.forEach((z) => {
+            const gaki = trackMesh(createRiverStoneMesh(0.26, 0.18, 0.24), 'ground');
+            gaki.position.set(x, SPEC.elevTeunamba + 0.09, z);
+            gaki.rotation.y = (x * 1.3 + z * 0.9);
+            constructionLayers.l1_foundation.add(gaki);
+          });
+        });
+
+        // Umpak batu tambahan untuk tiang Rumoh Dapu belakang (Z = -6.60m) & teras Seulasa (Z = +5.35m)
+        [-3.90, -1.30, 1.30].forEach((dx) => {
+          const gakiDapu = trackMesh(createRiverStoneMesh(0.22, 0.16, 0.21), 'ground');
+          gakiDapu.position.set(dx, SPEC.elevTeunamba + 0.08, -6.60);
+          constructionLayers.l1_foundation.add(gakiDapu);
+        });
+        [-3.35, -1.85].forEach((sx) => {
+          const gakiSeulasa = trackMesh(createRiverStoneMesh(0.21, 0.16, 0.21), 'ground');
+          gakiSeulasa.position.set(sx, SPEC.elevTeunamba + 0.08, 5.35);
+          constructionLayers.l1_foundation.add(gakiSeulasa);
+        });
+
+        // 3. YUP MOH (KOLONG TERBUKA +0.30m s/d +2.40m)
+        // A. Krông Padé: Lumbung padi silinder anyaman bambu beratap kerucut rumbia (sisi Barat)
+        const krongGroup = new THREE.Group();
+        krongGroup.position.set(-5.15, SPEC.elevTeunamba, 0.0);
+
+        [[-0.56, -0.56], [0.56, -0.56], [-0.56, 0.56], [0.56, 0.56]].forEach(([kx, kz]) => {
+          const post = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.065, 0.50, 8), mats.ulin));
+          post.position.set(kx, 0.25, kz);
+          krongGroup.add(post);
+        });
+        const krongDeck = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.86, 0.86, 0.07, 20), mats.seumantok));
+        krongDeck.position.y = 0.50;
+        krongGroup.add(krongDeck);
+
+        const krongCylinder = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.82, 0.78, 1.25, 24), mats.wovenBamboo), 'cladding');
+        krongCylinder.position.y = 1.15;
+        krongGroup.add(krongCylinder);
+
+        const krongCone = trackMesh(new THREE.Mesh(new THREE.ConeGeometry(1.02, 0.48, 22), mats.rumbia), 'cladding');
+        krongCone.position.y = 2.00;
+        krongGroup.add(krongCone);
+        constructionLayers.l1_foundation.add(krongGroup);
+
+        // B. Teupeun: Alat Tenun Tradisional Aceh di kolong tengah-barat
+        const teupeunGroup = new THREE.Group();
+        teupeunGroup.position.set(-2.55, SPEC.elevTeunamba, -0.2);
+
+        // Rangka kayu alat tenun (2 tiang depan, 2 tiang belakang, palang atas)
+        [[-0.55, -0.75], [0.55, -0.75]].forEach(([tx, tz]) => {
+          const rearPost = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.35, 0.08), mats.seumantok));
+          rearPost.position.set(tx, 0.675, tz);
+          teupeunGroup.add(rearPost);
+        });
+        [[-0.55, 0.75], [0.55, 0.75]].forEach(([tx, tz]) => {
+          const frontPost = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.85, 0.08), mats.seumantok));
+          frontPost.position.set(tx, 0.425, tz);
+          teupeunGroup.add(frontPost);
+        });
+        // Gulungan benang lungsin & kain songket Aceh yang sedang ditenun
+        const warpBeam = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.22, 10), mats.ulin));
+        warpBeam.rotation.z = Math.PI / 2;
+        warpBeam.position.set(0, 1.22, -0.75);
+        teupeunGroup.add(warpBeam);
+
+        const clothWeb = trackMesh(new THREE.Mesh(new THREE.PlaneGeometry(0.95, 1.55), mats.clothRed), 'cladding');
+        clothWeb.position.set(0, 0.94, 0.0);
+        clothWeb.rotation.x = -Math.PI * 0.39;
+        teupeunGroup.add(clothWeb);
+
+        const weaverBench = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.32, 0.32), mats.seumantok));
+        weaverBench.position.set(0, 0.16, 1.05);
+        teupeunGroup.add(weaverBench);
+        constructionLayers.l1_foundation.add(teupeunGroup);
+
+        // C. Jeungki: Penumbuk padi kayu tradisional di kolong sisi Timur
+        const jeungkiGroup = new THREE.Group();
+        jeungkiGroup.position.set(4.85, SPEC.elevTeunamba, -0.25);
+
+        const leusong = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.24, 0.40, 14), mats.ulin));
+        leusong.position.set(0, 0.20, 1.15);
+        jeungkiGroup.add(leusong);
+
+        [-0.22, 0.22].forEach((jx) => {
+          const jPost = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.84, 0.11), mats.ulin));
+          jPost.position.set(jx, 0.42, 0);
+          jeungkiGroup.add(jPost);
+        });
+        const jBeam = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.13, 2.60), mats.seumantok));
+        jBeam.position.set(0, 0.74, -0.05);
+        jBeam.rotation.x = -0.14;
+        jeungkiGroup.add(jBeam);
+
+        const jPestle = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.04, 0.60, 10), mats.ulin));
+        jPestle.position.set(0, 0.56, 1.15);
+        jeungkiGroup.add(jPestle);
+        constructionLayers.l1_foundation.add(jeungkiGroup);
+      }
+
+      // --------------------------------------------------------------------------
+      // 8. LAPIS 2: 24 TAMEH (TERMASUK TAMEH RAJA & TAMEH PUTROE), RÔK, TOI & PASEUK
+      // --------------------------------------------------------------------------
+      function buildLayer2PillarsAndJoinery() {
+        // 24 Tiang Utama (Tameh)
+        SPEC.colX.forEach((x, ix) => {
+          SPEC.colZ.forEach((z, iz) => {
+            const isInnerRow = (iz === 1 || iz === 2); // Deret tengah Z = ±1.40m lebih tinggi
+            // Tameh Raja (ix=2, iz=1 -> X=-1.30, Z=+1.40 sisi Utara/Barat inti)
+            // Tameh Putroe (ix=3, iz=2 -> X=+1.30, Z=-1.40 sisi Selatan/Timur inti)
+            const isTamehRaja = (ix === 2 && iz === 1);
+            const isTamehPutroe = (ix === 3 && iz === 2);
+            const isSacredPillar = isTamehRaja || isTamehPutroe;
+
+            const radius = isSacredPillar ? 0.165 : 0.14;
+            const topY = isInnerRow ? SPEC.coreColTopY : SPEC.eavesBeamY;
+            const h = topY - SPEC.elevGakiTop;
+
+            const tameh = trackMesh(
+              new THREE.Mesh(new THREE.CylinderGeometry(radius * 0.94, radius, h, 18), mats.ulin),
+              'frame'
+            );
+            tameh.position.set(x, SPEC.elevGakiTop + h * 0.5, z);
+            constructionLayers.l2_pillarsBeams.add(tameh);
+
+            // Puting Tameh (tenon) di puncak tiang yang masuk ke lubang Bara Panyang/Linteung
+            const putingTop = trackMesh(
+              new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.22, 0.11), mats.paseuk),
+              'frame'
+            );
+            putingTop.position.set(x, topY + 0.08, z);
+            constructionLayers.l2_pillarsBeams.add(putingTop);
+
+            // Cincin ukiran khusus & kain adat pada Tameh Raja & Tameh Putroe
+            if (isSacredPillar) {
+              const collar = trackMesh(
+                new THREE.Mesh(new THREE.CylinderGeometry(radius * 1.15, radius * 1.15, 0.22, 18), mats.carving),
+                'frame'
+              );
+              collar.position.set(x, 3.65, z);
+              constructionLayers.l2_pillarsBeams.add(collar);
+
+              const sash = trackMesh(
+                new THREE.Mesh(new THREE.CylinderGeometry(radius * 1.18, radius * 1.18, 0.10, 18), isTamehRaja ? mats.clothGold : mats.clothRed),
+                'cladding'
+              );
+              sash.position.set(x, 3.48, z);
+              constructionLayers.l2_pillarsBeams.add(sash);
+            }
+
+            // PASEUK / BAJO (Pasak & Baji Kayu pengunci Rôk dan Toi di lubang Tameh, Y = +2.16m)
+            const isDemoJoint = (ix === 2 && iz === 0); // Sambungan sampel close-up di X=-1.30, Z=+4.20
+
+            const paseukX = trackMesh(
+              new THREE.Mesh(new THREE.BoxGeometry(0.036, 0.17, radius * 2.75), mats.paseuk),
+              'frame'
+            );
+            paseukX.position.set(x + 0.15, 2.16, z);
+            constructionLayers.l2_pillarsBeams.add(paseukX);
+
+            const paseukZ = trackMesh(
+              new THREE.Mesh(new THREE.BoxGeometry(radius * 2.75, 0.17, 0.036), mats.paseuk),
+              'frame'
+            );
+            paseukZ.position.set(x, 2.16, z + 0.15);
+            constructionLayers.l2_pillarsBeams.add(paseukZ);
+
+            if (isDemoJoint) {
+              paseukX.userData.basePos = paseukX.position.clone();
+              paseukZ.userData.basePos = paseukZ.position.clone();
+              joineryDemoParts.pegsX.push(paseukX);
+              joineryDemoParts.pegsZ.push(paseukZ);
+            }
+
+            // Pasak tambahan pengunci Rôk Teungoh (+0.45m, Y = +2.61m) pada deret inti
+            if (isInnerRow) {
+              const paseukCore = trackMesh(
+                new THREE.Mesh(new THREE.BoxGeometry(0.034, 0.15, radius * 2.65), mats.paseuk),
+                'frame'
+              );
+              paseukCore.position.set(x - 0.14, 2.61, z);
+              constructionLayers.l2_pillarsBeams.add(paseukCore);
+            }
+          });
+        });
+
+        // RÔK (Balok pengikat memanjang Timur-Barat menembus lubang Tameh, Y = +2.16m)
+        SPEC.colZ.forEach((z, iz) => {
+          const rok = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(13.8, 0.18, 0.13), mats.seumantok), 'frame');
+          rok.position.set(0, 2.16, z);
+          constructionLayers.l2_pillarsBeams.add(rok);
+          if (iz === 0) {
+            rok.userData.basePos = rok.position.clone();
+            joineryDemoParts.rokHighlight = rok;
+          }
+        });
+
+        // TOI (Balok pengikat melintang Utara-Selatan menembus lubang Tameh, Y = +2.16m)
+        SPEC.colX.forEach((x, ix) => {
+          const toi = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.18, 9.2), mats.seumantok), 'frame');
+          toi.position.set(x, 2.16, 0);
+          constructionLayers.l2_pillarsBeams.add(toi);
+          if (ix === 2) {
+            toi.userData.basePos = toi.position.clone();
+            joineryDemoParts.toiHighlight = toi;
+          }
+        });
+
+        // Rôk Teungoh (+0.45m, Y = +2.61m) untuk mengangkat lantai zona Tungai menjadi +2.85m
+        [-1.40, 1.40].forEach((cz) => {
+          const rokCore = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(13.3, 0.16, 0.13), mats.seumantok), 'frame');
+          rokCore.position.set(0, 2.61, cz);
+          constructionLayers.l2_pillarsBeams.add(rokCore);
+        });
+
+        // Tiang pendukung tambahan untuk Rumoh Dapu (Z = -6.60m) & Teras Seulasa (Z = +5.35m)
+        [-3.90, -1.30, 1.30].forEach((dx) => {
+          const hDapu = 3.62 - SPEC.elevGakiTop; // tiang Dapu lebih rendah dari tiang utama
+          const dPost = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.105, 0.115, hDapu, 12), mats.ulin), 'frame');
+          dPost.position.set(dx, SPEC.elevGakiTop + hDapu * 0.5, -6.60);
+          constructionLayers.l2_pillarsBeams.add(dPost);
+        });
+        [-3.35, -1.85].forEach((sx) => {
+          const hSeulasa = 3.65 - SPEC.elevGakiTop;
+          const sPost = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.095, 0.105, hSeulasa, 12), mats.ulin), 'frame');
+          sPost.position.set(sx, SPEC.elevGakiTop + hSeulasa * 0.5, 5.35);
+          constructionLayers.l2_pillarsBeams.add(sPost);
+        });
+      }
+
+      // --------------------------------------------------------------------------
+      // 9. LAPIS 3: LHUE (BALOK ANAK GELEGAR) & ALEUE (BILAH PAPAN LANTAI)
+      // --------------------------------------------------------------------------
+      function buildLayer3FloorSystem() {
+        // A. LHUE (Balok-balok anak gelegar lantai menumpu di atas Rôk dan Toi)
+        for (let lx = -6.35; lx <= 6.35; lx += 0.65) {
+          // Lhue Seuramoe Keue (Y = +2.31m)
+          const lhueKeue = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.11, 2.78), mats.ulin), 'frame');
+          lhueKeue.position.set(lx, 2.31, 2.80);
+          constructionLayers.l3_floorSystem.add(lhueKeue);
+
+          // Lhue Seuramoe Likôt (Y = +2.31m)
+          const lhueLikot = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.11, 2.78), mats.ulin), 'frame');
+          lhueLikot.position.set(lx, 2.31, -2.80);
+          constructionLayers.l3_floorSystem.add(lhueLikot);
+
+          // Lhue Tungai (+0.45m, Y = +2.76m)
+          const lhueTungai = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.11, 2.78), mats.ulin), 'frame');
+          lhueTungai.position.set(lx, 2.76, 0.00);
+          constructionLayers.l3_floorSystem.add(lhueTungai);
+        }
+
+        // Gelegar & Lhue Rumoh Dapu (-0.35m, Y = +1.96m)
+        [-3.90, -1.30, 1.30].forEach((dx) => {
+          const dBeam = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.15, 2.45), mats.seumantok), 'frame');
+          dBeam.position.set(dx, 1.85, -5.40);
+          constructionLayers.l3_floorSystem.add(dBeam);
+        });
+        for (let dlx = -3.80; dlx <= 1.20; dlx += 0.62) {
+          const lhueDapu = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.10, 2.38), mats.ulin), 'frame');
+          lhueDapu.position.set(dlx, 1.96, -5.40);
+          constructionLayers.l3_floorSystem.add(lhueDapu);
+        }
+
+        // B. ALEUE (Bilah papan kayu/bambu rapat penutup lantai — dapat di-toggle!)
+        // 1. Aleue Seuramoe Keue (+2.40m)
+        const aleueKeue = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(13.05, 0.036, 2.82), mats.aleue), 'cladding', 'floor');
+        aleueKeue.position.set(0, SPEC.elevVeranda - 0.018, 2.80);
+        constructionLayers.l3_floorSystem.add(aleueKeue);
+
+        // 2. Aleue Tungai / Seuramoe Teungoh (+2.85m -> naik +0.45m!)
+        const aleueTungai = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(13.05, 0.036, 2.82), mats.aleue), 'cladding', 'floor');
+        aleueTungai.position.set(0, SPEC.elevTungai - 0.018, 0.00);
+        constructionLayers.l3_floorSystem.add(aleueTungai);
+
+        // 3. Aleue Seuramoe Likôt (+2.40m)
+        const aleueLikot = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(13.05, 0.036, 2.82), mats.aleue), 'cladding', 'floor');
+        aleueLikot.position.set(0, SPEC.elevVeranda - 0.018, -2.80);
+        constructionLayers.l3_floorSystem.add(aleueLikot);
+
+        // 4. Aleue Rumoh Dapu (+2.05m -> turun -0.35m dari Seuramoe Likôt!)
+        const aleueDapu = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(5.25, 0.036, 2.42), mats.aleue), 'cladding', 'floor');
+        aleueDapu.position.set(-1.30, SPEC.elevDapu - 0.018, -5.40);
+        constructionLayers.l3_floorSystem.add(aleueDapu);
+
+        // 5. Dek Teras Seulasa (+2.40m) di depan Pinto (X = -2.60m, Z = +4.20 s/d +5.35m)
+        const aleueSeulasa = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(1.65, 0.036, 1.18), mats.aleue), 'cladding', 'floor');
+        aleueSeulasa.position.set(SPEC.seulasaX, SPEC.elevVeranda - 0.018, 4.78);
+        constructionLayers.l3_floorSystem.add(aleueSeulasa);
+
+        // Anak tangga penghubung antar elevasi lantai dalam (Rambat +45cm & Dapu -35cm)
+        [1.46, -1.46].forEach((rz) => {
+          const rambatStep = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(1.40, 0.22, 0.26), mats.seumantok), 'frame', 'floor');
+          rambatStep.position.set(0, 2.51, rz);
+          constructionLayers.l3_floorSystem.add(rambatStep);
+        });
+        const dapuStep = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(1.10, 0.17, 0.25), mats.seumantok), 'frame', 'floor');
+        dapuStep.position.set(-1.30, 2.22, -4.26);
+        constructionLayers.l3_floorSystem.add(dapuStep);
+      }
+
+      // --------------------------------------------------------------------------
+      // 10. LAPIS 4: DINDING KINDANG/BINTEIH, TUNGAI (INONG, RAMBAT, ANJONG),
+      //              RUMOH DAPU, SEULASA, REUNYEUN (9 ANAK TANGGA) & PINTO (135 CM)
+      // --------------------------------------------------------------------------
+      // --------------------------------------------------------------------------
+      // TINGKAP (JENDELA) — bukaan tembus, kusen, ambang ukir, teralis bubut & 2 daun
+      // --------------------------------------------------------------------------
+      const TK = { W: 0.76, H: 0.86, CY: SPEC.elevVeranda + 1.02 };
+      const tingkapLeaves = [];
+      let tkOpen = false, tkProg = 0;
+
+      function ukirMat(rx) {
+        const t = mats.carving.map.clone();
+        t.needsUpdate = true;
+        t.repeat.set(rx, 1);
+        return new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, side: THREE.DoubleSide });
+      }
+
+      // Potongan dinding papan (axis 'x' = dinding memanjang di X pada Z tetap; 'z' = sebaliknya)
+      function wallPiece(axis, fixed, u0, u1, y0, y1) {
+        if (u1 - u0 < 0.001 || y1 - y0 < 0.001) return;
+        const len = u1 - u0, h = y1 - y0, um = (u0 + u1) / 2, ym = (y0 + y1) / 2;
+        const geo = axis === 'x' ? new THREE.BoxGeometry(len, h, 0.08) : new THREE.BoxGeometry(0.08, h, len);
+        const m = trackMesh(new THREE.Mesh(geo, mats.wallVertical), 'cladding', 'walls');
+        if (axis === 'x') m.position.set(um, ym, fixed); else m.position.set(fixed, ym, um);
+        constructionLayers.l4_wallsRooms.add(m);
+      }
+
+      // Dinding dengan bukaan tembus untuk tiap tingkap (pusat bukaan pada sumbu u)
+      function openWall(axis, fixed, u0, u1, centers) {
+        const y0 = SPEC.elevVeranda, y1 = SPEC.eavesBeamY;
+        const yb = TK.CY - TK.H / 2, yt = TK.CY + TK.H / 2;
+        let cur = u0;
+        centers.forEach((c) => {
+          wallPiece(axis, fixed, cur, c - TK.W / 2, y0, y1);
+          wallPiece(axis, fixed, c - TK.W / 2, c + TK.W / 2, y0, yb);
+          wallPiece(axis, fixed, c - TK.W / 2, c + TK.W / 2, yt, y1);
+          cur = c + TK.W / 2;
+        });
+        wallPiece(axis, fixed, cur, u1, y0, y1);
+      }
+
+      const tkBaluster = (() => {
+        const prof = [[0.010, 0], [0.016, 0.04], [0.024, 0.10], [0.014, 0.17], [0.022, 0.26], [0.014, 0.33], [0.024, 0.40], [0.016, 0.46], [0.012, 0.50]];
+        const ih = TK.H - 0.12;
+        return new THREE.LatheGeometry(prof.map((p) => new THREE.Vector2(p[0], p[1] * ih / 0.5)), 14);
+      })();
+
+      function buildTingkap(x, z, rotY) {
+        const { W, H } = TK;
+        const g = new THREE.Group();
+        g.position.set(x, TK.CY, z);
+        g.rotation.y = rotY; // +Z lokal = sisi luar rumah
+        const add = (w, h, d, mat, px, py, pz, parent, role) => {
+          const m = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat), role || 'frame', 'walls');
+          m.position.set(px, py, pz);
+          (parent || g).add(m);
+          return m;
+        };
+        const fr = 0.06, D = 0.13, yb = -H / 2, yt = H / 2, iw = W - 2 * fr, ih = H - 2 * fr;
+
+        // Kusen kayu ulin
+        add(fr, H, D, mats.ulin, -(W / 2 - fr / 2), 0, 0);
+        add(fr, H, D, mats.ulin, (W / 2 - fr / 2), 0, 0);
+        add(W, fr, D, mats.ulin, 0, yt - fr / 2, 0);
+        add(W, fr, D, mats.ulin, 0, yb + fr / 2, 0);
+        // Ambang atas berukir & ambang bawah (sill) menonjol
+        add(W + 0.20, 0.15, 0.14, ukirMat(1.4), 0, yt + 0.105, 0.01, g, 'cladding');
+        add(W + 0.12, 0.045, 0.22, mats.seumantok, 0, yb - 0.02, 0.04);
+
+        // Teralis kayu bubut (jerjak)
+        for (let i = 0; i < 7; i++) {
+          const b = trackMesh(new THREE.Mesh(tkBaluster, mats.ulin), 'frame', 'walls');
+          b.position.set(-iw / 2 + iw * (i + 0.5) / 7, yb + fr, 0);
+          g.add(b);
+        }
+        add(iw, 0.025, 0.03, mats.ulin, 0, yb + fr + 0.01, 0);
+        add(iw, 0.025, 0.03, mats.ulin, 0, yt - fr - 0.01, 0);
+
+        // Dua daun berpanel ukir (membuka ke dalam)
+        [-1, 1].forEach((sd) => {
+          const pv = new THREE.Group();
+          pv.position.set(sd * (W / 2 - fr), yb + fr, 0.04);
+          g.add(pv);
+          const lw = iw / 2, lh = ih, ex = 0.045;
+          const lg = new THREE.Group();
+          lg.position.x = -sd * lw / 2;
+          pv.add(lg);
+          add(ex, lh, 0.035, mats.ulin, -lw / 2 + ex / 2, lh / 2, 0, lg);
+          add(ex, lh, 0.035, mats.ulin, lw / 2 - ex / 2, lh / 2, 0, lg);
+          add(lw, ex, 0.035, mats.ulin, 0, ex / 2, 0, lg);
+          add(lw, ex, 0.035, mats.ulin, 0, lh - ex / 2, 0, lg);
+          add(lw - 2 * ex, lh * 0.30, 0.02, ukirMat(0.30), 0, lh * 0.80, 0.004, lg, 'cladding');
+          add(lw - 2 * ex, lh * 0.30, 0.02, ukirMat(0.30), 0, lh * 0.20, 0.004, lg, 'cladding');
+          add(lw - 2 * ex, lh * 0.26, 0.02, mats.wallVertical, 0, lh * 0.5, 0, lg, 'cladding');
+          tingkapLeaves.push({ pv, sd });
+        });
+        constructionLayers.l4_wallsRooms.add(g);
+      }
+
+      function updateTingkap(dt) {
+        const t = tkOpen ? 1 : 0;
+        if (Math.abs(tkProg - t) > 0.001) {
+          tkProg += (t - tkProg) * Math.min(1, dt * 5);
+          tingkapLeaves.forEach((l) => { l.pv.rotation.y = -l.sd * tkProg * 1.75; });
+        }
+      }
+
+      function buildLayer4WallsAndRooms() {
+        const partH = 2.05; // Tinggi partisi kamar zona Tungai (dari lantai +2.85m ke +4.90m)
+
+        // --- A. ZONA TUNGAI (+2.85M): RUMOH INONG (BARAT), RAMBAT (TENGAH), ANJONG (TIMUR) ---
+        // 1. Rumoh Inong (Sisi Barat: X = -6.50 s/d -1.30, Z = -1.40 s/d +1.40)
+        const inongFront = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(5.20, partH, 0.08), mats.wallVertical), 'cladding', 'walls');
+        inongFront.position.set(-3.90, SPEC.elevTungai + partH * 0.5, 1.40);
+        constructionLayers.l4_wallsRooms.add(inongFront);
+
+        const inongFrontFrieze = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(5.22, 0.24, 0.10), mats.carving), 'cladding', 'walls');
+        inongFrontFrieze.position.set(-3.90, SPEC.elevTungai + partH - 0.12, 1.40);
+        constructionLayers.l4_wallsRooms.add(inongFrontFrieze);
+
+        // Dinding Rambat sisi Barat (X = -1.30) dengan bukaan pintu masuk ke Rumoh Inong
+        const rambatWestN = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.08, partH, 0.95), mats.wallVertical), 'cladding');
+        rambatWestN.position.set(-1.30, SPEC.elevTungai + partH * 0.5, 0.925);
+        constructionLayers.l4_wallsRooms.add(rambatWestN);
+
+        const rambatWestS = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.08, partH, 0.95), mats.wallVertical), 'cladding');
+        rambatWestS.position.set(-1.30, SPEC.elevTungai + partH * 0.5, -0.925);
+        constructionLayers.l4_wallsRooms.add(rambatWestS);
+
+        const rambatWestLintel = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.55, 0.90), mats.carving), 'cladding');
+        rambatWestLintel.position.set(-1.30, SPEC.elevTungai + partH - 0.275, 0);
+        constructionLayers.l4_wallsRooms.add(rambatWestLintel);
+
+        // Dinding belakang Rumoh Inong menghadap Seuramoe Likôt (Z = -1.40)
+        const inongBack = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(5.20, partH, 0.08), mats.wallVertical), 'cladding', 'walls');
+        inongBack.position.set(-3.90, SPEC.elevTungai + partH * 0.5, -1.40);
+        constructionLayers.l4_wallsRooms.add(inongBack);
+
+        // Interior Rumoh Inong: Pelaminan / Tempat Tidur Adat & Peti Peutoe
+        const inongBed = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(2.20, 0.28, 1.75), mats.seumantok));
+        inongBed.position.set(-5.05, SPEC.elevTungai + 0.14, 0.30);
+        constructionLayers.l4_wallsRooms.add(inongBed);
+
+        const inongMattress = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(2.10, 0.12, 1.65), mats.clothRed), 'cladding');
+        inongMattress.position.set(-5.05, SPEC.elevTungai + 0.34, 0.30);
+        constructionLayers.l4_wallsRooms.add(inongMattress);
+
+        const tabirTop = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(2.25, 0.15, 1.80), mats.clothGold), 'cladding');
+        tabirTop.position.set(-5.05, SPEC.elevTungai + 1.80, 0.30);
+        constructionLayers.l4_wallsRooms.add(tabirTop);
+
+        const peutoe = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.52, 0.50), mats.carving));
+        peutoe.position.set(-2.35, SPEC.elevTungai + 0.26, 0.92);
+        constructionLayers.l4_wallsRooms.add(peutoe);
+
+        // 2. Anjong (Sisi Timur: X = +1.30 s/d +6.50, Z = -1.40 s/d +1.40)
+        const anjongFront = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(5.20, partH, 0.08), mats.wallVertical), 'cladding', 'walls');
+        anjongFront.position.set(3.90, SPEC.elevTungai + partH * 0.5, 1.40);
+        constructionLayers.l4_wallsRooms.add(anjongFront);
+
+        const anjongFrontFrieze = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(5.22, 0.24, 0.10), mats.carving), 'cladding', 'walls');
+        anjongFrontFrieze.position.set(3.90, SPEC.elevTungai + partH - 0.12, 1.40);
+        constructionLayers.l4_wallsRooms.add(anjongFrontFrieze);
+
+        // Dinding Rambat sisi Timur (X = +1.30) dengan bukaan pintu masuk ke Anjong
+        const rambatEastN = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.08, partH, 0.95), mats.wallVertical), 'cladding');
+        rambatEastN.position.set(1.30, SPEC.elevTungai + partH * 0.5, 0.925);
+        constructionLayers.l4_wallsRooms.add(rambatEastN);
+
+        const rambatEastS = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.08, partH, 0.95), mats.wallVertical), 'cladding');
+        rambatEastS.position.set(1.30, SPEC.elevTungai + partH * 0.5, -0.925);
+        constructionLayers.l4_wallsRooms.add(rambatEastS);
+
+        const rambatEastLintel = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.55, 0.90), mats.carving), 'cladding');
+        rambatEastLintel.position.set(1.30, SPEC.elevTungai + partH - 0.275, 0);
+        constructionLayers.l4_wallsRooms.add(rambatEastLintel);
+
+        const anjongBack = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(5.20, partH, 0.08), mats.wallVertical), 'cladding', 'walls');
+        anjongBack.position.set(3.90, SPEC.elevTungai + partH * 0.5, -1.40);
+        constructionLayers.l4_wallsRooms.add(anjongBack);
+
+        // Interior Anjong
+        const anjongBed = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(1.95, 0.24, 1.45), mats.clothGreen), 'cladding');
+        anjongBed.position.set(5.05, SPEC.elevTungai + 0.12, 0.35);
+        constructionLayers.l4_wallsRooms.add(anjongBed);
+
+        // 3. Tikar Pandan (Tika) di Seuramoe Keue & Seuramoe Likôt
+        const tikaKeue = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.018, 1.75), mats.pandanMat), 'cladding');
+        tikaKeue.position.set(2.4, SPEC.elevVeranda + 0.01, 2.80);
+        constructionLayers.l4_wallsRooms.add(tikaKeue);
+
+        const tikaLikot = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.018, 1.75), mats.pandanMat), 'cladding');
+        tikaLikot.position.set(2.4, SPEC.elevVeranda + 0.01, -2.80);
+        constructionLayers.l4_wallsRooms.add(tikaLikot);
+
+        // --- B. DINDING LUAR KINDANG & BINTEIH + TINGKAP (JENDELA BERTERALIS) ---
+        // Lis ukir Kindang keliling tepi lantai (+2.40m) & Peulangan atas (+4.22m)
+        [4.24, -4.24].forEach((kz) => {
+          const kindang = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(13.15, 0.24, 0.07), mats.carving), 'cladding', 'walls');
+          kindang.position.set(0, SPEC.elevVeranda + 0.05, kz);
+          constructionLayers.l4_wallsRooms.add(kindang);
+
+          const peulangan = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(13.15, 0.24, 0.07), mats.carving), 'cladding', 'walls');
+          peulangan.position.set(0, SPEC.eavesBeamY - 0.14, kz);
+          constructionLayers.l4_wallsRooms.add(peulangan);
+        });
+
+        // Fasad Depan (Z = +4.20m) terbelah bukaan Pinto 1.35m di X = -2.60m (lebar bukaan 1.00m: X = -3.10 s/d -2.10)
+        // Bagian kiri pintu (X = -6.50 s/d -3.10 -> lebar 3.40m, pusat X = -4.80)
+        openWall('x', 4.20, -6.50, -3.10, [-4.80]);
+        // Bagian kanan pintu (X = -2.10 s/d +6.50) dengan tingkap di X = 0.00, 2.60, 5.20
+        openWall('x', 4.20, -2.10, 6.50, [0.00, 2.60, 5.20]);
+
+        // Ambang atas Pinto 1.35m (dari Y = +3.75m ke +4.35m -> tinggi 0.60m, lebar 1.00m di X = -2.60m)
+        const pintoHeader = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(1.04, 0.60, 0.11), mats.carving), 'cladding', 'walls');
+        pintoHeader.position.set(SPEC.seulasaX, SPEC.elevVeranda + SPEC.pintoHeight + 0.30, 4.20);
+        constructionLayers.l4_wallsRooms.add(pintoHeader);
+
+        // PINTO: Pintu dua daun kayu berukir tanpa engsel besi (poros kayu atas-bawah, tinggi 1.35m)
+        [-1, 1].forEach((leafSide) => {
+          const pivotX = SPEC.seulasaX + leafSide * 0.47;
+          const doorPivot = new THREE.Group();
+          doorPivot.position.set(pivotX, SPEC.elevVeranda, 4.20);
+          // Buka sedikit ke dalam (26°) agar daun pintu ukir dan poros kayunya terlihat jelas
+          doorPivot.rotation.y = leafSide * 0.46;
+
+          const leafMesh = trackMesh(
+            new THREE.Mesh(new THREE.BoxGeometry(0.46, SPEC.pintoHeight - 0.03, 0.045), mats.carving),
+            'cladding', 'walls'
+          );
+          leafMesh.position.set(-leafSide * 0.23, (SPEC.pintoHeight - 0.03) * 0.5 + 0.015, 0);
+          doorPivot.add(leafMesh);
+
+          // Poros kayu atas & bawah (pengganti engsel besi)
+          const woodenPivotPin = trackMesh(
+            new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.024, SPEC.pintoHeight + 0.08, 10), mats.paseuk),
+            'frame', 'walls'
+          );
+          woodenPivotPin.position.set(0, SPEC.pintoHeight * 0.5, 0);
+          doorPivot.add(woodenPivotPin);
+
+          constructionLayers.l4_wallsRooms.add(doorPivot);
+        });
+
+        // Jendela Tingkap berteralis kayu pada fasad depan (Z = +4.20m)
+        [-4.80, 0.00, 2.60, 5.20].forEach((wx) => buildTingkap(wx, 4.20, 0));
+
+        // Dinding Belakang Seuramoe Likôt (Z = -4.20m) dengan bukaan ke Rumoh Dapu (X = -1.30m)
+        const backWallW = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(4.70, 1.95, 0.08), mats.wallVertical), 'cladding', 'walls');
+        backWallW.position.set(-4.15, SPEC.elevVeranda + 0.975, -4.20);
+        constructionLayers.l4_wallsRooms.add(backWallW);
+
+        const backWallE = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(7.30, 1.95, 0.08), mats.wallVertical), 'cladding', 'walls');
+        backWallE.position.set(2.85, SPEC.elevVeranda + 0.975, -4.20);
+        constructionLayers.l4_wallsRooms.add(backWallE);
+
+        const backDoorHeader = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(1.04, 0.55, 0.10), mats.carving), 'cladding', 'walls');
+        backDoorHeader.position.set(-1.30, SPEC.elevVeranda + 1.675, -4.20);
+        constructionLayers.l4_wallsRooms.add(backDoorHeader);
+
+        // Dinding Samping Barat (-6.50m) & Timur (+6.50m) dengan Tingkap berukir
+        [-6.50, 6.50].forEach((sx) => {
+          openWall('z', sx, -4.20, 4.20, [-2.80, 0.00, 2.80]);
+
+          const sideKindang = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.24, 8.50), mats.carving), 'cladding', 'walls');
+          sideKindang.position.set(sx, SPEC.elevVeranda + 0.05, 0);
+          constructionLayers.l4_wallsRooms.add(sideKindang);
+
+          [-2.80, 0.00, 2.80].forEach((wz) => buildTingkap(sx, wz, sx > 0 ? Math.PI / 2 : -Math.PI / 2));
+        });
+
+        // --- C. RUMOH DAPU (+2.05M — TURUN -0.35M DI BELAKANG SEURAMOE LIKÔT) ---
+        const dapuWallH = 1.25; // puncak dinding +3.30m; celah ±0.35-0.40m di bawah atap sandar = ventilasi asap
+        const dapuBack = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(5.20, dapuWallH, 0.07), mats.wovenBamboo), 'cladding', 'walls');
+        dapuBack.position.set(-1.30, SPEC.elevDapu + dapuWallH * 0.5, -6.60);
+        constructionLayers.l4_wallsRooms.add(dapuBack);
+
+        [-3.90, 1.30].forEach((dx) => {
+          const dapuSide = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.07, dapuWallH, 2.40), mats.wovenBamboo), 'cladding', 'walls');
+          dapuSide.position.set(dx, SPEC.elevDapu + dapuWallH * 0.5, -5.40);
+          constructionLayers.l4_wallsRooms.add(dapuSide);
+        });
+
+        // Tungku masak tanah liat (Dapue), periuk Beulangong & rak kayu gantung (Para)
+        const dapueHearth = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(1.40, 0.24, 0.95), mats.riverStone));
+        dapueHearth.position.set(-2.75, SPEC.elevDapu + 0.12, -5.85);
+        constructionLayers.l4_wallsRooms.add(dapueHearth);
+
+        const beulangong = trackMesh(new THREE.Mesh(new THREE.SphereGeometry(0.24, 14, 12), mats.terracotta));
+        beulangong.scale.set(1, 0.76, 1);
+        beulangong.position.set(-2.75, SPEC.elevDapu + 0.42, -5.85);
+        constructionLayers.l4_wallsRooms.add(beulangong);
+
+        // Para (rak kayu gantung pengasapan di atas tungku)
+        const paraRack = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(1.50, 0.05, 0.98), mats.bamboo));
+        paraRack.position.set(-2.75, SPEC.elevDapu + 1.28, -5.85);
+        constructionLayers.l4_wallsRooms.add(paraRack);
+
+        // Guci air di sudut Dapu
+        [0.45, 0.88].forEach((gx) => {
+          const guci = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.13, 0.52, 14), mats.terracotta));
+          guci.position.set(gx, SPEC.elevDapu + 0.26, -6.15);
+          constructionLayers.l4_wallsRooms.add(guci);
+        });
+
+        // Atap Dapu: atap sandar (lean-to) yang menyelip di bawah tepi atap utama (Z = -4.58m, Y = +4.16m)
+        // lalu turun menjauhi rumah ke tepi belakang (Z = -6.95m, Y = +3.62m) -> air hujan mengalir ke belakang
+        const dRoofFront = { z: -4.58, y: 4.16 };
+        const dRoofBack  = { z: -6.95, y: 3.62 };
+        const dRoofDz = dRoofFront.z - dRoofBack.z;
+        const dRoofDy = dRoofFront.y - dRoofBack.y;
+        const dRoofAng = Math.atan2(dRoofDy, dRoofDz);
+        const dRoofLen = Math.hypot(dRoofDz, dRoofDy);
+        const dRoofMidZ = (dRoofFront.z + dRoofBack.z) * 0.5;
+        const dRoofMidY = (dRoofFront.y + dRoofBack.y) * 0.5 - 0.055; // permukaan atas pada garis lereng
+
+        const dapuRoof = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(5.65, 0.11, dRoofLen), mats.rumbia), 'cladding', 'roof');
+        dapuRoof.position.set(-1.30, dRoofMidY, dRoofMidZ);
+        dapuRoof.rotation.x = -dRoofAng; // sisi dekat rumah (Z+) lebih tinggi
+        constructionLayers.l4_wallsRooms.add(dapuRoof);
+
+        // Gaseue kecil (usuk) penyangga atap Dapu + balok ring belakang di atas tiang
+        [-3.90, -2.60, -1.30, 0.00, 1.30].forEach((rx) => {
+          const rafter = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.09, dRoofLen + 0.08), mats.ulin), 'frame');
+          rafter.position.set(rx, dRoofMidY - 0.055 - 0.045, dRoofMidZ);
+          rafter.rotation.x = -dRoofAng;
+          constructionLayers.l4_wallsRooms.add(rafter);
+        });
+        const dapuPlate = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(5.40, 0.12, 0.12), mats.seumantok), 'frame');
+        dapuPlate.position.set(-1.30, 3.58, -6.60);
+        constructionLayers.l4_wallsRooms.add(dapuPlate);
+
+        // --- D. SEULASA (TERAS MASUK BERTEDUH) & REUNYEUN (9 ANAK TANGGA GANJIL) ---
+        const stairGroup = new THREE.Group();
+        const xCenter = SPEC.seulasaX; // -2.60m (agak ke sisi Barat fasad depan)
+
+        // Pagar ukir rendah Seulasa & atap pelana kecil berteduh
+        [-3.35, -1.85].forEach((sx) => {
+          const rail = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.55, 1.12), mats.carving), 'cladding');
+          rail.position.set(sx, SPEC.elevVeranda + 0.275, 4.78);
+          stairGroup.add(rail);
+        });
+        // Atap Seulasa berteduh
+        const seulasaCanopy = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(1.85, 0.09, 1.45), mats.rumbia), 'cladding', 'roof');
+        seulasaCanopy.position.set(xCenter, 3.72, 4.82);
+        seulasaCanopy.rotation.x = 0.24;
+        stairGroup.add(seulasaCanopy);
+
+        // Reunyeun: 9 Anak Tangga Ganjil dari Teunamba' (+0.30m, Z=+7.35m) ke Seulasa (+2.40m, Z=+5.35m)
+        const nSteps = 9;
+        const zBot = 7.35;
+        const zTop = 5.35;
+        const yBot = SPEC.elevTeunamba;
+        const yTop = SPEC.elevVeranda;
+
+        for (let s = 1; s <= nSteps; s++) {
+          const frac = s / (nSteps + 1);
+          const sy = yBot + (yTop - yBot) * frac;
+          const sz = zBot + (zTop - zBot) * frac;
+          const tread = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.06, 0.23), mats.seumantok), 'frame');
+          tread.position.set(xCenter, sy, sz);
+          stairGroup.add(tread);
+        }
+
+        const lenStair = Math.hypot(zBot - zTop, yTop - yBot) + 0.30;
+        const angStair = Math.atan2(yTop - yBot, zBot - zTop);
+        [xCenter - 0.48, xCenter + 0.48].forEach((rx) => {
+          const stringer = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.19, lenStair), mats.ulin), 'frame');
+          stringer.position.set(rx, (yTop + yBot) * 0.5, (zTop + zBot) * 0.5);
+          stringer.rotation.x = angStair;
+          stairGroup.add(stringer);
+
+          const handrail = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.08, lenStair), mats.carving), 'cladding');
+          handrail.position.set(rx, (yTop + yBot) * 0.5 + 0.72, (zTop + zBot) * 0.5);
+          handrail.rotation.x = angStair;
+          stairGroup.add(handrail);
+
+          const postBot = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 0.92, 10), mats.ulin), 'frame');
+          postBot.position.set(rx, yBot + 0.44, zBot);
+          stairGroup.add(postBot);
+        });
+
+        // Sepasang Mundam (guci batu pencuci kaki) di kaki Reunyeun
+        [xCenter - 0.78, xCenter + 0.78].forEach((mx) => {
+          const mundam = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.20, 0.15, 0.42, 14), mats.riverStone), 'ground');
+          mundam.position.set(mx, yBot + 0.21, zBot + 0.16);
+          stairGroup.add(mundam);
+        });
+        constructionLayers.l4_wallsRooms.add(stairGroup);
+
+        // Lentera interior
+        lanternCoords.forEach(([lx, ly, lz]) => {
+          const lantern = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.065, 0.21, 10), mats.lanternGlow), 'cladding');
+          lantern.position.set(lx, ly, lz);
+          constructionLayers.l4_wallsRooms.add(lantern);
+        });
+      }
+
+      // --------------------------------------------------------------------------
+      // 11. LAPIS 5: RANGKA ATAP PELANA SIMETRIS ~45°
+      //              (BARA PANYANG, BARA LINTEUNG, DEURI, TULEUNG RUENG,
+      //               INDRENG, GASEUE, GASEUE GANTOENG & BEULEUBAH)
+      // --------------------------------------------------------------------------
+      const ROOF_GEOM = {
+        halfSpanZ: 4.65,
+        eavesY: 4.04, // dinaikkan: bidang atap di Z=±4.20m (Y≈4.50m) harus di atas Bara Panyang (+4.43m) & puting tiang (+4.54m)
+        peakY: SPEC.ridgeY, // 8.75m -> rise = 4.71m, run = 4.65m -> angle ≈ 45.4° ≈ 45° (sejajar sisi segitiga Tulak Angèn)
+        xEavesHalf: 6.85,
+        xRidgeHalf: 6.50 + SPEC.tulakTiltOut + 0.20 // 7.55m
+      };
+
+      function buildLayer5RoofTrusses() {
+        const { halfSpanZ, eavesY, peakY, xEavesHalf, xRidgeHalf } = ROOF_GEOM;
+        const slopeLen = Math.hypot(halfSpanZ, peakY - eavesY);
+        const slopeAngle = Math.atan2(peakY - eavesY, halfSpanZ);
+
+        // 1. BARA PANYANG (Balok atas tiang memanjang Timur-Barat di atas Z = ±4.20m dan Z = ±1.40m)
+        SPEC.colZ.forEach((z, iz) => {
+          const yBara = (iz === 1 || iz === 2) ? SPEC.coreColTopY : SPEC.eavesBeamY;
+          const lenBara = (iz === 1 || iz === 2) ? 13.7 : 13.4;
+          const baraPanyang = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(lenBara, 0.16, 0.13), mats.seumantok), 'frame');
+          baraPanyang.position.set(0, yBara, z);
+          constructionLayers.l5_roofTruss.add(baraPanyang);
+        });
+
+        // 2. BARA LINTEUNG, DEURI (KING POST) & GASEUE PADA 6 DERET KUDA-KUDA
+        SPEC.colX.forEach((tx, idx) => {
+          // Bara Linteung bawah (Y = +4.35m)
+          const baraLinteung = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.16, 8.50), mats.seumantok), 'frame');
+          baraLinteung.position.set(tx, SPEC.eavesBeamY, 0);
+          constructionLayers.l5_roofTruss.add(baraLinteung);
+
+          // Bara Ateuh / balok pengikat atas di atas Tungai (Y = +6.45m)
+          const baraAteuh = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.14, 3.85), mats.seumantok), 'frame');
+          baraAteuh.position.set(tx, SPEC.coreColTopY, 0);
+          constructionLayers.l5_roofTruss.add(baraAteuh);
+
+          // Deuri / Diri (Tiang kuda-kuda gantung vertikal di atas Tungai menuju Tuleung Rueng)
+          const hDeuri = peakY - SPEC.coreColTopY;
+          const deuri = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.12, hDeuri, 0.12), mats.ulin), 'frame');
+          deuri.position.set(tx, SPEC.coreColTopY + hDeuri * 0.5, 0);
+          constructionLayers.l5_roofTruss.add(deuri);
+
+          // Gaseue & Gaseue Gantoeng (Usuk/kasau simetris Utara & Selatan kemiringan ~45°)
+          const xTopShift = (idx === 0) ? -SPEC.tulakTiltOut : (idx === 5 ? SPEC.tulakTiltOut : 0);
+          [-1, 1].forEach((side) => {
+            const gaseue = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.095, 0.13, slopeLen + 0.12), mats.ulin), 'frame');
+            gaseue.position.set(tx + xTopShift * 0.45, (peakY + eavesY) * 0.5, side * halfSpanZ * 0.5);
+            gaseue.rotation.x = side * slopeAngle;
+            if (xTopShift !== 0) {
+              gaseue.rotation.z = -(xTopShift > 0 ? 1 : -1) * 0.10;
+            }
+            constructionLayers.l5_roofTruss.add(gaseue);
+          });
+        });
+
+        // 3. TULEUNG RUENG (Balok nok / bubungan puncak Y = +8.75m)
+        const ridgeLen = xRidgeHalf * 2 - 0.10; // tidak menonjol keluar ujung atap
+        const tuleungRueng = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(ridgeLen, 0.17, 0.15), mats.ulin), 'frame');
+        tuleungRueng.position.set(0, peakY, 0);
+        constructionLayers.l5_roofTruss.add(tuleungRueng);
+
+        // 4. INDRENG / ENDRENG (Gording memanjang Timur-Barat penyangga Gaseue)
+        [-1, 1].forEach((side) => {
+          [0.32, 0.68].forEach((frac) => {
+            const iz = side * halfSpanZ * frac;
+            const iy = peakY - (peakY - eavesY) * frac - 0.08;
+            const indrengLen = (xRidgeHalf - frac * (xRidgeHalf - xEavesHalf)) * 2 - 0.30;
+            const indreng = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(indrengLen, 0.10, 0.10), mats.seumantok), 'frame');
+            indreng.position.set(0, iy, iz);
+            constructionLayers.l5_roofTruss.add(indreng);
+          });
+        });
+
+        // 5. BEULEUBAH (Reng bilah bambu horizontal memanjang Timur-Barat di atas Gaseue)
+        const numBattens = 8;
+        for (let b = 1; b <= numBattens; b++) {
+          const frac = b / (numBattens + 0.5);
+          const bz = halfSpanZ * frac;
+          const by = peakY - (peakY - eavesY) * frac + 0.06;
+          const bLen = (xRidgeHalf - frac * (xRidgeHalf - xEavesHalf)) * 2 - 0.20;
+
+          [-1, 1].forEach((side) => {
+            const beuleubah = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(bLen, 0.032, 0.045), mats.bamboo), 'frame');
+            beuleubah.position.set(0, by, side * bz);
+            constructionLayers.l5_roofTruss.add(beuleubah);
+          });
+        }
+      }
+
+      // --------------------------------------------------------------------------
+      // 12. LAPIS 6: PENUTUP ATAP ON RUMBIA, IKATAN TALOE JÔK & TULAK ANGÈN
+      // --------------------------------------------------------------------------
+      function buildLayer6RoofCoverAndTulakAngen() {
+        const { halfSpanZ, eavesY, peakY, xEavesHalf, xRidgeHalf } = ROOF_GEOM;
+
+        // 1. ON RUMBIA: Lembaran anyaman daun rumbia berlapis pada atap pelana simetris ~45°
+        [-1, 1].forEach((side) => {
+          const zEaves = side * halfSpanZ;
+          for (let layer = 0; layer < 2; layer++) {
+            const yOff = 0.09 + layer * 0.065;
+            const rGeo = new THREE.BufferGeometry();
+            const verts = new Float32Array([
+              -xEavesHalf, eavesY + yOff, zEaves,
+               xEavesHalf, eavesY + yOff, zEaves,
+               xRidgeHalf, peakY + yOff,  0,
+
+              -xEavesHalf, eavesY + yOff, zEaves,
+               xRidgeHalf, peakY + yOff,  0,
+              -xRidgeHalf, peakY + yOff,  0
+            ]);
+            const uvs = new Float32Array([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]);
+            rGeo.setAttribute('position', new THREE.BufferAttribute(verts, 3));
+            rGeo.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+            rGeo.computeVertexNormals();
+
+            const rumbiaMesh = trackMesh(new THREE.Mesh(rGeo, mats.rumbia), 'cladding', 'roof');
+            constructionLayers.l6_roofCover.add(rumbiaMesh);
+          }
+        });
+
+        // Bubungan puncak anyaman (Bubông): dua bilah membentuk V terbalik, menempel mengikuti lereng atap
+        const bubongLen = xRidgeHalf * 2 + 0.10;
+        const capAng = Math.atan2(peakY - eavesY, halfSpanZ);
+        const capW = 0.62, capT = 0.05;
+        [-1, 1].forEach((side) => {
+          const slab = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(bubongLen, capT, capW), mats.wovenBamboo), 'cladding', 'roof');
+          slab.position.set(
+            0,
+            peakY + 0.17 - (capW / 2) * Math.sin(capAng) + (capT / 2) * Math.cos(capAng),
+            side * ((capW / 2) * Math.cos(capAng) + (capT / 2) * Math.sin(capAng))
+          );
+          slab.rotation.x = side * capAng;
+          constructionLayers.l6_roofCover.add(slab);
+        });
+
+        // Tepi atap rumbia yang tebal (atap berlapis): bibir teritis di sisi Utara & Selatan
+        const roofSlopeAng = Math.atan2(peakY - eavesY, halfSpanZ);
+        [-1, 1].forEach((side) => {
+          const lip = trackMesh(
+            new THREE.Mesh(new THREE.BoxGeometry(xEavesHalf * 2 + 0.12, 0.14, 0.26), mats.rumbia),
+            'cladding', 'roof'
+          );
+          lip.position.set(0, eavesY + 0.17, side * (halfSpanZ - 0.09));
+          lip.rotation.x = side * roofSlopeAng;
+          constructionLayers.l6_roofCover.add(lip);
+        });
+
+        // Theuep Gaseue (papan lisplang berukir) sepanjang tepi miring atap di ujung Timur & Barat
+        [-1, 1].forEach((dx) => {
+          [-1, 1].forEach((dz) => {
+            const p1 = new THREE.Vector3(dx * xEavesHalf, eavesY + 0.04, dz * halfSpanZ);
+            const p2 = new THREE.Vector3(dx * xRidgeHalf, peakY + 0.04, 0);
+            const len = p1.distanceTo(p2);
+            const board = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.26, len), mats.carving), 'cladding', 'roof');
+            board.position.copy(p1).add(p2).multiplyScalar(0.5);
+            board.position.y -= 0.20;
+            board.lookAt(p2);
+            constructionLayers.l6_roofCover.add(board);
+          });
+        });
+
+        // 2. TALOE JÔK: Simpul ikatan tali ijuk hitam antara Beuleubah dan Gaseue
+        const numBattens = 8;
+        SPEC.colX.forEach((tx, idx) => {
+          const xTopShift = (idx === 0) ? -SPEC.tulakTiltOut : (idx === 5 ? SPEC.tulakTiltOut : 0);
+          for (let b = 1; b <= numBattens; b++) {
+            const frac = b / (numBattens + 0.5);
+            const bz = halfSpanZ * frac;
+            const by = peakY - (peakY - eavesY) * frac + 0.04;
+            const knotX = tx + xTopShift * (1 - frac) * 0.75;
+
+            [-1, 1].forEach((side) => {
+              const taloe = trackMesh(new THREE.Mesh(new THREE.TorusGeometry(0.055, 0.016, 6, 12), mats.taloeJok), 'frame');
+              taloe.position.set(knotX, by, side * bz);
+              taloe.rotation.y = Math.PI / 4;
+              constructionLayers.l6_roofCover.add(taloe);
+            });
+          }
+        });
+
+        // 3. TULAK ANGÈN: Bidang segitiga ujung atap (Timur & Barat) miring keluar dengan ukiran kerawang tembus
+        [-1, 1].forEach((dir) => {
+          const xBase = dir * 6.50;
+          const xPeak = dir * (6.50 + SPEC.tulakTiltOut); // 7.35m (miring keluar!)
+          const zHalf = 4.35;
+          const yBase = SPEC.eavesBeamY;
+          const yPeak = peakY - 0.05;
+
+          const tulakGroup = new THREE.Group();
+
+          // Panel segitiga berukir kerawang Awan Meucukop & Bungong Meulu
+          const triGeo = new THREE.BufferGeometry();
+          const v = new Float32Array([
+            xBase, yBase, -zHalf,
+            xBase, yBase,  zHalf,
+            xPeak, yPeak,  0
+          ]);
+          const uv = new Float32Array([0, 0, 1, 0, 0.5, 1]);
+          triGeo.setAttribute('position', new THREE.BufferAttribute(v, 3));
+          triGeo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+          triGeo.computeVertexNormals();
+
+          const tulakPanel = trackMesh(new THREE.Mesh(triGeo, mats.tulakOpenwork), 'cladding', 'walls');
+          tulakGroup.add(tulakPanel);
+
+          // Kisi-kisi jalusi ventilasi horizontal pada Tulak Angèn
+          for (let lv = 1; lv <= 5; lv++) {
+            const f = lv / 6;
+            const ly = yBase + (yPeak - yBase) * f;
+            const lx = xBase + (xPeak - xBase) * f + dir * 0.03;
+            const spanZ = zHalf * 2 * (1 - f) * 0.88;
+            const louver = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.08, spanZ), mats.seumantok), 'frame', 'walls');
+            louver.position.set(lx, ly, 0);
+            tulakGroup.add(louver);
+          }
+
+          // Balok tegak tengah & mahkota puncak Tulak Angèn
+          const strutLen = Math.hypot(xPeak - xBase, yPeak - yBase);
+          const strut = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(0.10, strutLen, 0.11), mats.ulin), 'frame', 'walls');
+          strut.position.set((xBase + xPeak) * 0.5 + dir * 0.03, (yBase + yPeak) * 0.5, 0);
+          strut.rotation.z = -dir * Math.atan2(xPeak - xBase, yPeak - yBase);
+          tulakGroup.add(strut);
+
+          constructionLayers.l6_roofCover.add(tulakGroup);
+        });
+      }
+
+      // Bangun seluruh komponen arsitektural
+      buildEnvironment();
+      buildDimensionGrid();
+      buildLayer1FoundationAndYupMoh();
+      buildLayer2PillarsAndJoinery();
+      buildLayer3FloorSystem();
+      buildLayer4WallsAndRooms();
+      buildLayer5RoofTrusses();
+      buildLayer6RoofCoverAndTulakAngen();
+
+      // --------------------------------------------------------------------------
+      // 13. ANIMASI KAMERA
+      // --------------------------------------------------------------------------
+      let cameraTween = null;
+
+      function flyCameraTo(targetPos, targetLookAt) {
+        cameraTween = {
+          p0: camera.position.clone(),
+          p1: targetPos.clone(),
+          t0: controls.target.clone(),
+          t1: targetLookAt.clone(),
+          alpha: 0
+        };
+      }
+
+      // --------------------------------------------------------------------------
+      // 14. SIMULASI INTERAKTIF LEPAS-PASANG PASAK (PASEUK) & RÔK–TOI
+      // --------------------------------------------------------------------------
+      function toggleJoinerySimulation() {
+        state.joineryOpen = !state.joineryOpen;
+        const drawerJoineryText = document.getElementById('drawer-joinery-text');
+        if (drawerJoineryText) {
+          drawerJoineryText.textContent = state.joineryOpen
+            ? 'Pasang Kembali Pasak (Paseuk)'
+            : 'Tarik Pasak (Paseuk) Rôk–Toi';
+        }
+      }
+
+      document.getElementById('btn-drawer-joinery').addEventListener('click', () => {
+        const yShift = (state.explode / 100) * (layerExplodeHeight.l2_pillarsBeams || 0);
+        flyCameraTo(
+          new THREE.Vector3(-2.65, 2.65 + yShift, 5.75),
+          new THREE.Vector3(-1.30, 2.16 + yShift, 4.20)
+        );
+        toggleJoinerySimulation();
+      });
+
+      // --------------------------------------------------------------------------
+      // 16. KONTROL UI (BONGKAR KONSTRUKSI, MODE VISUAL, LAYER TOGGLE, KAMERA)
+      // --------------------------------------------------------------------------
+      // A. Slider Bongkar Konstruksi (Exploded View 0% - 100%)
+      const explodeSlider = document.getElementById('explode-slider');
+      const explodeVal = document.getElementById('explode-val');
+
+      explodeSlider.addEventListener('input', (e) => {
+        state.explode = parseFloat(e.target.value);
+        explodeVal.textContent = `${Math.round(state.explode)}%`;
+        const ratio = state.explode / 100;
+
+        Object.keys(layerExplodeHeight).forEach((key) => {
+          constructionLayers[key].position.y = ratio * layerExplodeHeight[key];
+        });
+      });
+
+      // B. 3 Mode Visual (Arsitektural Realistis / Blueprint CAD Teknis / X-Ray Struktur)
+      function applyVisualMode(mode) {
+        state.renderMode = mode;
+        const bpOverlay = document.getElementById('blueprint-overlay');
+
+        document.querySelectorAll('.render-btn').forEach((btn) => {
+          const isAct = btn.dataset.render === mode;
+          btn.className = isAct
+            ? 'render-btn active px-2 py-2 rounded-xl text-[10px] leading-tight font-medium bg-amber-500/25 text-amber-200 border border-amber-400/50 transition text-center'
+            : 'render-btn px-2 py-2 rounded-xl text-[10px] leading-tight font-medium bg-slate-800/75 text-slate-300 border border-slate-700/70 hover:border-slate-500 transition text-center';
+        });
+
+        if (mode === 'blueprint') {
+          scene.background = new THREE.Color(0x05152c);
+          scene.fog = new THREE.FogExp2(0x05152c, 0.013);
+          envGroup.visible = false;
+          bpOverlay.classList.remove('hidden');
+          setLayerVisibility('dimensions', true);
+
+          allTrackedMeshes.forEach((m) => { m.material = mats.blueprintFill; });
+          blueprintEdges.forEach((edge) => { edge.visible = true; });
+        } else if (mode === 'xray') {
+          scene.background = new THREE.Color(0x0b1220);
+          scene.fog = new THREE.FogExp2(0x0b1220, 0.012);
+          envGroup.visible = false;
+          bpOverlay.classList.add('hidden');
+          blueprintEdges.forEach((edge) => { edge.visible = false; });
+
+          allTrackedMeshes.forEach((m) => {
+            if (m.userData.role === 'frame') {
+              m.material = mats.xrayFrame;
+            } else if (m.userData.role === 'ground') {
+              m.material = m.userData.origMat;
+            } else {
+              m.material = mats.xrayCladding;
+            }
+          });
+        } else {
+          // Arsitektural Realistis
+          envGroup.visible = true;
+          bpOverlay.classList.add('hidden');
+          blueprintEdges.forEach((edge) => { edge.visible = false; });
+          allTrackedMeshes.forEach((m) => { m.material = m.userData.origMat; });
+          applyLightingTime(state.timeOfDay);
+        }
+      }
+
+      document.querySelectorAll('.render-btn').forEach((btn) => {
+        btn.addEventListener('click', () => applyVisualMode(btn.dataset.render));
+      });
+
+      // C. Tombol Toggle Lapisan
+      function setLayerVisibility(layerName, visible) {
+        state.layers[layerName] = visible;
+        const btn = document.querySelector(`.layer-toggle[data-layer="${layerName}"]`);
+        if (btn) {
+          btn.className = visible
+            ? `layer-toggle active ${layerName === 'dimensions' ? 'col-span-2' : ''} flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] bg-emerald-500/20 text-emerald-200 border border-emerald-400/40 transition`
+            : `layer-toggle ${layerName === 'dimensions' ? 'col-span-2' : ''} flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] bg-slate-800/75 text-slate-300 border border-slate-700/70 transition`;
+          const dot = btn.querySelector('.status-dot');
+          if (dot) {
+            dot.className = visible
+              ? 'status-dot w-2 h-2 rounded-full bg-emerald-400'
+              : 'status-dot w-2 h-2 rounded-full bg-slate-500';
+          }
+        }
+
+        if (layerName === 'dimensions') {
+          dimensionGroup.visible = visible;
+        } else if (toggleGroups[layerName]) {
+          toggleGroups[layerName].forEach((m) => { m.visible = visible; });
+        }
+      }
+
+      document.querySelectorAll('.layer-toggle').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.layer;
+          setLayerVisibility(key, !state.layers[key]);
+        });
+      });
+
+      // D. Pencahayaan & Suasana (Siang / Senja / Malam)
+      function applyLightingTime(time) {
+        state.timeOfDay = time;
+        document.querySelectorAll('.time-btn').forEach((btn) => {
+          const isAct = btn.dataset.time === time;
+          btn.className = isAct
+            ? 'time-btn active py-1.5 rounded-xl text-[11px] font-medium bg-sky-500/25 text-sky-200 border border-sky-400/50 transition'
+            : 'time-btn py-1.5 rounded-xl text-[11px] font-medium bg-slate-800/75 text-slate-300 border border-slate-700/70 transition';
+        });
+
+        if (time === 'day') {
+          if (state.renderMode === 'realistic') {
+            scene.background = new THREE.Color(0x9bc4e2);
+            scene.fog = new THREE.FogExp2(0x9bc4e2, 0.010);
+          }
+          sunLight.color.setHex(0xfff5db);
+          sunLight.intensity = 1.38;
+          sunLight.position.set(19, 27, 17);
+          hemiLight.intensity = 0.74;
+          interiorLights.forEach(l => { l.intensity = 0.25; });
+          mats.lanternGlow.emissiveIntensity = 0.8;
+        } else if (time === 'sunset') {
+          if (state.renderMode === 'realistic') {
+            scene.background = new THREE.Color(0xd6743f);
+            scene.fog = new THREE.FogExp2(0xc06234, 0.012);
+          }
+          sunLight.color.setHex(0xff8c42);
+          sunLight.intensity = 1.48;
+          sunLight.position.set(-25, 9, 10);
+          hemiLight.intensity = 0.52;
+          interiorLights.forEach(l => { l.intensity = 1.25; });
+          mats.lanternGlow.emissiveIntensity = 1.8;
+        } else {
+          if (state.renderMode === 'realistic') {
+            scene.background = new THREE.Color(0x080f1d);
+            scene.fog = new THREE.FogExp2(0x080f1d, 0.015);
+          }
+          sunLight.color.setHex(0x4f75b8);
+          sunLight.intensity = 0.34;
+          sunLight.position.set(-14, 22, -12);
+          hemiLight.intensity = 0.26;
+          interiorLights.forEach(l => { l.intensity = 2.1; });
+          mats.lanternGlow.emissiveIntensity = 2.6;
+        }
+      }
+
+      document.querySelectorAll('.time-btn').forEach((btn) => {
+        btn.addEventListener('click', () => applyLightingTime(btn.dataset.time));
+      });
+
+      // E. 6 Preset Kamera Cepat
+      const CAMERA_VIEWS = {
+        iso: {
+          pos: new THREE.Vector3(15.2, 9.4, 17.2),
+          target: new THREE.Vector3(0, 3.3, 0),
+          roof: true, walls: true, floor: true
+        },
+        section: {
+          pos: new THREE.Vector3(16.8, 5.4, 0.0),
+          target: new THREE.Vector3(0.0, 4.3, 0.0),
+          roof: true, walls: false, floor: true
+        },
+        facade: {
+          pos: new THREE.Vector3(-2.6, 3.6, 15.2),
+          target: new THREE.Vector3(-2.6, 3.0, 4.2),
+          roof: true, walls: true, floor: true
+        },
+        tungai: {
+          pos: new THREE.Vector3(0.0, 5.2, -3.6),
+          target: new THREE.Vector3(0.0, 3.1, 0.2),
+          roof: false, walls: true, floor: true
+        },
+        yupmoh: {
+          pos: new THREE.Vector3(-9.8, 2.1, 3.5),
+          target: new THREE.Vector3(-3.2, 1.2, -0.2),
+          roof: true, walls: true, floor: true
+        },
+        joinery: {
+          pos: new THREE.Vector3(-2.65, 2.65, 5.75),
+          target: new THREE.Vector3(-1.30, 2.16, 4.20),
+          roof: true, walls: true, floor: true
+        }
+      };
+
+      document.querySelectorAll('.cam-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.cam-btn').forEach((b) => {
+            b.className = 'cam-btn shrink-0 px-3 py-2 rounded-xl text-[11px] font-medium bg-slate-800/75 text-slate-300 border border-slate-700/60 hover:border-slate-500 transition';
+          });
+          btn.className = 'cam-btn active shrink-0 px-3 py-2 rounded-xl text-[11px] font-medium bg-amber-500/25 text-amber-200 border border-amber-400/50 transition';
+
+          const view = CAMERA_VIEWS[btn.dataset.cam];
+          if (!view) return;
+          setLayerVisibility('roof', view.roof);
+          setLayerVisibility('walls', view.walls);
+          setLayerVisibility('floor', view.floor);
+
+          flyCameraTo(view.pos, view.target);
+        });
+      });
+
+      // F. Lipat Drawer Kanan & Sembunyikan HUD
+      const drawerBody = document.getElementById('drawer-body');
+      const chevronDrawer = document.getElementById('chevron-drawer');
+      let drawerMinimized = false;
+
+      document.getElementById('btn-collapse-drawer').addEventListener('click', () => {
+        drawerMinimized = !drawerMinimized;
+        drawerBody.style.display = drawerMinimized ? 'none' : 'block';
+        chevronDrawer.style.transform = drawerMinimized ? 'rotate(180deg)' : 'rotate(0deg)';
+      });
+
+      document.getElementById('btn-toggle-hud').addEventListener('click', () => {
+        state.hudHidden = !state.hudHidden;
+        document.getElementById('cad-drawer').style.display = state.hudHidden ? 'none' : 'flex';
+        document.getElementById('camera-bar').style.display = state.hudHidden ? 'none' : 'flex';
+        document.getElementById('icon-eye-open').classList.toggle('hidden', state.hudHidden);
+        document.getElementById('icon-eye-closed').classList.toggle('hidden', !state.hudHidden);
+      });
+
+      if (window.innerWidth < 640) {
+        drawerMinimized = true;
+        drawerBody.style.display = 'none';
+        chevronDrawer.style.transform = 'rotate(180deg)';
+      }
+
+      // --------------------------------------------------------------------------
+      // 17. KONTROL KEYBOARD WASD & RESPONSIVE RESIZE
+      // --------------------------------------------------------------------------
+      const keys = {};
+      window.addEventListener('keydown', (e) => { keys[e.key.toLowerCase()] = true; });
+      window.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
+
+      function updateKeyboardNav(dt) {
+        const speed = 7.5 * dt;
+        const fwd = new THREE.Vector3();
+        camera.getWorldDirection(fwd);
+        fwd.y = 0;
+        fwd.normalize();
+        const right = new THREE.Vector3().crossVectors(fwd, camera.up).normalize();
+        const deltaMove = new THREE.Vector3();
+
+        if (keys['w'] || keys['arrowup']) deltaMove.add(fwd);
+        if (keys['s'] || keys['arrowdown']) deltaMove.sub(fwd);
+        if (keys['d'] || keys['arrowright']) deltaMove.add(right);
+        if (keys['a'] || keys['arrowleft']) deltaMove.sub(right);
+
+        if (deltaMove.lengthSq() > 0) {
+          deltaMove.normalize().multiplyScalar(speed);
+          camera.position.add(deltaMove);
+          controls.target.add(deltaMove);
+        }
+      }
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // --------------------------------------------------------------------------
+      // 18. LOOP RENDER & ANIMASI REAL-TIME
+      // --------------------------------------------------------------------------
+      function updateJoineryAnimation(dt) {
+        const targetJP = state.joineryOpen ? 1 : 0;
+        if (Math.abs(state.joineryProgress - targetJP) > 0.001) {
+          state.joineryProgress += (targetJP - state.joineryProgress) * Math.min(1, dt * 5.5);
+          const p = state.joineryProgress;
+
+          // Tarik keluar pasak Paseuk X & Z terlebih dahulu, lalu geser sedikit Rôk & Toi
+          joineryDemoParts.pegsX.forEach((peg) => {
+            peg.position.z = peg.userData.basePos.z + p * 0.42;
+          });
+          joineryDemoParts.pegsZ.forEach((peg) => {
+            peg.position.x = peg.userData.basePos.x - p * 0.42;
+          });
+          if (joineryDemoParts.rokHighlight) {
+            joineryDemoParts.rokHighlight.position.z = joineryDemoParts.rokHighlight.userData.basePos.z + Math.max(0, p - 0.35) * 0.32;
+          }
+          if (joineryDemoParts.toiHighlight) {
+            joineryDemoParts.toiHighlight.position.x = joineryDemoParts.toiHighlight.userData.basePos.x - Math.max(0, p - 0.35) * 0.32;
+          }
+        }
+      }
+
+      document.getElementById('btn-tingkap').addEventListener('click', () => {
+        tkOpen = !tkOpen;
+        document.getElementById('tingkap-text').textContent = tkOpen ? 'Tutup Daun Tingkap' : 'Buka Daun Tingkap';
+      });
+
+      const clock = new THREE.Clock();
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const dt = Math.min(clock.getDelta(), 0.05);
+
+        if (cameraTween) {
+          cameraTween.alpha = Math.min(1, cameraTween.alpha + dt * 1.7);
+          const ease = 1 - Math.pow(1 - cameraTween.alpha, 3);
+          camera.position.lerpVectors(cameraTween.p0, cameraTween.p1, ease);
+          controls.target.lerpVectors(cameraTween.t0, cameraTween.t1, ease);
+          if (cameraTween.alpha >= 1) cameraTween = null;
+        }
+
+        updateJoineryAnimation(dt);
+        updateTingkap(dt);
+        updateKeyboardNav(dt);
+        controls.update();
+        renderer.render(scene, camera);
+      }
+
+      window.onload = function () {
+        animate();
+      };
+    })();
+  </script>
+</body>
+</html>
