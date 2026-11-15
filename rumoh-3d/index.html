@@ -1930,10 +1930,10 @@
       // 12b. TIANG BENDERA DI HALAMAN DEPAN (MERAH PUTIH & BINTANG BULAN)
       // --------------------------------------------------------------------------
       const flagMeshes = [];
-      const FLAG_W = 1.6, FLAG_H = 1.0;
+      const FLAG_W = 1.5, FLAG_H = 1.0; // rasio 3:2 (Merah Putih dan Bintang Bulan)
 
       function makeFlagTexture(kind) {
-        const W = 640, H = 400;
+        const W = 600, H = 400;
         const c = document.createElement('canvas');
         c.width = W; c.height = H;
         const ctx = c.getContext('2d');
@@ -1942,21 +1942,28 @@
           ctx.fillStyle = '#d6001c'; ctx.fillRect(0, 0, W, H / 2);
           ctx.fillStyle = '#f5f5f5'; ctx.fillRect(0, H / 2, W, H / 2);
         } else {
-          // Bendera Bintang Bulan: dasar merah, lajur putih-hitam atas & bawah, bulan sabit & bintang putih
+          // Bendera Bintang Bulan (Qanun Aceh No. 3/2013): rasio 3:2, dasar merah. Di atas dan di bawah masing-masing
+          // ada lajur putih tipis, hitam (2x lebar putih), putih tipis; tepi merah luar selebar lajur hitam.
+          const u = H / 36; // 1 satuan = lebar lajur putih; blok lajur = 6u = 1/6 tinggi bendera
           ctx.fillStyle = '#d3161c'; ctx.fillRect(0, 0, W, H);
-          ctx.fillStyle = '#f5f5f5'; ctx.fillRect(0, 0, W, 16); ctx.fillRect(0, H - 16, W, 16);
-          ctx.fillStyle = '#111111'; ctx.fillRect(0, 16, W, 60); ctx.fillRect(0, H - 76, W, 60);
-          const cx = W / 2 - 14, cy = H / 2;
+          [[2 * u, u, '#f5f5f5'], [3 * u, 2 * u, '#111111'], [5 * u, u, '#f5f5f5']].forEach(([y0, h, col]) => {
+            ctx.fillStyle = col;
+            ctx.fillRect(0, y0, W, h);
+            ctx.fillRect(0, H - y0 - h, W, h);
+          });
+          // bulan sabit & bintang putih di tengah, bintang menghadap ke bukaan bulan sabit
+          // ukuran dan posisi mengikuti gambar referensi: sabit sedikit di kiri tengah, bukaan ke kanan, bintang di kanannya
+          const cx = W / 2 - 40, cy = H / 2;
           ctx.fillStyle = '#f5f5f5';
-          ctx.beginPath(); ctx.arc(cx, cy, 84, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(cx, cy, 66, 0, Math.PI * 2); ctx.fill();
           ctx.fillStyle = '#d3161c';
-          ctx.beginPath(); ctx.arc(cx + 24, cy, 70, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(cx + 22, cy, 54, 0, Math.PI * 2); ctx.fill();
           ctx.fillStyle = '#f5f5f5';
           ctx.beginPath();
           for (let k = 0; k < 10; k++) {
-            const rr = k % 2 === 0 ? 30 : 12;
+            const rr = k % 2 === 0 ? 40 : 16;
             const ang = -Math.PI / 2 + (k * Math.PI) / 5;
-            const px = cx + 62 + Math.cos(ang) * rr, py = cy + Math.sin(ang) * rr;
+            const px = cx + 118 + Math.cos(ang) * rr, py = cy + Math.sin(ang) * rr;
             if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
           }
           ctx.closePath(); ctx.fill();
@@ -2474,48 +2481,53 @@
       }
       const S_WID = 'Wikipedia ID', S_WEN = 'Wikipedia EN', S_USTJ = 'Median USTJ', S_IAIN = 'IAIN Langsa';
 
+      const S_UNIMAL = 'Buku Rumoh Aceh (Unimal)', S_UNIKA = 'Jurnal Tesa (Unika)';
+
       // STRUKTUR
-      L('tameh', 'struktur', 'Tamèh', 'Tiang', 'Tiang penyangga badan rumah. Jumlahnya 16, 24, atau 32 untuk rumah 3, 5, atau 7 ruang. Rumah ini memakai 24 tiang.', [6.5, 3.4, 4.2], 'l2', null, S_WID + ', ' + S_USTJ + ', ' + S_IAIN);
-      L('tameh_raja', 'struktur', 'Tamèh Raja', 'Tiang Raja', 'Tiang utama berukuran lebih besar di dekat pintu masuk, berpasangan dengan Tamèh Putroe.', [-1.3, 3.3, 1.4], 'l2', null, S_WID + ', ' + S_WEN + ', ' + S_IAIN, 'Posisi di model (deret inti rumah) belum terverifikasi. Sumber Indonesia menyebut sisi kanan pintu masuk, sumber Inggris menyebut sisi utara.');
-      L('tameh_putroe', 'struktur', 'Tamèh Putroe', 'Tiang Putri', 'Tiang utama pasangan Tamèh Raja, di sisi kiri pintu masuk.', [1.3, 3.3, -1.4], 'l2', null, S_WID + ', ' + S_WEN + ', ' + S_IAIN, 'Posisi di model belum terverifikasi. Sumber Inggris menyebut sisi selatan, dan di sana tiang ini disisipi sedikit emas.');
+      L('tameh', 'struktur', 'Tamèh', 'Tiang', 'Tiang penyangga badan rumah, 16, 24, atau 32 buah untuk rumah 3, 5, atau 7 ruang (rumah ini 24). Diameter sekitar 30 cm, tinggi tiang depan sekitar 4 m dan tiang tengah sekitar 6 m.', [6.5, 3.4, 4.2], 'l2', null, S_WID + ', ' + S_UNIMAL + ', ' + S_USTJ);
+      L('tameh_raja', 'struktur', 'Tamèh Raja', 'Tiang Raja', 'Tiang utama berukuran lebih besar, berpasangan dengan Tamèh Putroe. Kain merah dan putih pada tiang utama dimaknai sebagai keberanian (merah) dan kesucian (putih).', [-1.3, 3.3, 1.4], 'l2', null, S_WID + ', ' + S_WEN + ', ' + S_UNIKA, 'Posisi di model (deret inti rumah) belum terverifikasi: sumber Indonesia menyebut sisi kanan pintu masuk, sumber Inggris sisi utara. Selendang di model berwarna emas, sedangkan sumber menyebut kain merah putih.');
+      L('tameh_putroe', 'struktur', 'Tamèh Putroe', 'Tiang Putri', 'Tiang utama pasangan Tamèh Raja. Pada upacara peusijuk, periuk tanah (kanot tanoh) ditanam di tiang ini.', [1.3, 3.3, -1.4], 'l2', null, S_WID + ', ' + S_WEN + ', ' + S_UNIMAL, 'Posisi di model belum terverifikasi: sumber Inggris menyebut sisi selatan, dan di sana tiang ini disisipi sedikit emas. Denah pastinya tidak dijelaskan di sumber lain.');
       L('gaki_tameh', 'struktur', 'Keunaleueng Tamèh', 'Alas tiang (batu umpak)', 'Alas kaki tiang dari batu sungai agar tiang tidak amblas ke tanah.', [6.5, 0.6, 4.2], 'l1', null, S_WID + ', ' + S_IAIN);
       L('puteng', 'struktur', 'Puténg Tamèh', 'Ujung tiang (tenon)', 'Ujung tiang yang dipahat untuk menyambung balok.', [6.5, 4.8, 4.2], 'l2', null, S_IAIN);
-      L('rok', 'struktur', 'Rôk', 'Balok pengunci memanjang', 'Balok pengunci yang memperkuat sambungan antarujung balok.', [3.0, 2.25, 4.2], 'l2', null, S_IAIN + ', ' + S_USTJ);
-      L('toi', 'struktur', 'Tôi', 'Balok pengunci melintang', 'Balok pengunci yang tegak lurus terhadap Rôk.', [6.5, 2.25, 2.3], 'l2', null, S_IAIN + ', ' + S_USTJ);
-      L('bajoe', 'struktur', 'Bajoe (Paseuk)', 'Pasak kayu', 'Pasak yang mengunci Rôk dan Tôi pada pahatan tiang. Rumah dibangun tanpa paku.', [-1.15, 2.2, 4.2], 'l2', null, S_IAIN + ', ' + S_WID, 'Model memakai istilah "Paseuk". Istilah ini tidak ditemukan di sumber, yang menyebut pasak sebagai "bajoe".');
-      L('lhue', 'struktur', 'Lhue', 'Balok penyangga lantai', 'Balok rangka yang menopang papan lantai.', [3.25, 2.33, 2.8], 'l3', null, S_IAIN);
+      L('rok', 'struktur', 'Rôk', 'Balok pengunci', 'Balok pengunci yang menghubungkan antartiang dan memperkuat sambungan.', [3.0, 2.25, 4.2], 'l2', null, S_IAIN + ', ' + S_UNIMAL, 'Arah Rôk dan Tôi berbeda antar sumber (IAIN Langsa: saling tegak lurus; Unimal: Rôk melintang, Tôi memanjang). Orientasi di model (Rôk memanjang timur–barat) belum terverifikasi.');
+      L('toi', 'struktur', 'Tôi', 'Balok pengunci', 'Balok pengunci yang tegak lurus terhadap Rôk, menghubungkan antartiang.', [6.5, 2.25, 2.3], 'l2', null, S_IAIN + ', ' + S_UNIMAL, 'Arah Tôi di model (melintang utara–selatan) belum terverifikasi, lihat catatan Rôk.');
+      L('bajoe', 'struktur', 'Bajoe (Paseuk)', 'Pasak kayu', 'Pasak yang mengunci Rôk dan Tôi pada pahatan tiang. Rumah dibangun tanpa paku.', [-1.15, 2.2, 4.2], 'l2', null, S_IAIN + ', ' + S_UNIMAL, 'Model memakai istilah "Paseuk". Sumber menyebut pasak sebagai "bajoe" atau "bajo", dan "paseuk" tidak ditemukan.');
+      L('lhue', 'struktur', 'Lhue', 'Landasan lantai', 'Landasan bilah lantai, sejajar dan setinggi Tôi. Menurut sumber berupa bambu bulat utuh dengan jarak sekitar 0,5 m.', [3.25, 2.33, 2.8], 'l3', null, S_UNIMAL + ', ' + S_IAIN, 'Model menggambarkan balok kayu berjarak 0,65 m, sedangkan sumber menyebut bambu bulat berjarak sekitar 0,5 m.');
 
       // RUANG & LANTAI
-      L('aleue', 'ruang', 'Aleue', 'Lantai papan', 'Lantai dari papan berbilah kecil, diikat tanpa paku.', [4.9, 2.45, 2.8], 'l3', 'floor', S_WID + ', ' + S_IAIN);
-      L('seuramoe_keue', 'ruang', 'Seuramoè Keuë', 'Serambi depan', 'Serambi tanpa sekat untuk menerima tamu, mengaji, dan tempat tidur anak laki-laki. Dianggap ruang publik atau "laki-laki".', [0, 3.1, 2.8], 'l3', 'floor', S_WID + ', ' + S_WEN);
-      L('rambat', 'ruang', 'Rambat', 'Lorong tengah', 'Lorong di bagian tengah rumah, dihampari tikar pandan dan dipakai serbaguna.', [0, 3.7, 0], 'l4', 'walls', S_WEN + ', ' + S_USTJ, 'Model menyebut zona ini "Tungai", istilah yang tidak ditemukan di sumber. Sumber memakai seuramoè teungoh atau rumoh inong.');
-      L('rumoh_inong', 'ruang', 'Rumoh Inong', 'Bilik utama', 'Bilik inti rumah di bagian tengah. Bagian paling penting dan lantainya lebih tinggi (sekitar setengah meter) dari serambi lain.', [-3.9, 4.3, 0], 'l4', 'walls', S_WID + ', ' + S_WEN);
-      L('anjong', 'ruang', 'Anjông', 'Bilik anak perempuan', 'Bilik anak perempuan di sisi timur. Pengantin baru menempati Rumoh Inong, sementara orang tua pindah ke sini.', [3.9, 4.3, 0], 'l4', 'walls', S_WID + ', ' + S_WEN);
-      L('seuramoe_likot', 'ruang', 'Seuramoè Likôt', 'Serambi belakang', 'Serambi tanpa sekat, sama tinggi dengan serambi depan. Dipakai makan bersama, menenun, dan urusan keluarga. Dianggap ruang "perempuan".', [0, 3.1, -2.8], 'l3', 'floor', S_WID + ', ' + S_WEN);
-      L('rumoh_dapu', 'ruang', 'Rumoh Dapu', 'Dapur', 'Bangunan dapur tambahan di belakang, lantainya lebih rendah dari serambi belakang.', [-1.3, 2.8, -5.4], 'l3', 'floor', S_WID + ', ' + S_USTJ);
-      L('meuyup', 'ruang', 'Meuyup Rumoh', 'Kolong rumah', 'Ruang di bawah rumah panggung. Dipakai bermain anak, kandang hewan, menenun, dan menyimpan jeungki serta krông padé.', [1.5, 1.4, -1.5], 'l1', null, S_WID + ', ' + S_USTJ);
-      L('krong_pade', 'ruang', 'Krông Padé', 'Lumbung padi', 'Lumbung penyimpan padi, di bawah atau di samping rumah.', [-5.15, 2.8, 0], 'l1', null, S_WEN + ', ' + S_USTJ);
+      L('aleue', 'ruang', 'Aleue', 'Lantai papan', 'Lantai dari papan atau bilah kecil yang diikat tanpa paku.', [4.9, 2.45, 2.8], 'l3', 'floor', S_WID + ', ' + S_IAIN);
+      L('seuramoe_keue', 'ruang', 'Seuramoè Keuë', 'Serambi depan', 'Ruang publik tanpa sekat untuk menerima tamu, makan, dan kenduri. Juga dipakai mengaji dan tempat tidur anak laki-laki.', [0, 3.1, 2.8], 'l3', 'floor', S_WID + ', ' + S_WEN + ', ' + S_UNIKA);
+      L('tungai', 'ruang', 'Tungai', 'Ruang tengah (tertinggi)', 'Ruang tengah yang privat dan paling tinggi, memuat dua bilik (Rumoh Inong di barat, Anjông di timur) dan lorong Rambat. Lantainya sekitar 30–50 cm lebih tinggi dari serambi depan dan belakang; model: +45 cm.', [0, 3.05, 0.9], 'l3', 'floor', S_UNIMAL + ', ' + S_UNIKA);
+      L('rambat', 'ruang', 'Rambat', 'Lorong tengah', 'Lorong di tengah Tungai di antara dua bilik, menghubungkan serambi depan dan belakang. Dihampari tikar pandan.', [0, 3.9, -0.6], 'l4', 'walls', S_UNIMAL + ', ' + S_UNIKA + ', ' + S_WEN);
+      L('rumoh_inong', 'ruang', 'Rumoh Inong', 'Bilik utama (barat)', 'Bilik inti di sisi barat Tungai. Bagian paling pribadi, dianggap suci, dengan lantai paling tinggi. Pengantin baru menempatinya.', [-3.9, 4.3, 0], 'l4', 'walls', S_WID + ', ' + S_UNIMAL + ', ' + S_UNIKA);
+      L('anjong', 'ruang', 'Anjông', 'Bilik anak perempuan (timur)', 'Bilik di sisi timur Tungai untuk anak perempuan. Pengantin baru menempati Rumoh Inong, sementara orang tua pindah ke sini.', [3.9, 4.3, 0], 'l4', 'walls', S_WID + ', ' + S_UNIKA, 'Istilah "anjong/anjung" dipakai berbeda di tiap sumber: bilik timur Tungai (Wikipedia, Unika) atau ruang tambahan yang dicapai 3 anak tangga (Unimal).');
+      L('seuramoe_likot', 'ruang', 'Seuramoè Likôt', 'Serambi belakang', 'Serambi tanpa sekat, sama tinggi dengan serambi depan. Dipakai makan, istirahat, menenun, dan salat, serta sebagai dapur.', [0, 3.1, -2.8], 'l3', 'floor', S_WID + ', ' + S_UNIMAL + ', ' + S_UNIKA);
+      L('rumoh_dapu', 'ruang', 'Rumoh Dapu', 'Dapur', 'Bangunan dapur tambahan di belakang, lantainya lebih rendah dari serambi belakang.', [-1.3, 2.8, -5.4], 'l3', 'floor', S_WID + ', ' + S_USTJ, 'Sumber Unimal menulis istilah dapur sebagai "dapue".');
+      L('meuyup', 'ruang', 'Meuyup Rumoh', 'Kolong rumah', 'Ruang di bawah rumah panggung (tinggi sekitar 2,5–3 m menurut sumber). Dipakai bermain anak, kandang hewan, menenun, dan menyimpan jeungki serta krông padé.', [1.5, 1.4, -1.5], 'l1', null, S_WID + ', ' + S_USTJ + ', ' + S_UNIMAL);
+      L('krong_pade', 'ruang', 'Krông Padé', 'Lumbung padi', 'Lumbung padi berbentuk bulat di kolong rumah, berdiameter dan setinggi sekitar 2 m.', [-5.15, 2.8, 0], 'l1', null, S_UNIMAL + ', ' + S_WEN);
+      L('jeungki', 'ruang', 'Jeungki', 'Alat penumbuk padi', 'Alat penumbuk padi dari kayu yang diletakkan di kolong rumah.', [4.85, 1.3, -0.25], 'l1', null, S_UNIMAL + ', ' + S_WID);
 
       // ATAP
-      L('bara_panyang', 'atap', 'Bara Panyang', 'Balok pengunci memanjang atas', 'Balok pengunci memanjang di puncak tiang.', [-3.0, 4.55, 4.2], 'l5', null, S_IAIN + ', ' + S_USTJ);
-      L('bara_linteueng', 'atap', 'Bara Linteueng', 'Balok pengunci melintang atas', 'Balok pengunci melintang di puncak tiang.', [6.5, 4.55, -2.0], 'l5', null, S_IAIN + ', ' + S_USTJ);
-      L('diri', 'atap', 'Diri', 'Tiang kuda-kuda', 'Tiang tegak kuda-kuda penopang balok wuwung.', [3.9, 7.4, 0], 'l5', null, S_IAIN, 'Model menulis "Deuri". Sumber memakai "diri".');
-      L('gaseue', 'atap', 'Gaseue Gantong', 'Kaki kuda-kuda', 'Kaki kuda-kuda yang membentuk lereng atap.', [1.3, 6.5, -2.3], 'l5', null, S_IAIN, 'Model memakai "gaseue" untuk usuk atap. Sumber menyebut "gaseue gantong" sebagai kaki kuda-kuda.');
-      L('tuleueng', 'atap', 'Tuleueng Rueng', 'Balok wuwung', 'Balok bubungan tempat kaso bersandar. Dibuat dari kayu ringan agar tidak membebani atap.', [0, 9.0, 0], 'l5', null, S_WID + ', ' + S_IAIN);
-      L('beuleubah', 'atap', 'Beuleubah', 'Reng bambu', 'Bilah bambu tempat menyemat atap.', [-2.0, 6.6, 2.2], 'l5', null, S_USTJ);
-      L('taloe', 'atap', 'Taloe', 'Tali pengikat atap', 'Tali ijuk, rotan, atau kulit waru pengikat atap. Atap bisa dilepas cepat saat terjadi kebakaran.', [3.9, 6.45, 2.2], 'l6', null, S_USTJ + ', ' + S_WEN, 'Model menyebut "Taloe Jôk". Istilah itu tidak ditemukan di sumber.');
+      L('bara_panyang', 'atap', 'Bara Panyang', 'Balok memanjang atas', 'Balok pada puting tiang sejajar bara, penopang kuda-kuda dua tiang tengah.', [-3.0, 4.55, 4.2], 'l5', null, S_UNIMAL + ', ' + S_IAIN);
+      L('bara_linteueng', 'atap', 'Bara Linteueng', 'Balok melintang atas', 'Balok melintang pada puting tiang, tempat diri dan indreng dipasang.', [6.5, 4.55, -2.0], 'l5', null, S_UNIMAL + ', ' + S_IAIN);
+      L('diri', 'atap', 'Diri', 'Tiang kuda-kuda', 'Balok tegak di tengah Bara Linteueng yang disambung pasak bulat. Ujung atasnya terhubung ke Tuleueng Rueng. Ditulis juga "deuri" atau "dieri".', [3.9, 7.4, 0], 'l5', null, S_UNIMAL + ', ' + S_IAIN);
+      L('indreng', 'atap', 'Indrèng', 'Balok miring penopang kasau', 'Balok miring sejajar Bara Panyang yang dipasang pada Bara Linteueng, tempat kasau bertumpu.', [0, 7.2, 1.5], 'l5', null, S_UNIMAL, 'Di model digambarkan sebagai gording horizontal, sedangkan sumber menyebut balok miring.');
+      L('gaseue', 'atap', 'Gaseue', 'Kasau (usuk)', 'Kasau yang bertumpu pada bara dan indreng, dengan pangkal pada neuduek gaseue. Membentuk lereng atap.', [1.3, 6.5, -2.3], 'l5', null, S_UNIMAL, 'IAIN Langsa memakai "gaseue gantong" untuk kaki kuda-kuda, jadi cakupan istilah antar sumber sedikit berbeda.');
+      L('tuleueng', 'atap', 'Tuleueng Rueng', 'Balok wuwung', 'Balok puncak kuda-kuda tempat kasau bersandar. Dibuat dari kayu ringan agar tidak membebani atap.', [0, 9.0, 0], 'l5', null, S_WID + ', ' + S_IAIN + ', ' + S_UNIMAL);
+      L('beuleubah', 'atap', 'Beuleubah', 'Reng bambu', 'Bilah bambu tempat mengikat atap rumbia, dipasang di antara kasau.', [-2.0, 6.6, 2.2], 'l5', null, S_USTJ + ', ' + S_UNIMAL);
+      L('taloe', 'atap', 'Taloe', 'Tali pengikat', 'Tali ijuk ("taloe bawai") menahan kuda-kuda dan tali rotan mengikat atap. Jika tali dipotong saat kebakaran, atap jatuh.', [3.9, 6.45, 2.2], 'l6', null, S_UNIMAL + ', ' + S_USTJ, 'Model menyebut "Taloe Jôk". Sumber menyebut "taloe bawai/pawai" untuk ijuk, dan istilah "Taloe Jôk" tidak ditemukan tertulis.');
       L('rumbia', 'atap', 'Atap Rumbia', 'Atap daun rumbia', 'Penutup atap dari daun rumbia: ringan, sejuk, dan mudah dilepas saat kebakaran.', [-3.5, 5.45, 3.6], 'l6', 'roof', S_WID + ', ' + S_WEN);
-      L('tulak_angen', 'atap', 'Tulak Angèn', 'Dinding segitiga kerawang', 'Bidang segitiga di ujung atap yang berlubang untuk ventilasi silang. Miring ke luar dan dihias ukiran.', [7.0, 6.0, 0], 'l6', 'walls', S_IAIN + ', ' + S_WEN);
+      L('tulak_angen', 'atap', 'Tulak Angèn', 'Dinding segitiga kerawang', 'Bidang segitiga di ujung atap berupa kisi atau ukiran tembus untuk ventilasi silang, sekaligus penanda seni ukir Aceh.', [7.0, 6.0, 0], 'l6', 'walls', S_IAIN + ', ' + S_UNIKA + ', ' + S_WEN);
 
       // AKSES & ORNAMEN
-      L('tangga', 'akses', 'Tangga', 'Tangga utama', 'Tangga utama di depan rumah. Jumlah anak tangga selalu ganjil dan dipercaya membawa keberuntungan.', [-2.6, 1.7, 6.4], 'l4', null, S_WID + ', ' + S_USTJ, 'Model menyebut "Reunyeun" untuk tangga ini. Istilah itu tidak ditemukan di sumber.');
-      L('seulasa', 'akses', 'Seulasa', 'Teras depan beratap', 'Teras depan beratap di ujung tangga, sebelum masuk ke pintu.', [-2.6, 3.0, 4.8], 'l4', null, S_WEN, 'Hanya disebut singkat di satu sumber (Inggris).');
-      L('pinto', 'akses', 'Pintô', 'Pintu', 'Pintu dibuat rendah (120–150 cm) agar tamu menunduk sebagai tanda hormat. Model: 135 cm.', [-2.6, 3.95, 4.2], 'l4', 'walls', S_WID + ', ' + S_USTJ);
-      L('tingkap', 'akses', 'Tingkap', 'Jendela', 'Jendela berukuran kecil, dengan jendela utama di sisi rumah.', [0, 3.9, 4.2], 'l4', 'walls', S_WID);
-      L('binteh', 'akses', 'Bintéh', 'Dinding papan', 'Dinding papan keras berukir. Semakin banyak ukiran, semakin tinggi status sosial pemilik.', [3.9, 3.3, 4.2], 'l4', 'walls', S_WID + ', ' + S_IAIN);
-      L('kindang', 'akses', 'Kindang', 'Tumpuan dinding luar', 'Tempat bertumpu dinding luar.', [-3.2, 2.55, 4.24], 'l4', 'walls', S_IAIN, 'Di model digambarkan sebagai lis ukir di kaki dinding.');
-      L('peulangan', 'akses', 'Peulangan', 'Tumpuan dinding dalam', 'Tempat bertumpu dinding dalam.', [3.2, 4.3, 4.24], 'l4', 'walls', S_IAIN, 'Di model digambarkan sebagai lis ukir di atas dinding luar, sehingga fungsi sebenarnya perlu dicek.');
-      L('ukiran', 'akses', 'Ukiran', 'Ragam hias', 'Motif seperti Pucôk Reubông (pertumbuhan), Oen Ranub (penghormatan), Awan Meucanek (kemuliaan), dan Taloe Meuputa (ikatan sosial).', [-3.9, 4.85, 1.4], 'l4', 'walls', 'Jurnal Surau (ornamen masjid Pidie)', 'Makna motif berasal dari kajian masjid, bukan rumoh. Perlu dicek ke sumber khusus Rumoh Aceh.');
+      L('tangga', 'akses', 'Reunyeun', 'Tangga masuk', 'Tangga masuk rumah sekaligus kontrol sosial: tamu yang bukan keluarga dekat tidak naik jika tak ada laki-laki keluarga. Anak tangga selalu ganjil (7 atau 9, kebanyakan 9). Gentong air pembasuh kaki ada di bawahnya.', [-2.6, 1.7, 6.4], 'l4', null, S_UNIKA + ', ' + S_UNIMAL + ', ' + S_WID);
+      L('seulasa', 'akses', 'Seulasa', 'Atap pelindung tangga', 'Kanopi atau atap pelindung tangga dari hujan, di ujung tangga sebelum pintu.', [-2.6, 3.0, 4.8], 'l4', null, S_UNIMAL + ', ' + S_WEN);
+      L('pinto', 'akses', 'Pintô', 'Pintu', 'Pintu dibuat rendah agar tamu menunduk sebagai tanda hormat. Tinggi umumnya 120–150 cm (satu sumber menyebut 150–180 cm). Model: 135 cm.', [-2.6, 3.95, 4.2], 'l4', 'walls', S_WID + ', ' + S_USTJ + ', ' + S_UNIMAL + ', ' + S_UNIKA);
+      L('tingkap', 'akses', 'Tingkap', 'Jendela', 'Jendela kecil berdaun sepasang pada dinding.', [0, 3.9, 4.2], 'l4', 'walls', S_WID + ', ' + S_UNIMAL);
+      L('binteh', 'akses', 'Bintéh', 'Dinding papan', 'Dinding papan keras berukir. Semakin banyak ukiran, semakin tinggi status sosial pemilik.', [3.9, 3.3, 4.2], 'l4', 'walls', S_WID + ', ' + S_IAIN + ', ' + S_UNIKA);
+      L('kindang', 'akses', 'Kindang', 'Papan tumpuan dinding', 'Papan tebal berukir di ujung Tôi yang menjadi tumpuan dinding paling bawah.', [-3.2, 2.55, 4.24], 'l4', 'walls', S_UNIMAL + ', ' + S_IAIN);
+      L('peulangan', 'akses', 'Peulangan', 'Balok penguat bangunan', 'Dua balok lebar di ujung Tôi bagian Tungai untuk memperkuat bangunan. Sumber lain menyebutnya tumpuan dinding dalam.', [3.2, 4.3, 4.24], 'l4', 'walls', S_UNIMAL + ', ' + S_IAIN, 'Sumber berbeda soal fungsinya, dan di model digambarkan sebagai lis ukir di atas dinding luar. Perlu dicek ke sumber primer.');
+      L('ukiran', 'akses', 'Ukiran', 'Ragam hias', 'Motif flora (daun, batang, bunga) dan geometris, misalnya Puta Taloe, Bungong Meulu, dan Pucôk Reubông pada kindang. Banyaknya ukiran menandai status pemilik.', [-3.9, 4.85, 1.4], 'l4', 'walls', S_UNIMAL + ', ' + S_UNIKA + ', Jurnal Surau', 'Makna per motif (misalnya Oen Ranub = penghormatan, Awan Meucanek = kemuliaan) berasal dari kajian masjid di Pidie, bukan rumoh.');
 
       const lblLayer = document.getElementById('label-layer');
       const lblCard = document.getElementById('label-card');
