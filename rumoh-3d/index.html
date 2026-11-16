@@ -1205,7 +1205,9 @@
           constructionLayers.l2_pillarsBeams.add(dPost);
         });
         [-3.35, -1.85].forEach((sx) => {
-          const hSeulasa = 3.65 - SPEC.elevGakiTop;
+          // Atap Seulasa miring (pusat y=3.72 @ z=4.82, tebal 0.09, kemiringan 0.24 rad). Di rentang z tiang (5.245–5.455)
+          // sisi bawah atap 3.52–3.57 dan sisi atasnya 3.61–3.66, sehingga ujung tiang di y=3.60 terbenam penuh di dalam atap.
+          const hSeulasa = 3.60 - SPEC.elevGakiTop;
           const sPost = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.095, 0.105, hSeulasa, 12), mats.ulin), 'frame');
           sPost.position.set(sx, SPEC.elevGakiTop + hSeulasa * 0.5, 5.35);
           constructionLayers.l2_pillarsBeams.add(sPost);
