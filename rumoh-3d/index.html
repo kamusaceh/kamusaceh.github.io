@@ -2541,8 +2541,7 @@
       const OCC_OWN = 0.04;      // kelonggaran kotak pembatas bagian milik label itu sendiri
       const OCC_SMALL = 3.2;     // benda lebih kecil dari ini dianggap "milik label" jika titik label ada di dalam kotaknya
       const OCC_TOL_BIG = 0.12;  // untuk benda besar (atap, dinding utuh): tertutup bila lebih dari ini di depan titik
-      const OCC_PER_FRAME = 10;  // jumlah label yang diuji per frame (bergiliran) agar tetap ringan
-      let _occluders = [], _occFrame = 0, _occCursor = 0;
+      let _occluders = [], _occFrame = 0;
       const _box = new THREE.Box3(), _bsz = new THREE.Vector3();
 
       function chainVisible(o) {
@@ -2591,14 +2590,9 @@
       function updateLabels() {
         const W = window.innerWidth, H = window.innerHeight;
         const vis = lblState.on && !state.hudHidden;
-        if (vis) {
-          if (++_occFrame % 20 === 1) rebuildOccluders();
-          for (let k = 0; k < OCC_PER_FRAME; k++) {
-            const l = LABELS[_occCursor];
-            _occCursor = (_occCursor + 1) % LABELS.length;
-            if (l.wp && l.onscreen) checkOcclusion(l);
-          }
-        }
+        // Daftar penghalang diperbarui sering (lapisan bisa dinyalakan/dimatikan), dan SEMUA label diuji tiap frame
+        // sehingga tidak ada label yang tertinggal tampil saat kamera bergerak.
+        if (vis && ++_occFrame % 6 === 1) rebuildOccluders();
         LABELS.forEach((l) => {
           let show = vis && lblState.cats[l.cat] && (!l.needs || state.layers[l.needs]);
           l.onscreenPrev = l.onscreen;
@@ -2611,7 +2605,7 @@
             if (_lp.z > 1 || Math.abs(_lp.x) > 1.05 || Math.abs(_lp.y) > 1.05) {
               show = false;
             } else {
-              if (!l.onscreenPrev && vis) checkOcclusion(l);   // label baru masuk layar: uji segera
+              if (vis) checkOcclusion(l);
               l.onscreen = true;
               const px = (_lp.x * 0.5 + 0.5) * W;
               const py = (-_lp.y * 0.5 + 0.5) * H;
