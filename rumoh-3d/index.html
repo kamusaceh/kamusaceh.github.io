@@ -1676,9 +1676,20 @@
           handrail.rotation.x = angStair;
           stairGroup.add(handrail);
 
-          const postBot = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 0.92, 10), mats.ulin), 'frame');
-          postBot.position.set(rx, yBot + 0.44, zBot);
-          stairGroup.add(postBot);
+          // Tiang penopang pegangan: 4 tiang sepanjang tangga (kaki, dua di tengah, ujung atas dekat Seulasa).
+          // Dasar tiang bertumpu pada permukaan balok tangga, ujung atasnya terbenam di dalam pegangan.
+          const tanA = (yTop - yBot) / (zBot - zTop);
+          const cosA = Math.cos(angStair);
+          const zMid = (zTop + zBot) * 0.5, yMid = (yTop + yBot) * 0.5;
+          [zBot, zBot - (zBot - 5.40) / 3, zBot - 2 * (zBot - 5.40) / 3, 5.40].forEach((pz) => {
+            const yS = yMid - tanA * (pz - zMid);        // sumbu balok tangga di z ini
+            const y0 = yS + 0.095 / cosA - 0.02;         // permukaan atas balok tangga (sedikit terbenam)
+            const y1 = yS + 0.72;                        // sumbu pegangan
+            const hp = y1 - y0;
+            const bpost = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.045, hp, 10), mats.ulin), 'cladding');
+            bpost.position.set(rx, (y0 + y1) * 0.5, pz);
+            stairGroup.add(bpost);
+          });
         });
 
         // Sepasang Mundam (guci batu pencuci kaki) di kaki Reunyeun
