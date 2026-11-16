@@ -1283,6 +1283,19 @@
         const dapuStep = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(1.10, 0.17, 0.25), mats.seumantok), 'frame', 'floor');
         dapuStep.position.set(-1.30, 2.22, -4.26);
         constructionLayers.l3_floorSystem.add(dapuStep);
+
+        // PAPAN PENUTUP (papan tegak) di sambungan lantai berbeda tinggi, agar tepi lantai tidak berlubang tembus ke kolong:
+        // - Tungai (+2.85m) terhadap Seuramoe Keue & Likôt (+2.40m): dua papan setinggi 0.45m pada Z = ±1.40m
+        [1.40, -1.40].forEach((rz) => {
+          const riser = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(13.05, SPEC.elevTungai - SPEC.elevVeranda, 0.03), mats.seumantok), 'cladding', 'floor');
+          riser.position.set(0, (SPEC.elevTungai + SPEC.elevVeranda) * 0.5, rz);
+          constructionLayers.l3_floorSystem.add(riser);
+        });
+        // - Rumoh Dapu (+2.05m) terhadap Seuramoe Likôt (+2.40m): papan setinggi 0.35m pada Z = -4.20m
+        const dapuRiserH = SPEC.elevVeranda - SPEC.elevDapu;
+        const dapuRiser = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(5.25, dapuRiserH, 0.03), mats.seumantok), 'cladding', 'floor');
+        dapuRiser.position.set(-1.30, (SPEC.elevVeranda + SPEC.elevDapu) * 0.5, -4.20);
+        constructionLayers.l3_floorSystem.add(dapuRiser);
       }
 
       // --------------------------------------------------------------------------
