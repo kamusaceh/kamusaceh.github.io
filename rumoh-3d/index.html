@@ -2536,9 +2536,12 @@
       const _lp = new THREE.Vector3();
       const _rayDir = new THREE.Vector3();
       const _raycaster = new THREE.Raycaster();
-      const OCC_TOL = 0.22;      // label yang menempel pada permukaan bendanya sendiri tetap dianggap terlihat
-      const OCC_PER_FRAME = 6;   // jumlah label yang diuji per frame (bergiliran) agar tetap ringan
+      const OCC_OWN = 0.04;      // kelonggaran kotak pembatas bagian milik label itu sendiri
+      const OCC_SMALL = 3.2;     // benda lebih kecil dari ini dianggap "milik label" jika titik label ada di dalam kotaknya
+      const OCC_TOL_BIG = 0.12;  // untuk benda besar (atap, dinding utuh): tertutup bila lebih dari ini di depan titik
+      const OCC_PER_FRAME = 10;  // jumlah label yang diuji per frame (bergiliran) agar tetap ringan
       let _occluders = [], _occFrame = 0, _occCursor = 0;
+      const _box = new THREE.Box3(), _bsz = new THREE.Vector3();
 
       function chainVisible(o) {
         for (; o; o = o.parent) { if (!o.visible) return false; }
@@ -2546,19 +2549,41 @@
       }
 
       function rebuildOccluders() {
-        _occluders = allTrackedMeshes.filter((m) =>
-          chainVisible(m) && !(state.renderMode === 'xray' && m.userData.role === 'cladding'));
+        const set = new Set(allTrackedMeshes);
+        Object.values(constructionLayers).forEach((g) => g.traverse((o) => { if (o.isMesh) set.add(o); }));
+        _occluders = [];
+        set.forEach((m) => {
+          if (!chainVisible(m) || m.material.visible === false) return;
+          if (state.renderMode === 'xray' && m.userData.role === 'cladding') return;
+          _occluders.push(m);
+        });
       }
 
+      // Sinar dari kamera ke titik label. Benda pertama di depan titik menutup label, kecuali benda kecil yang
+      // kotaknya memuat titik label itu sendiri (misalnya label tiang yang titiknya berada di dalam tiang).
       function checkOcclusion(l) {
+        l.occ = false;
         _rayDir.copy(l.wp).sub(camera.position);
         const dist = _rayDir.length();
-        if (dist < 0.001) { l.occ = false; return; }
+        if (dist < 0.001) return;
         _rayDir.divideScalar(dist);
         _raycaster.set(camera.position, _rayDir);
         _raycaster.far = dist;
         const hits = _raycaster.intersectObjects(_occluders, false);
-        l.occ = hits.length > 0 && hits[0].distance < dist - OCC_TOL;
+        for (let i = 0; i < hits.length; i++) {
+          const h = hits[i];
+          if (h.distance >= dist - 0.02) break;
+          _box.setFromObject(h.object);
+          _box.getSize(_bsz);
+          const small = _bsz.length() < OCC_SMALL;
+          if (small) {
+            if (_box.expandByScalar(OCC_OWN).containsPoint(l.wp)) continue;
+          } else if (h.distance >= dist - OCC_TOL_BIG) {
+            continue;
+          }
+          l.occ = true;
+          break;
+        }
       }
 
       function updateLabels() {
@@ -2574,6 +2599,7 @@
         }
         LABELS.forEach((l) => {
           let show = vis && lblState.cats[l.cat] && (!l.needs || state.layers[l.needs]);
+          l.onscreenPrev = l.onscreen;
           l.onscreen = false;
           if (show) {
             if (!l.wp) l.wp = new THREE.Vector3();
@@ -2583,6 +2609,7 @@
             if (_lp.z > 1 || Math.abs(_lp.x) > 1.05 || Math.abs(_lp.y) > 1.05) {
               show = false;
             } else {
+              if (!l.onscreenPrev && vis) checkOcclusion(l);   // label baru masuk layar: uji segera
               l.onscreen = true;
               const px = (_lp.x * 0.5 + 0.5) * W;
               const py = (-_lp.y * 0.5 + 0.5) * H;
