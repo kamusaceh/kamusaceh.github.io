@@ -2470,7 +2470,7 @@
       L('diri', 'atap', 'Diri', 'Tiang kuda-kuda', 'Balok tegak di tengah Bara Linteueng yang disambung pasak bulat. Ujung atasnya terhubung ke Tuleueng Rueng. Ditulis juga "deuri" atau "dieri".', [3.9, 7.4, 0], 'l5', null, S_UNIMAL + ', ' + S_IAIN);
       L('indreng', 'atap', 'Indrèng', 'Balok miring penopang kasau', 'Balok miring sejajar Bara Panyang yang dipasang pada Bara Linteueng, tempat kasau bertumpu.', [0, 7.2, 1.5], 'l5', null, S_UNIMAL, 'Di model digambarkan sebagai gording horizontal, sedangkan sumber menyebut balok miring.');
       L('gaseue', 'atap', 'Gaseue', 'Kasau (usuk)', 'Kasau yang bertumpu pada bara dan indreng, dengan pangkal pada neuduek gaseue. Membentuk lereng atap.', [1.3, 6.5, -2.3], 'l5', null, S_UNIMAL, 'IAIN Langsa memakai "gaseue gantong" untuk kaki kuda-kuda, jadi cakupan istilah antar sumber sedikit berbeda.');
-      L('tuleueng', 'atap', 'Tuleueng Rueng', 'Balok wuwung', 'Balok puncak kuda-kuda tempat kasau bersandar. Dibuat dari kayu ringan agar tidak membebani atap.', [0, 9.0, 0], 'l5', null, S_WID + ', ' + S_IAIN + ', ' + S_UNIMAL);
+      L('tuleueng', 'atap', 'Tuleueng Rueng', 'Balok wuwung', 'Balok puncak kuda-kuda tempat kasau bersandar. Dibuat dari kayu ringan agar tidak membebani atap.', [0, 8.6, 0], 'l5', null, S_WID + ', ' + S_IAIN + ', ' + S_UNIMAL);
       L('beuleubah', 'atap', 'Beuleubah', 'Reng bambu', 'Bilah bambu tempat mengikat atap rumbia, dipasang di antara kasau.', [-2.0, 6.6, 2.2], 'l5', null, S_USTJ + ', ' + S_UNIMAL);
       L('taloe', 'atap', 'Taloe', 'Tali pengikat', 'Tali ijuk ("taloe bawai") menahan kuda-kuda dan tali rotan mengikat atap. Jika tali dipotong saat kebakaran, atap jatuh.', [3.9, 6.45, 2.2], 'l6', null, S_UNIMAL + ', ' + S_USTJ, 'Model menyebut "Taloe Jôk". Sumber menyebut "taloe bawai/pawai" untuk ijuk, dan istilah "Taloe Jôk" tidak ditemukan tertulis.');
       L('rumbia', 'atap', 'Atap Rumbia', 'Atap daun rumbia', 'Penutup atap dari daun rumbia: ringan, sejuk, dan mudah dilepas saat kebakaran.', [-3.5, 5.45, 3.6], 'l6', 'roof', S_WID + ', ' + S_WEN);
@@ -2486,6 +2486,10 @@
       L('peulangan', 'akses', 'Peulangan', 'Balok penguat bangunan', 'Dua balok lebar di ujung Tôi bagian Tungai untuk memperkuat bangunan. Sumber lain menyebutnya tumpuan dinding dalam.', [3.2, 4.3, 4.24], 'l4', 'walls', S_UNIMAL + ', ' + S_IAIN, 'Sumber berbeda soal fungsinya, dan di model digambarkan sebagai lis ukir di atas dinding luar. Perlu dicek ke sumber primer.');
       L('ukiran', 'akses', 'Ukiran', 'Ragam hias', 'Motif flora (daun, batang, bunga) dan geometris, misalnya Puta Taloe, Bungong Meulu, dan Pucôk Reubông pada kindang. Banyaknya ukiran menandai status pemilik.', [-3.9, 4.85, 1.4], 'l4', 'walls', S_UNIMAL + ', ' + S_UNIKA + ', Jurnal Surau', 'Makna per motif (misalnya Oen Ranub = penghormatan, Awan Meucanek = kemuliaan) berasal dari kajian masjid di Pidie, bukan rumoh.');
 
+      const OCC_OWN = 0.04;        // kelonggaran kotak lokal bagian milik label itu sendiri
+      const OCC_TOL = 0.03;        // label biasa: tertutup bila ada benda lebih dari 3 cm di depan titiknya
+      const OCC_TOL_SURFACE = 0.2; // label yang menempel di permukaan luar (dinding, pintu, gable): titiknya boleh tepat di permukaan
+      const LABEL_SURFACE = new Set(['tulak_angen', 'binteh', 'kindang', 'peulangan', 'pinto', 'tingkap', 'ukiran', 'seulasa', 'aleue']);
       const lblLayer = document.getElementById('label-layer');
       const lblCard = document.getElementById('label-card');
       const lblState = { on: true, cats: { struktur: true, ruang: true, atap: true, akses: true }, active: null };
@@ -2519,6 +2523,7 @@
 
       LABELS.forEach((l) => {
         l.base = new THREE.Vector3(l.pos[0], l.pos[1], l.pos[2]);
+        l.tol = LABEL_SURFACE.has(l.id) ? OCC_TOL_SURFACE : OCC_TOL;
         const el = document.createElement('div');
         el.className = 'lbl' + (l.note ? ' check' : '');
         el.textContent = l.aceh;
@@ -2551,11 +2556,8 @@
       const _lp = new THREE.Vector3();
       const _rayDir = new THREE.Vector3();
       const _raycaster = new THREE.Raycaster();
-      const OCC_OWN = 0.04;      // kelonggaran kotak pembatas bagian milik label itu sendiri
-      const OCC_SMALL = 3.2;     // benda lebih kecil dari ini dianggap "milik label" jika titik label ada di dalam kotaknya
-      const OCC_TOL_BIG = 0.12;  // untuk benda besar (atap, dinding utuh): tertutup bila lebih dari ini di depan titik
       let _occluders = [], _occFrame = 0;
-      const _box = new THREE.Box3(), _bsz = new THREE.Vector3();
+      const _inv = new THREE.Matrix4(), _lpt = new THREE.Vector3();
 
       function chainVisible(o) {
         for (; o; o = o.parent) { if (!o.visible) return false; }
@@ -2573,8 +2575,20 @@
         });
       }
 
-      // Sinar dari kamera ke titik label. Benda pertama di depan titik menutup label, kecuali benda kecil yang
-      // kotaknya memuat titik label itu sendiri (misalnya label tiang yang titiknya berada di dalam tiang).
+      // Titik label berada DI DALAM benda padat (kotak/silinder/kerucut) itu sendiri, diuji di ruang lokal benda.
+      // Lembaran bebas seperti atap rumbia tidak dihitung, karena kotak pembatasnya meliputi seluruh ruang di bawahnya.
+      function anchorInsideSolid(mesh, wp) {
+        const g = mesh.geometry;
+        if (!g || !g.parameters) return false;
+        if (!g.boundingBox) g.computeBoundingBox();
+        mesh.updateWorldMatrix(true, false);
+        _inv.copy(mesh.matrixWorld).invert();
+        _lpt.copy(wp).applyMatrix4(_inv);
+        return g.boundingBox.clone().expandByScalar(OCC_OWN).containsPoint(_lpt);
+      }
+
+      // Sinar dari kamera ke titik label. Benda pertama di depan titik menutup label, kecuali benda padat yang
+      // memuat titik itu (misalnya titik label tiang yang berada di dalam tiang) atau, untuk label permukaan, dalam kelonggaran.
       function checkOcclusion(l) {
         l.occ = false;
         _rayDir.copy(l.wp).sub(camera.position);
@@ -2584,17 +2598,11 @@
         _raycaster.set(camera.position, _rayDir);
         _raycaster.far = dist;
         const hits = _raycaster.intersectObjects(_occluders, false);
+        const tol = l.tol;
         for (let i = 0; i < hits.length; i++) {
           const h = hits[i];
-          if (h.distance >= dist - 0.02) break;
-          _box.setFromObject(h.object);
-          _box.getSize(_bsz);
-          const small = _bsz.length() < OCC_SMALL;
-          if (small) {
-            if (_box.expandByScalar(OCC_OWN).containsPoint(l.wp)) continue;
-          } else if (h.distance >= dist - OCC_TOL_BIG) {
-            continue;
-          }
+          if (h.distance >= dist - tol) break;
+          if (anchorInsideSolid(h.object, l.wp)) continue;
           l.occ = true;
           break;
         }
