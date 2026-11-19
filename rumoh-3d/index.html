@@ -146,7 +146,6 @@
       bottom: calc(22px + env(safe-area-inset-bottom, 0px));
     }
     body.walk-on #walk-actions { display: flex; }
-    #walk-actions .row { display: flex; gap: 12px; align-items: flex-end; }
     .walk-round {
       border-radius: 50%; border: 2px solid rgba(217, 155, 38, 0.5); padding: 0; cursor: pointer;
       background: rgba(10, 15, 26, 0.6); color: #fde68a; font: 600 11px/1.1 'Inter', sans-serif;
@@ -154,7 +153,6 @@
       backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
     }
     .walk-round.sm { width: 52px; height: 52px; }
-    .walk-round.lg { width: 76px; height: 76px; font-size: 12px; }
     .walk-round:active, .walk-round.on { background: #f59e0b; color: #111827; border-color: #fde68a; }
 
     #walk-hint {
@@ -165,7 +163,6 @@
       pointer-events: none;
     }
     body.walk-on #walk-hint { display: block; }
-    @media (max-width: 420px) { .walk-round.lg { width: 68px; height: 68px; } }
   </style>
 </head>
 <body>
@@ -335,11 +332,7 @@
   <div id="walk-base" aria-hidden="true"><div id="walk-thumb"></div></div>
   <div id="walk-hint">Geser kiri untuk jalan, geser kanan untuk melihat</div>
   <div id="walk-actions">
-    <div class="row">
-      <button class="walk-round sm" id="walk-crouch" type="button" aria-label="Tunduk">Tunduk</button>
-      <button class="walk-round sm" id="walk-exit" type="button" aria-label="Keluar mode jelajah">Keluar</button>
-    </div>
-    <button class="walk-round lg" id="walk-jump" type="button" aria-label="Lompat">Lompat</button>
+    <button class="walk-round sm" id="walk-exit" type="button" aria-label="Keluar mode jelajah">Keluar</button>
   </div>
 
   <!-- Bilah Bawah: 6 Preset Kamera Cepat -->
@@ -2724,11 +2717,11 @@
       // --------------------------------------------------------------------------
       // 17b. MODE JELAJAH — JOYSTICK BULAT ALA PUBG MOBILE
       //      Kiri: joystick analog (geser di mana saja). Kanan: geser untuk melihat.
-      //      Keyboard: WASD jalan, panah melihat, Shift lari, Spasi lompat, C tunduk, Esc keluar.
+      //      Keyboard: WASD jalan, panah melihat, Shift lari, Esc keluar. Aktif otomatis saat halaman dibuka.
       // --------------------------------------------------------------------------
       const walk = {
         on: false, x: 0, z: 10.5, y: 0, level: 'ground', yaw: 0, pitch: 0,
-        eyeCur: 1.6, crouch: false, jh: 0, jv: 0, jx: 0, jy: 0, saved: null, zone: ''
+        eye: 1.3, jx: 0, jy: 0, saved: null, zone: ''
       };
       const WALK_PR = 0.28;   // radius badan
       const STAIR_X = SPEC.seulasaX;
@@ -2816,7 +2809,6 @@
       const wHint = document.getElementById('walk-hint');
       const wBtn = document.getElementById('btn-walk');
       const wBtnText = document.getElementById('btn-walk-text');
-      const wCrouchBtn = document.getElementById('walk-crouch');
       const WALK_MAXR = 50;
       const wHome = { x: 100, y: 0 };
       const wOrigin = { x: 0, y: 0 };
@@ -2887,21 +2879,12 @@
       wLookZone.addEventListener('pointerup', endLook);
       wLookZone.addEventListener('pointercancel', endLook);
 
-      function walkJump() { if (walk.on && walk.jh <= 0.001) walk.jv = 3.4; }
-      function walkCrouchToggle() {
-        walk.crouch = !walk.crouch;
-        wCrouchBtn.classList.toggle('on', walk.crouch);
-      }
-      document.getElementById('walk-jump').addEventListener('pointerdown', (e) => { e.preventDefault(); walkJump(); });
-      wCrouchBtn.addEventListener('click', walkCrouchToggle);
       document.getElementById('walk-exit').addEventListener('click', () => exitWalk());
       wBtn.addEventListener('click', () => { if (walk.on) exitWalk(); else enterWalk(); });
 
       window.addEventListener('keydown', (e) => {
         if (!walk.on) return;
-        if (e.key === ' ') { e.preventDefault(); walkJump(); }
-        else if (e.key === 'c' || e.key === 'C') walkCrouchToggle();
-        else if (e.key === 'Escape') exitWalk();
+        if (e.key === 'Escape') exitWalk();
       });
 
       function setWalkHint(text) {
@@ -2917,14 +2900,12 @@
         camera.updateProjectionMatrix();
         camera.rotation.order = 'YXZ';
         walk.x = STAIR_X; walk.z = 10.5; walk.y = 0; walk.level = 'ground';
-        walk.yaw = 0; walk.pitch = 0.05; walk.jh = 0; walk.jv = 0;
-        walk.eyeCur = 1.6; walk.crouch = false; walk.zone = '';
-        wCrouchBtn.classList.remove('on');
+        walk.yaw = 0; walk.pitch = 0.05; walk.zone = '';
         stickReset();
         document.body.classList.add('walk-on');
         wBtnText.textContent = 'Keluar';
         walk.on = true;
-        setWalkHint('Naik tangga Reunyeun, masuk lewat pintu Pinto');
+        setWalkHint('Naik tangga Reunyeun, lalu masuk lewat pintu Pinto');
       }
 
       function exitWalk() {
@@ -2978,20 +2959,10 @@
         const zone = zoneAt(walk.x, walk.z, walk.level) || { y: walk.y, name: walk.zone };
         walk.y += (zone.y - walk.y) * Math.min(1, dt * 9);
 
-        // Pinto hanya 135 cm: otomatis tunduk di ambang pintu
-        const atPinto = walk.level === 'up' && Math.abs(walk.x - STAIR_X) < 0.75 && Math.abs(walk.z - 4.2) < 0.6;
-        const eyeTarget = (walk.crouch || atPinto) ? 1.05 : 1.6;
-        walk.eyeCur += (eyeTarget - walk.eyeCur) * Math.min(1, dt * 10);
+        if (zone.name !== walk.zone) { walk.zone = zone.name; setWalkHint(zone.name); }
 
-        // Lompat
-        walk.jv -= 11 * dt;
-        walk.jh += walk.jv * dt;
-        if (walk.jh < 0) { walk.jh = 0; walk.jv = 0; }
-
-        const label = atPinto ? 'Pinto hanya 135 cm: tunduk saat masuk' : zone.name;
-        if (label !== walk.zone) { walk.zone = label; setWalkHint(label); }
-
-        camera.position.set(walk.x, walk.y + walk.eyeCur + walk.jh, walk.z);
+        // Tinggi mata 1,30 m agar lolos ambang atas Pinto (bukaan 135 cm)
+        camera.position.set(walk.x, walk.y + walk.eye, walk.z);
         camera.rotation.set(walk.pitch, walk.yaw, 0, 'YXZ');
       }
 
@@ -3024,6 +2995,7 @@
 
       window.onload = function () {
         animate();
+        enterWalk();   // joystick langsung aktif sejak awal
       };
     })();
   </script>
