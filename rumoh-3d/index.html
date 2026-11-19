@@ -1771,12 +1771,6 @@
           });
         });
 
-        // Sepasang Mundam (guci batu pencuci kaki) di kaki Reunyeun
-        [xCenter - 0.78, xCenter + 0.78].forEach((mx) => {
-          const mundam = trackMesh(new THREE.Mesh(new THREE.CylinderGeometry(0.20, 0.15, 0.42, 14), mats.riverStone), 'ground');
-          mundam.position.set(mx, yBot + 0.21, zBot + 0.16);
-          stairGroup.add(mundam);
-        });
         constructionLayers.l4_wallsRooms.add(stairGroup);
       }
 
@@ -2642,7 +2636,7 @@
       L('tulak_angen', 'atap', 'Tulak Angèn', 'Dinding segitiga kerawang', 'Bidang segitiga di ujung atap berupa kisi atau ukiran tembus untuk ventilasi silang, sekaligus penanda seni ukir Aceh.', [7.0, 6.0, 0], 'l6', 'walls', S_IAIN + ', ' + S_UNIKA + ', ' + S_WEN);
 
       // AKSES & ORNAMEN
-      L('tangga', 'akses', 'Reunyeun', 'Tangga masuk', 'Tangga masuk rumah sekaligus kontrol sosial: tamu yang bukan keluarga dekat tidak naik jika tak ada laki-laki keluarga. Anak tangga selalu ganjil (7 atau 9, kebanyakan 9). Gentong air pembasuh kaki ada di bawahnya.', [-2.6, 1.7, 6.4], 'l4', null, S_UNIKA + ', ' + S_UNIMAL + ', ' + S_WID);
+      L('tangga', 'akses', 'Reunyeun', 'Tangga masuk', 'Tangga masuk rumah sekaligus kontrol sosial: tamu yang bukan keluarga dekat tidak naik jika tak ada laki-laki keluarga. Anak tangga selalu ganjil (7 atau 9, kebanyakan 9).', [-2.6, 1.7, 6.4], 'l4', null, S_UNIKA + ', ' + S_UNIMAL + ', ' + S_WID);
       L('seulasa', 'akses', 'Seulasa', 'Atap pelindung tangga', 'Kanopi atau atap pelindung tangga dari hujan, di ujung tangga sebelum pintu.', [-2.6, 3.0, 4.8], 'l4', null, S_UNIMAL + ', ' + S_WEN);
       L('pinto', 'akses', 'Pintô', 'Pintu', 'Pintu dibuat rendah agar tamu menunduk sebagai tanda hormat. Tinggi umumnya 120–150 cm (satu sumber menyebut 150–180 cm). Model: 135 cm.', [-2.6, 3.95, 4.2], 'l4', 'walls', S_WID + ', ' + S_USTJ + ', ' + S_UNIMAL + ', ' + S_UNIKA);
       L('tingkap', 'akses', 'Tingkap', 'Jendela', 'Jendela kecil berdaun sepasang pada dinding.', [0, 3.9, 4.2], 'l4', 'walls', S_WID + ', ' + S_UNIMAL);
@@ -2875,7 +2869,7 @@
       // --------------------------------------------------------------------------
       const walk = {
         on: false, x: 0, z: 10.5, y: 0, level: 'ground', yaw: 0, pitch: 0,
-        eye: 1.3, jx: 0, jy: 0, zone: ''
+        eye: 1.3, eyeT: 1.3, jx: 0, jy: 0, zone: ''
       };
       const WALK_PR = 0.28;   // radius badan
       const STAIR_X = SPEC.seulasaX;
@@ -3153,7 +3147,11 @@
 
         if (zone.name !== walk.zone) { walk.zone = zone.name; setWalkHint(zone.name); }
 
-        // Tinggi mata 1,30 m agar lolos ambang atas Pinto (bukaan 135 cm)
+        // Tinggi mata 1,30 m agar lolos ambang atas Pinto (bukaan 135 cm). Di bawah atap Seulasa (ruang bebas ~1,1 m)
+        // dan saat melewati Pinto, mata merunduk ke 1,0 m supaya kamera tidak menembus naik ke atas atap.
+        const underCanopy = walk.x > -3.55 && walk.x < -1.65 && walk.z > 3.9 && walk.z < 5.9;
+        walk.eyeT = underCanopy ? 1.0 : 1.3;
+        walk.eye += (walk.eyeT - walk.eye) * Math.min(1, dt * (underCanopy ? 10 : 4));
         camera.position.set(walk.x, walk.y + walk.eye, walk.z);
         camera.rotation.set(walk.pitch, walk.yaw, 0, 'YXZ');
       }
