@@ -1355,7 +1355,7 @@
           constructionLayers.l3_floorSystem.add(rambatStep);
         });
         const dapuStep = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(1.10, 0.17, 0.25), mats.seumantok), 'frame', 'floor');
-        dapuStep.position.set(-1.30, 2.22, -4.26);
+        dapuStep.position.set(0, 2.22, -4.26);
         constructionLayers.l3_floorSystem.add(dapuStep);
 
         // PAPAN PENUTUP (papan tegak) di sambungan lantai berbeda tinggi, agar tepi lantai tidak berlubang tembus ke kolong:
@@ -1625,17 +1625,18 @@
         // Jendela Tingkap berteralis kayu pada fasad depan (Z = +4.20m)
         [-4.80, 0.00, 2.60, 5.20].forEach((wx) => buildTingkap(wx, 4.20, 0));
 
-        // Dinding Belakang Seuramoe Likôt (Z = -4.20m) dengan bukaan ke Rumoh Dapu (X = -1.30m)
-        const backWallW = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(4.70, 1.95, 0.08), mats.wallVertical), 'cladding', 'walls');
-        backWallW.position.set(-4.15, SPEC.elevVeranda + 0.975, -4.20);
+        // Dinding Belakang Seuramoe Likôt (Z = -4.20m) dengan bukaan ke Rumoh Dapu (X = 0, di antara dua tiang)
+        // Bukaan pintu digeser ke X = 0 (di antara tiang X = -1.30 dan +1.30) agar tiang tidak berada di tengah pintu
+        const backWallW = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(6.00, 1.95, 0.08), mats.wallVertical), 'cladding', 'walls');
+        backWallW.position.set(-3.50, SPEC.elevVeranda + 0.975, -4.20);
         constructionLayers.l4_wallsRooms.add(backWallW);
 
-        const backWallE = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(7.30, 1.95, 0.08), mats.wallVertical), 'cladding', 'walls');
-        backWallE.position.set(2.85, SPEC.elevVeranda + 0.975, -4.20);
+        const backWallE = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(6.00, 1.95, 0.08), mats.wallVertical), 'cladding', 'walls');
+        backWallE.position.set(3.50, SPEC.elevVeranda + 0.975, -4.20);
         constructionLayers.l4_wallsRooms.add(backWallE);
 
         const backDoorHeader = trackMesh(new THREE.Mesh(new THREE.BoxGeometry(1.04, 0.55, 0.10), mats.carving), 'cladding', 'walls');
-        backDoorHeader.position.set(-1.30, SPEC.elevVeranda + 1.675, -4.20);
+        backDoorHeader.position.set(0, SPEC.elevVeranda + 1.675, -4.20);
         constructionLayers.l4_wallsRooms.add(backDoorHeader);
 
         // Dinding Samping Barat (-6.50m) & Timur (+6.50m) dengan Tingkap berukir
@@ -2875,8 +2876,6 @@
       const STAIR_X = SPEC.seulasaX;
       const tamehPosts = [];
       SPEC.colX.forEach((cx) => SPEC.colZ.forEach((cz) => {
-        // Tiang tepat di ambang pintu belakang ke Rumoh Dapu (X -1.30, Z -4.20) tidak menghalangi, agar dapur tetap bisa dimasuki
-        if (cx === -1.30 && cz === -4.20) return;
         tamehPosts.push([cx, cz]);
       }));
 
@@ -2886,7 +2885,7 @@
       // Dinding yang menghalangi di lantai atas (ukuran sesuai pembangunan lapis 4)
       const wallRects = [
         hz(-6.5, -3.1, 4.2), hz(-2.1, 6.5, 4.2),          // fasad depan, bukaan Pinto X -3.10..-2.10
-        hz(-6.5, -1.8, -4.2), hz(-0.8, 6.5, -4.2),        // dinding belakang, bukaan ke Rumoh Dapu
+        hz(-6.5, -0.5, -4.2), hz(0.5, 6.5, -4.2),          // dinding belakang, bukaan ke Rumoh Dapu di X 0
         vx(-6.5, -4.2, 4.2), vx(6.5, -4.2, 4.2),          // dinding samping barat & timur
         hz(-6.5, -1.3, 1.4), hz(-6.5, -1.3, -1.4),        // Rumoh Inong
         hz(1.3, 6.5, 1.4), hz(1.3, 6.5, -1.4),            // Anjong
@@ -2955,7 +2954,7 @@
         [0.0, 2.8, 0], [0.0, 0.5, 1.8],
         [-1.3, 0.0, 0], [-3.5, 0.0, 2.2], [-1.3, 0.0, 0], [0.0, 0.0, 0],
         [1.3, 0.0, 0], [3.5, 0.0, 2.2], [1.3, 0.0, 0], [0.0, 0.0, 0],
-        [0.0, -2.8, 1.8], [-1.3, -3.0, 0], [-1.3, -5.5, 2.2], [-1.3, -3.0, 0], [0.0, -2.8, 0],
+        [0.0, -2.8, 1.8], [0.0, -3.4, 0], [0.0, -5.4, 2.2], [0.0, -3.4, 0], [0.0, -2.8, 0],
         [0.0, 0.0, 0], [0.0, 2.8, 0], [-2.6, 3.0, 0], [-2.6, 5.0, 0], [-2.6, 7.0, 0], [-2.6, 9.5, 1.2]
       ];
       const tour = { on: false, i: 1, wait: 0, stuck: 0 };
