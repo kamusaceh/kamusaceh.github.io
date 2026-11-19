@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101923">
+  <title>City Builder 3D</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <main id="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">CITY BUILDER</div>
+        <h1>Kota 3D</h1>
+      </div>
+      <div class="help">Klik tanah untuk membangun · Seret untuk memutar · Scroll untuk zoom</div>
+    </header>
+
+    <nav class="toolbar" aria-label="Pilihan bangunan">
+      <button class="tool active" data-kind="house">⌂ <span>Rumah</span></button>
+      <button class="tool" data-kind="office">▥ <span>Kantor</span></button>
+      <button class="tool" data-kind="tower">▤ <span>Menara</span></button>
+      <button class="tool" data-kind="park">♣ <span>Taman</span></button>
+      <button id="remove" class="tool danger">× <span>Hapus</span></button>
+    </nav>
+
+    <section id="viewport" aria-label="Dunia kota 3D">
+      <div id="loading">Menyiapkan kota 3D…</div>
+      <div class="hint">Mode: <strong id="mode-label">Rumah</strong></div>
+    </section>
+
+    <footer class="statusbar">
+      <span id="building-count">0 bangunan</span>
+      <span>Prototype · Penyimpanan lokal browser</span>
+    </footer>
+  </main>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
