@@ -121,8 +121,8 @@
     #walk-move-zone { left: 0; width: 50%; }
     #walk-look-zone { right: 0; width: 50%; }
     body.walk-on .walk-zone { display: block; }
-    body.walk-on #camera-bar, body.walk-on #cad-drawer { display: none !important; }
-    body.walk-on #label-card { left: auto; right: 12px; bottom: 190px; }
+    body.walk-on #camera-bar { display: none !important; }
+    body.walk-on #label-card { left: auto; right: 12px; bottom: 20px; }
 
     #walk-base {
       position: fixed; z-index: 35; display: none; pointer-events: none;
@@ -140,20 +140,6 @@
     }
     #walk-base.active #walk-thumb { background: #f59e0b; border-color: #fde68a; }
 
-    #walk-actions {
-      position: fixed; z-index: 40; display: none; flex-direction: column; align-items: flex-end; gap: 12px;
-      right: max(14px, env(safe-area-inset-right, 0px));
-      bottom: calc(22px + env(safe-area-inset-bottom, 0px));
-    }
-    body.walk-on #walk-actions { display: flex; }
-    .walk-round {
-      border-radius: 50%; border: 2px solid rgba(217, 155, 38, 0.5); padding: 0; cursor: pointer;
-      background: rgba(10, 15, 26, 0.6); color: #fde68a; font: 600 11px/1.1 'Inter', sans-serif;
-      display: grid; place-items: center; text-align: center; touch-action: none;
-      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-    }
-    .walk-round.sm { width: 52px; height: 52px; }
-    .walk-round:active, .walk-round.on { background: #f59e0b; color: #111827; border-color: #fde68a; }
 
     #walk-hint {
       position: fixed; z-index: 30; display: none; left: 50%; transform: translateX(-50%);
@@ -204,10 +190,6 @@
   <button id="btn-labels" title="Tampilkan / Sembunyikan Label Bagian"
       class="museum-panel rounded-xl px-2.5 py-2 text-[11px] font-semibold text-amber-300 hover:border-amber-400/50 transition flex items-center gap-1.5">
       <span>🏷️</span><span id="btn-labels-text">Label: ON</span>
-    </button>
-    <button id="btn-walk" title="Jelajahi rumoh dengan joystick (Esc untuk keluar)"
-      class="museum-panel rounded-xl px-2.5 py-2 text-[11px] font-semibold text-emerald-300 hover:border-emerald-400/50 transition flex items-center gap-1.5">
-      <span>🎮</span><span id="btn-walk-text">Jelajah</span>
     </button>
   </header>
 
@@ -321,19 +303,16 @@
       </div>
 
       <div class="text-[9.5px] text-slate-400 font-mono-tech leading-relaxed">
-        Putar: Drag • Zoom: Scroll/Pinch • Geser: Klik Kanan / 2-Jari • WASD: Jelajah
+        Kiri: joystick jalan • Kanan: geser layar untuk melihat • Keyboard: WASD jalan, panah melihat, Shift lari
       </div>
     </div>
   </aside>
 
-  <!-- Mode Jelajah: zona sentuh, joystick bulat & tombol aksi -->
+  <!-- Mode Jelajah: zona sentuh & joystick bulat (selalu aktif) -->
   <div id="walk-move-zone" class="walk-zone" aria-hidden="true"></div>
   <div id="walk-look-zone" class="walk-zone" aria-hidden="true"></div>
   <div id="walk-base" aria-hidden="true"><div id="walk-thumb"></div></div>
   <div id="walk-hint">Geser kiri untuk jalan, geser kanan untuk melihat</div>
-  <div id="walk-actions">
-    <button class="walk-round sm" id="walk-exit" type="button" aria-label="Keluar mode jelajah">Keluar</button>
-  </div>
 
   <!-- Bilah Bawah: 6 Preset Kamera Cepat -->
   <nav id="camera-bar" class="fixed bottom-3 left-3 right-3 z-30 flex justify-center pointer-events-none">
@@ -2717,11 +2696,11 @@
       // --------------------------------------------------------------------------
       // 17b. MODE JELAJAH — JOYSTICK BULAT ALA PUBG MOBILE
       //      Kiri: joystick analog (geser di mana saja). Kanan: geser untuk melihat.
-      //      Keyboard: WASD jalan, panah melihat, Shift lari, Esc keluar. Aktif otomatis saat halaman dibuka.
+      //      Keyboard: WASD jalan, panah melihat, Shift lari. Selalu aktif sejak halaman dibuka.
       // --------------------------------------------------------------------------
       const walk = {
         on: false, x: 0, z: 10.5, y: 0, level: 'ground', yaw: 0, pitch: 0,
-        eye: 1.3, jx: 0, jy: 0, saved: null, zone: ''
+        eye: 1.3, jx: 0, jy: 0, zone: ''
       };
       const WALK_PR = 0.28;   // radius badan
       const STAIR_X = SPEC.seulasaX;
@@ -2807,8 +2786,6 @@
       const wBase = document.getElementById('walk-base');
       const wThumb = document.getElementById('walk-thumb');
       const wHint = document.getElementById('walk-hint');
-      const wBtn = document.getElementById('btn-walk');
-      const wBtnText = document.getElementById('btn-walk-text');
       const WALK_MAXR = 50;
       const wHome = { x: 100, y: 0 };
       const wOrigin = { x: 0, y: 0 };
@@ -2879,21 +2856,12 @@
       wLookZone.addEventListener('pointerup', endLook);
       wLookZone.addEventListener('pointercancel', endLook);
 
-      document.getElementById('walk-exit').addEventListener('click', () => exitWalk());
-      wBtn.addEventListener('click', () => { if (walk.on) exitWalk(); else enterWalk(); });
-
-      window.addEventListener('keydown', (e) => {
-        if (!walk.on) return;
-        if (e.key === 'Escape') exitWalk();
-      });
-
       function setWalkHint(text) {
         if (wHint.textContent !== text) wHint.textContent = text;
       }
 
       function enterWalk() {
         if (walk.on) return;
-        walk.saved = { pos: camera.position.clone(), target: controls.target.clone(), fov: camera.fov };
         cameraTween = null;
         controls.enabled = false;
         camera.fov = 72;
@@ -2903,24 +2871,8 @@
         walk.yaw = 0; walk.pitch = 0.05; walk.zone = '';
         stickReset();
         document.body.classList.add('walk-on');
-        wBtnText.textContent = 'Keluar';
         walk.on = true;
         setWalkHint('Naik tangga Reunyeun, lalu masuk lewat pintu Pinto');
-      }
-
-      function exitWalk() {
-        if (!walk.on) return;
-        walk.on = false;
-        stickReset();
-        document.body.classList.remove('walk-on');
-        wBtnText.textContent = 'Jelajah';
-        camera.fov = walk.saved.fov;
-        camera.updateProjectionMatrix();
-        const dir = new THREE.Vector3();
-        camera.getWorldDirection(dir);
-        controls.target.copy(camera.position).addScaledVector(dir, 3);
-        controls.enabled = true;
-        flyCameraTo(walk.saved.pos, walk.saved.target);
       }
 
       function angleDiff(a, b) {
