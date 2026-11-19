@@ -115,6 +115,57 @@
       background: rgba(30, 41, 59, 0.75); color: #cbd5e1; transition: 0.15s;
     }
     .lcat-chip.on { background: rgba(245, 158, 11, 0.2); border-color: rgba(251, 191, 36, 0.55); color: #fde68a; }
+
+    /* ===== Mode Jelajah: joystick bulat ala PUBG Mobile ===== */
+    .walk-zone { position: fixed; top: 0; bottom: 0; z-index: 25; touch-action: none; display: none; }
+    #walk-move-zone { left: 0; width: 50%; }
+    #walk-look-zone { right: 0; width: 50%; }
+    body.walk-on .walk-zone { display: block; }
+    body.walk-on #camera-bar, body.walk-on #cad-drawer { display: none !important; }
+    body.walk-on #label-card { left: auto; right: 12px; bottom: 190px; }
+
+    #walk-base {
+      position: fixed; z-index: 35; display: none; pointer-events: none;
+      width: 132px; height: 132px; margin: -66px 0 0 -66px; border-radius: 50%;
+      background: rgba(10, 15, 26, 0.5); border: 2px solid rgba(217, 155, 38, 0.5);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      opacity: 0.65; transition: opacity 0.12s ease;
+    }
+    body.walk-on #walk-base { display: block; }
+    #walk-base.active { opacity: 1; }
+    #walk-thumb {
+      position: absolute; left: 50%; top: 50%; width: 58px; height: 58px; margin: -29px 0 0 -29px;
+      border-radius: 50%; background: rgba(241, 245, 249, 0.5); border: 2px solid rgba(241, 245, 249, 0.85);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.45);
+    }
+    #walk-base.active #walk-thumb { background: #f59e0b; border-color: #fde68a; }
+
+    #walk-actions {
+      position: fixed; z-index: 40; display: none; flex-direction: column; align-items: flex-end; gap: 12px;
+      right: max(14px, env(safe-area-inset-right, 0px));
+      bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+    }
+    body.walk-on #walk-actions { display: flex; }
+    #walk-actions .row { display: flex; gap: 12px; align-items: flex-end; }
+    .walk-round {
+      border-radius: 50%; border: 2px solid rgba(217, 155, 38, 0.5); padding: 0; cursor: pointer;
+      background: rgba(10, 15, 26, 0.6); color: #fde68a; font: 600 11px/1.1 'Inter', sans-serif;
+      display: grid; place-items: center; text-align: center; touch-action: none;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .walk-round.sm { width: 52px; height: 52px; }
+    .walk-round.lg { width: 76px; height: 76px; font-size: 12px; }
+    .walk-round:active, .walk-round.on { background: #f59e0b; color: #111827; border-color: #fde68a; }
+
+    #walk-hint {
+      position: fixed; z-index: 30; display: none; left: 50%; transform: translateX(-50%);
+      top: calc(14px + env(safe-area-inset-top, 0px)); max-width: calc(100vw - 150px);
+      padding: 6px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; text-align: center;
+      background: rgba(10, 15, 26, 0.8); border: 1px solid rgba(217, 155, 38, 0.4); color: #fde68a;
+      pointer-events: none;
+    }
+    body.walk-on #walk-hint { display: block; }
+    @media (max-width: 420px) { .walk-round.lg { width: 68px; height: 68px; } }
   </style>
 </head>
 <body>
@@ -156,6 +207,10 @@
   <button id="btn-labels" title="Tampilkan / Sembunyikan Label Bagian"
       class="museum-panel rounded-xl px-2.5 py-2 text-[11px] font-semibold text-amber-300 hover:border-amber-400/50 transition flex items-center gap-1.5">
       <span>🏷️</span><span id="btn-labels-text">Label: ON</span>
+    </button>
+    <button id="btn-walk" title="Jelajahi rumoh dengan joystick (Esc untuk keluar)"
+      class="museum-panel rounded-xl px-2.5 py-2 text-[11px] font-semibold text-emerald-300 hover:border-emerald-400/50 transition flex items-center gap-1.5">
+      <span>🎮</span><span id="btn-walk-text">Jelajah</span>
     </button>
   </header>
 
@@ -273,6 +328,19 @@
       </div>
     </div>
   </aside>
+
+  <!-- Mode Jelajah: zona sentuh, joystick bulat & tombol aksi -->
+  <div id="walk-move-zone" class="walk-zone" aria-hidden="true"></div>
+  <div id="walk-look-zone" class="walk-zone" aria-hidden="true"></div>
+  <div id="walk-base" aria-hidden="true"><div id="walk-thumb"></div></div>
+  <div id="walk-hint">Geser kiri untuk jalan, geser kanan untuk melihat</div>
+  <div id="walk-actions">
+    <div class="row">
+      <button class="walk-round sm" id="walk-crouch" type="button" aria-label="Tunduk">Tunduk</button>
+      <button class="walk-round sm" id="walk-exit" type="button" aria-label="Keluar mode jelajah">Keluar</button>
+    </div>
+    <button class="walk-round lg" id="walk-jump" type="button" aria-label="Lompat">Lompat</button>
+  </div>
 
   <!-- Bilah Bawah: 6 Preset Kamera Cepat -->
   <nav id="camera-bar" class="fixed bottom-3 left-3 right-3 z-30 flex justify-center pointer-events-none">
@@ -2653,6 +2721,280 @@
         lblCard.classList.toggle('hidden', !lblState.active || state.hudHidden);
       }
 
+      // --------------------------------------------------------------------------
+      // 17b. MODE JELAJAH — JOYSTICK BULAT ALA PUBG MOBILE
+      //      Kiri: joystick analog (geser di mana saja). Kanan: geser untuk melihat.
+      //      Keyboard: WASD jalan, panah melihat, Shift lari, Spasi lompat, C tunduk, Esc keluar.
+      // --------------------------------------------------------------------------
+      const walk = {
+        on: false, x: 0, z: 10.5, y: 0, level: 'ground', yaw: 0, pitch: 0,
+        eyeCur: 1.6, crouch: false, jh: 0, jv: 0, jx: 0, jy: 0, saved: null, zone: ''
+      };
+      const WALK_PR = 0.28;   // radius badan
+      const STAIR_X = SPEC.seulasaX;
+      const tamehPosts = [];
+      SPEC.colX.forEach((cx) => SPEC.colZ.forEach((cz) => {
+        // Tiang tepat di ambang pintu belakang ke Rumoh Dapu (X -1.30, Z -4.20) tidak menghalangi, agar dapur tetap bisa dimasuki
+        if (cx === -1.30 && cz === -4.20) return;
+        tamehPosts.push([cx, cz]);
+      }));
+
+      const WT = 0.07;
+      const hz = (x0, x1, z) => [x0, x1, z - WT, z + WT];
+      const vx = (x, z0, z1) => [x - WT, x + WT, z0, z1];
+      // Dinding yang menghalangi di lantai atas (ukuran sesuai pembangunan lapis 4)
+      const wallRects = [
+        hz(-6.5, -3.1, 4.2), hz(-2.1, 6.5, 4.2),          // fasad depan, bukaan Pinto X -3.10..-2.10
+        hz(-6.5, -1.8, -4.2), hz(-0.8, 6.5, -4.2),        // dinding belakang, bukaan ke Rumoh Dapu
+        vx(-6.5, -4.2, 4.2), vx(6.5, -4.2, 4.2),          // dinding samping barat & timur
+        hz(-6.5, -1.3, 1.4), hz(-6.5, -1.3, -1.4),        // Rumoh Inong
+        hz(1.3, 6.5, 1.4), hz(1.3, 6.5, -1.4),            // Anjong
+        vx(-1.3, 0.45, 1.4), vx(-1.3, -1.4, -0.45),       // Rambat barat (pintu ke Inong di tengah)
+        vx(1.3, 0.45, 1.4), vx(1.3, -1.4, -0.45),         // Rambat timur
+        vx(-3.35, 4.2, 5.35), vx(-1.85, 4.2, 5.35),       // pagar ukir Seulasa
+        hz(-3.9, 1.3, -6.6), vx(-3.9, -6.6, -4.2), vx(1.3, -6.6, -4.2)  // dinding Rumoh Dapu
+      ];
+      // Pagar tangga Reunyeun: lebar jalur 0.6 m (tanpa tambahan radius badan)
+      const stairRails = [
+        [STAIR_X - 1.6, STAIR_X - 0.30, 5.35, 7.35],
+        [STAIR_X + 0.30, STAIR_X + 1.6, 5.35, 7.35]
+      ];
+
+      function stairY(x, z) {
+        if (Math.abs(x - STAIR_X) <= 0.5 && z >= 5.35 && z <= 7.35) {
+          return SPEC.elevTeunamba + (SPEC.elevVeranda - SPEC.elevTeunamba) * (7.35 - z) / 2.0;
+        }
+        return null;
+      }
+
+      function zoneAt(x, z, level) {
+        const sy = stairY(x, z);
+        if (sy !== null) return { y: sy, name: 'Reunyeun (tangga 9 anak tangga)' };
+        if (level === 'up') {
+          if (x >= -6.5 && x <= 6.5 && z >= -4.2 && z <= 4.2) {
+            if (z > 1.4) return { y: SPEC.elevVeranda, name: 'Seuramoe Keue (serambi depan)' };
+            if (z >= -1.4) {
+              if (x < -1.3) return { y: SPEC.elevTungai, name: 'Rumoh Inong (kamar induk)' };
+              if (x > 1.3) return { y: SPEC.elevTungai, name: 'Anjong (kamar anak)' };
+              return { y: SPEC.elevTungai, name: 'Rambat (lorong tengah, +45 cm)' };
+            }
+            return { y: SPEC.elevVeranda, name: 'Seuramoe Likôt (serambi belakang)' };
+          }
+          if (x >= -3.9 && x <= 1.3 && z >= -6.6 && z < -4.2) return { y: SPEC.elevDapu, name: 'Rumoh Dapu (dapur, −35 cm)' };
+          if (x >= -3.32 && x <= -1.88 && z > 4.2 && z <= 5.35) return { y: SPEC.elevVeranda, name: 'Seulasa (teras masuk)' };
+          return null;
+        }
+        if (Math.abs(x) <= 7 && Math.abs(z) <= 4.8) return { y: SPEC.elevTeunamba, name: 'Kolong rumoh (Yup Moh)' };
+        return { y: 0, name: 'Halaman (Teunamba)' };
+      }
+
+      function walkable(x, z, level) {
+        if (Math.abs(x) > 60 || Math.abs(z) > 60) return false;
+        for (let i = 0; i < tamehPosts.length; i++) {
+          const dx = x - tamehPosts[i][0], dz = z - tamehPosts[i][1];
+          const rr = 0.20 + WALK_PR;
+          if (dx * dx + dz * dz < rr * rr) return false;
+        }
+        for (let i = 0; i < stairRails.length; i++) {
+          const r = stairRails[i];
+          if (x > r[0] && x < r[1] && z > r[2] && z < r[3]) return false;
+        }
+        if (level === 'up') {
+          for (let i = 0; i < wallRects.length; i++) {
+            const r = wallRects[i];
+            if (x > r[0] - WALK_PR && x < r[1] + WALK_PR && z > r[2] - WALK_PR && z < r[3] + WALK_PR) return false;
+          }
+        }
+        return zoneAt(x, z, level) !== null;
+      }
+
+      // ---- Elemen UI ----
+      const wMoveZone = document.getElementById('walk-move-zone');
+      const wLookZone = document.getElementById('walk-look-zone');
+      const wBase = document.getElementById('walk-base');
+      const wThumb = document.getElementById('walk-thumb');
+      const wHint = document.getElementById('walk-hint');
+      const wBtn = document.getElementById('btn-walk');
+      const wBtnText = document.getElementById('btn-walk-text');
+      const wCrouchBtn = document.getElementById('walk-crouch');
+      const WALK_MAXR = 50;
+      const wHome = { x: 100, y: 0 };
+      const wOrigin = { x: 0, y: 0 };
+      let wMovePtr = null, wLookPtr = null;
+      const wLast = { x: 0, y: 0 };
+
+      function placeBase(x, y) { wBase.style.left = x + 'px'; wBase.style.top = y + 'px'; }
+      function setWalkHome() {
+        wHome.x = 100;
+        wHome.y = window.innerHeight - 122;
+        if (wMovePtr === null) placeBase(wHome.x, wHome.y);
+      }
+      setWalkHome();
+      window.addEventListener('resize', setWalkHome);
+
+      function stickUpdate(cx, cy) {
+        let dx = cx - wOrigin.x, dy = cy - wOrigin.y;
+        const len = Math.hypot(dx, dy);
+        if (len > WALK_MAXR) { dx = dx / len * WALK_MAXR; dy = dy / len * WALK_MAXR; }
+        wThumb.style.transform = 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px)';
+        const mag = Math.min(len, WALK_MAXR) / WALK_MAXR;
+        if (mag < 0.12) { walk.jx = 0; walk.jy = 0; return; }   // zona mati
+        walk.jx = dx / WALK_MAXR;
+        walk.jy = -dy / WALK_MAXR;
+      }
+      function stickReset() {
+        wMovePtr = null; walk.jx = 0; walk.jy = 0;
+        wThumb.style.transform = 'translate(0px,0px)';
+        wBase.classList.remove('active');
+        placeBase(wHome.x, wHome.y);
+      }
+
+      wMoveZone.addEventListener('pointerdown', (e) => {
+        if (wMovePtr !== null) return;
+        e.preventDefault();
+        wMovePtr = e.pointerId;
+        try { wMoveZone.setPointerCapture(e.pointerId); } catch (err) { /* abaikan */ }
+        wOrigin.x = e.clientX; wOrigin.y = e.clientY;
+        placeBase(wOrigin.x, wOrigin.y);
+        wBase.classList.add('active');
+        stickUpdate(e.clientX, e.clientY);
+      });
+      wMoveZone.addEventListener('pointermove', (e) => {
+        if (e.pointerId !== wMovePtr) return;
+        e.preventDefault();
+        stickUpdate(e.clientX, e.clientY);
+      });
+      const endMove = (e) => { if (e.pointerId === wMovePtr) stickReset(); };
+      wMoveZone.addEventListener('pointerup', endMove);
+      wMoveZone.addEventListener('pointercancel', endMove);
+
+      const clampPitch = (v) => Math.max(-1.25, Math.min(1.25, v));
+      wLookZone.addEventListener('pointerdown', (e) => {
+        if (wLookPtr !== null) return;
+        e.preventDefault();
+        wLookPtr = e.pointerId;
+        try { wLookZone.setPointerCapture(e.pointerId); } catch (err) { /* abaikan */ }
+        wLast.x = e.clientX; wLast.y = e.clientY;
+      });
+      wLookZone.addEventListener('pointermove', (e) => {
+        if (e.pointerId !== wLookPtr) return;
+        e.preventDefault();
+        walk.yaw -= (e.clientX - wLast.x) * 0.0055;
+        walk.pitch = clampPitch(walk.pitch - (e.clientY - wLast.y) * 0.0045);
+        wLast.x = e.clientX; wLast.y = e.clientY;
+      });
+      const endLook = (e) => { if (e.pointerId === wLookPtr) wLookPtr = null; };
+      wLookZone.addEventListener('pointerup', endLook);
+      wLookZone.addEventListener('pointercancel', endLook);
+
+      function walkJump() { if (walk.on && walk.jh <= 0.001) walk.jv = 3.4; }
+      function walkCrouchToggle() {
+        walk.crouch = !walk.crouch;
+        wCrouchBtn.classList.toggle('on', walk.crouch);
+      }
+      document.getElementById('walk-jump').addEventListener('pointerdown', (e) => { e.preventDefault(); walkJump(); });
+      wCrouchBtn.addEventListener('click', walkCrouchToggle);
+      document.getElementById('walk-exit').addEventListener('click', () => exitWalk());
+      wBtn.addEventListener('click', () => { if (walk.on) exitWalk(); else enterWalk(); });
+
+      window.addEventListener('keydown', (e) => {
+        if (!walk.on) return;
+        if (e.key === ' ') { e.preventDefault(); walkJump(); }
+        else if (e.key === 'c' || e.key === 'C') walkCrouchToggle();
+        else if (e.key === 'Escape') exitWalk();
+      });
+
+      function setWalkHint(text) {
+        if (wHint.textContent !== text) wHint.textContent = text;
+      }
+
+      function enterWalk() {
+        if (walk.on) return;
+        walk.saved = { pos: camera.position.clone(), target: controls.target.clone(), fov: camera.fov };
+        cameraTween = null;
+        controls.enabled = false;
+        camera.fov = 72;
+        camera.updateProjectionMatrix();
+        camera.rotation.order = 'YXZ';
+        walk.x = STAIR_X; walk.z = 10.5; walk.y = 0; walk.level = 'ground';
+        walk.yaw = 0; walk.pitch = 0.05; walk.jh = 0; walk.jv = 0;
+        walk.eyeCur = 1.6; walk.crouch = false; walk.zone = '';
+        wCrouchBtn.classList.remove('on');
+        stickReset();
+        document.body.classList.add('walk-on');
+        wBtnText.textContent = 'Keluar';
+        walk.on = true;
+        setWalkHint('Naik tangga Reunyeun, masuk lewat pintu Pinto');
+      }
+
+      function exitWalk() {
+        if (!walk.on) return;
+        walk.on = false;
+        stickReset();
+        document.body.classList.remove('walk-on');
+        wBtnText.textContent = 'Jelajah';
+        camera.fov = walk.saved.fov;
+        camera.updateProjectionMatrix();
+        const dir = new THREE.Vector3();
+        camera.getWorldDirection(dir);
+        controls.target.copy(camera.position).addScaledVector(dir, 3);
+        controls.enabled = true;
+        flyCameraTo(walk.saved.pos, walk.saved.target);
+      }
+
+      function angleDiff(a, b) {
+        let d = (b - a) % (Math.PI * 2);
+        if (d > Math.PI) d -= Math.PI * 2;
+        if (d < -Math.PI) d += Math.PI * 2;
+        return d;
+      }
+
+      function updateWalk(dt) {
+        // Melihat dengan keyboard
+        walk.yaw += ((keys['arrowleft'] ? 1 : 0) - (keys['arrowright'] ? 1 : 0)) * 1.9 * dt;
+        walk.pitch = clampPitch(walk.pitch + ((keys['arrowup'] ? 1 : 0) - (keys['arrowdown'] ? 1 : 0)) * 1.3 * dt);
+
+        // Gerak: joystick + WASD
+        let ix = walk.jx + ((keys['d'] ? 1 : 0) - (keys['a'] ? 1 : 0));
+        let iy = walk.jy + ((keys['w'] ? 1 : 0) - (keys['s'] ? 1 : 0));
+        let mag = Math.hypot(ix, iy);
+        if (mag > 1) { ix /= mag; iy /= mag; mag = 1; }
+
+        if (mag > 0.001) {
+          const sprint = mag > 0.92 || keys['shift'];
+          const speed = (sprint ? 4.6 : 2.5) * mag * dt;
+          const fx = -Math.sin(walk.yaw), fz = -Math.cos(walk.yaw);
+          const rx = Math.cos(walk.yaw), rz = -Math.sin(walk.yaw);
+          let mx = fx * iy + rx * ix, mz = fz * iy + rz * ix;
+          const ml = Math.hypot(mx, mz) || 1;
+          mx = mx / ml * speed; mz = mz / ml * speed;
+          if (walkable(walk.x + mx, walk.z, walk.level)) walk.x += mx;
+          if (walkable(walk.x, walk.z + mz, walk.level)) walk.z += mz;
+        }
+
+        // Ganti lantai lewat tangga Reunyeun
+        if (stairY(walk.x, walk.z) !== null) walk.level = walk.z < 5.45 ? 'up' : 'ground';
+
+        const zone = zoneAt(walk.x, walk.z, walk.level) || { y: walk.y, name: walk.zone };
+        walk.y += (zone.y - walk.y) * Math.min(1, dt * 9);
+
+        // Pinto hanya 135 cm: otomatis tunduk di ambang pintu
+        const atPinto = walk.level === 'up' && Math.abs(walk.x - STAIR_X) < 0.75 && Math.abs(walk.z - 4.2) < 0.6;
+        const eyeTarget = (walk.crouch || atPinto) ? 1.05 : 1.6;
+        walk.eyeCur += (eyeTarget - walk.eyeCur) * Math.min(1, dt * 10);
+
+        // Lompat
+        walk.jv -= 11 * dt;
+        walk.jh += walk.jv * dt;
+        if (walk.jh < 0) { walk.jh = 0; walk.jv = 0; }
+
+        const label = atPinto ? 'Pinto hanya 135 cm: tunduk saat masuk' : zone.name;
+        if (label !== walk.zone) { walk.zone = label; setWalkHint(label); }
+
+        camera.position.set(walk.x, walk.y + walk.eyeCur + walk.jh, walk.z);
+        camera.rotation.set(walk.pitch, walk.yaw, 0, 'YXZ');
+      }
+
       const clock = new THREE.Clock();
 
       function animate() {
@@ -2671,8 +3013,12 @@
         updateTingkap(dt);
         updateFlags(clock.elapsedTime);
         updateLabels();
-        updateKeyboardNav(dt);
-        controls.update();
+        if (walk.on) {
+          updateWalk(dt);
+        } else {
+          updateKeyboardNav(dt);
+          controls.update();
+        }
         renderer.render(scene, camera);
       }
 
