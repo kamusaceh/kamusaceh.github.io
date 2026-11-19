@@ -118,8 +118,9 @@
 
     /* ===== Mode Jelajah: joystick bulat ala PUBG Mobile ===== */
     .walk-zone { position: fixed; top: 0; bottom: 0; z-index: 25; touch-action: none; display: none; }
-    #walk-move-zone { left: 0; width: 50%; }
-    #walk-look-zone { right: 0; width: 50%; }
+    /* Joystick tetap di satu posisi (kiri bawah); zona sentuhnya hanya area di sekitar joystick */
+    #walk-move-zone { z-index: 26; top: auto; bottom: auto; width: 190px; height: 190px; margin: -95px 0 0 -95px; }
+    #walk-look-zone { left: 0; right: 0; }
     body.walk-on .walk-zone { display: block; }
     body.walk-on #camera-bar { display: none !important; }
     body.walk-on #label-card { left: auto; right: 12px; bottom: 20px; }
@@ -149,6 +150,18 @@
       pointer-events: none;
     }
     body.walk-on #walk-hint { display: block; }
+    #walk-tour {
+      position: fixed; z-index: 40; display: none; cursor: pointer;
+      right: max(14px, env(safe-area-inset-right, 0px));
+      bottom: calc(26px + env(safe-area-inset-bottom, 0px));
+      min-width: 148px; height: 56px; padding: 0 22px; border-radius: 999px;
+      font: 700 14px 'Inter', sans-serif; color: #fde68a;
+      background: rgba(10, 15, 26, 0.7); border: 2px solid rgba(217, 155, 38, 0.6);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      touch-action: manipulation;
+    }
+    body.walk-on #walk-tour { display: block; }
+    #walk-tour.on { background: #f59e0b; color: #111827; border-color: #fde68a; }
   </style>
 </head>
 <body>
@@ -313,6 +326,7 @@
   <div id="walk-look-zone" class="walk-zone" aria-hidden="true"></div>
   <div id="walk-base" aria-hidden="true"><div id="walk-thumb"></div></div>
   <div id="walk-hint">Geser kiri untuk jalan, geser kanan untuk melihat</div>
+  <button id="walk-tour" type="button" aria-pressed="false">Tur Otomatis</button>
 
   <!-- Bilah Bawah: 6 Preset Kamera Cepat -->
   <nav id="camera-bar" class="fixed bottom-3 left-3 right-3 z-30 flex justify-center pointer-events-none">
@@ -2780,6 +2794,17 @@
         return zoneAt(x, z, level) !== null;
       }
 
+      // Rute Tur Otomatis: [x, z, jeda detik]. Titik 0 = halaman depan; tur berulang dari titik 1.
+      const TOUR_POINTS = [
+        [-2.6, 10.5, 0], [-2.6, 7.0, 0], [-2.6, 5.0, 1.6], [-2.6, 3.0, 1.6],
+        [0.0, 2.8, 0], [0.0, 0.5, 1.8],
+        [-1.3, 0.0, 0], [-3.5, 0.0, 2.2], [-1.3, 0.0, 0], [0.0, 0.0, 0],
+        [1.3, 0.0, 0], [3.5, 0.0, 2.2], [1.3, 0.0, 0], [0.0, 0.0, 0],
+        [0.0, -2.8, 1.8], [-1.3, -3.0, 0], [-1.3, -5.5, 2.2], [-1.3, -3.0, 0], [0.0, -2.8, 0],
+        [0.0, 0.0, 0], [0.0, 2.8, 0], [-2.6, 3.0, 0], [-2.6, 5.0, 0], [-2.6, 7.0, 0], [-2.6, 9.5, 1.2]
+      ];
+      const tour = { on: false, i: 1, wait: 0, stuck: 0 };
+
       // ---- Elemen UI ----
       const wMoveZone = document.getElementById('walk-move-zone');
       const wLookZone = document.getElementById('walk-look-zone');
@@ -2796,7 +2821,9 @@
       function setWalkHome() {
         wHome.x = 100;
         wHome.y = window.innerHeight - 122;
-        if (wMovePtr === null) placeBase(wHome.x, wHome.y);
+        placeBase(wHome.x, wHome.y);
+        wMoveZone.style.left = wHome.x + 'px';
+        wMoveZone.style.top = wHome.y + 'px';
       }
       setWalkHome();
       window.addEventListener('resize', setWalkHome);
@@ -2815,16 +2842,15 @@
         wMovePtr = null; walk.jx = 0; walk.jy = 0;
         wThumb.style.transform = 'translate(0px,0px)';
         wBase.classList.remove('active');
-        placeBase(wHome.x, wHome.y);
       }
 
       wMoveZone.addEventListener('pointerdown', (e) => {
         if (wMovePtr !== null) return;
         e.preventDefault();
+        stopTour();
         wMovePtr = e.pointerId;
         try { wMoveZone.setPointerCapture(e.pointerId); } catch (err) { /* abaikan */ }
-        wOrigin.x = e.clientX; wOrigin.y = e.clientY;
-        placeBase(wOrigin.x, wOrigin.y);
+        wOrigin.x = wHome.x; wOrigin.y = wHome.y;   // pusat joystick selalu tetap
         wBase.classList.add('active');
         stickUpdate(e.clientX, e.clientY);
       });
@@ -2841,6 +2867,7 @@
       wLookZone.addEventListener('pointerdown', (e) => {
         if (wLookPtr !== null) return;
         e.preventDefault();
+        stopTour();
         wLookPtr = e.pointerId;
         try { wLookZone.setPointerCapture(e.pointerId); } catch (err) { /* abaikan */ }
         wLast.x = e.clientX; wLast.y = e.clientY;
@@ -2882,27 +2909,79 @@
         return d;
       }
 
-      function updateWalk(dt) {
-        // Melihat dengan keyboard
-        walk.yaw += ((keys['arrowleft'] ? 1 : 0) - (keys['arrowright'] ? 1 : 0)) * 1.9 * dt;
-        walk.pitch = clampPitch(walk.pitch + ((keys['arrowup'] ? 1 : 0) - (keys['arrowdown'] ? 1 : 0)) * 1.3 * dt);
+      const tourBtn = document.getElementById('walk-tour');
+      function stopTour() {
+        if (!tour.on) return;
+        tour.on = false;
+        tourBtn.textContent = 'Tur Otomatis';
+        tourBtn.classList.remove('on');
+        tourBtn.setAttribute('aria-pressed', 'false');
+      }
+      function startTour() {
+        walk.x = TOUR_POINTS[0][0]; walk.z = TOUR_POINTS[0][1]; walk.level = 'ground'; walk.y = 0;
+        walk.yaw = 0; walk.pitch = 0.05;
+        tour.i = 1; tour.wait = 0; tour.stuck = 0; tour.on = true;
+        tourBtn.textContent = 'Berhenti';
+        tourBtn.classList.add('on');
+        tourBtn.setAttribute('aria-pressed', 'true');
+      }
+      tourBtn.addEventListener('click', () => { if (tour.on) stopTour(); else startTour(); });
 
-        // Gerak: joystick + WASD
+      function updateWalk(dt) {
+        const kbLook = (keys['arrowleft'] ? 1 : 0) - (keys['arrowright'] ? 1 : 0);
+        const kbPitch = (keys['arrowup'] ? 1 : 0) - (keys['arrowdown'] ? 1 : 0);
         let ix = walk.jx + ((keys['d'] ? 1 : 0) - (keys['a'] ? 1 : 0));
         let iy = walk.jy + ((keys['w'] ? 1 : 0) - (keys['s'] ? 1 : 0));
         let mag = Math.hypot(ix, iy);
         if (mag > 1) { ix /= mag; iy /= mag; mag = 1; }
 
-        if (mag > 0.001) {
-          const sprint = mag > 0.92 || keys['shift'];
-          const speed = (sprint ? 4.6 : 2.5) * mag * dt;
-          const fx = -Math.sin(walk.yaw), fz = -Math.cos(walk.yaw);
-          const rx = Math.cos(walk.yaw), rz = -Math.sin(walk.yaw);
-          let mx = fx * iy + rx * ix, mz = fz * iy + rz * ix;
-          const ml = Math.hypot(mx, mz) || 1;
-          mx = mx / ml * speed; mz = mz / ml * speed;
+        // Sentuhan atau tombol keyboard mengambil alih kendali dari tur
+        if (tour.on && (mag > 0.001 || kbLook || kbPitch)) stopTour();
+
+        let mx = 0, mz = 0;
+        if (tour.on) {
+          const tp = TOUR_POINTS[tour.i];
+          const dx = tp[0] - walk.x, dz = tp[1] - walk.z;
+          const dist = Math.hypot(dx, dz);
+          walk.pitch += (0.05 - walk.pitch) * Math.min(1, dt * 3);
+          if (tour.wait > 0) {
+            tour.wait -= dt;
+            walk.yaw += 0.32 * dt;                    // menoleh pelan saat berhenti di sebuah area
+            if (tour.wait <= 0) tour.i = (tour.i + 1) % TOUR_POINTS.length || 1;
+          } else if (dist < 0.15) {
+            if (tp[2] > 0) tour.wait = tp[2];
+            else tour.i = (tour.i + 1) % TOUR_POINTS.length || 1;
+          } else {
+            const ty = Math.atan2(-dx, -dz);
+            walk.yaw += angleDiff(walk.yaw, ty) * Math.min(1, dt * 4);
+            const step = Math.min(dist, 1.9 * dt);
+            mx = dx / dist * step; mz = dz / dist * step;
+          }
+        } else {
+          walk.yaw += kbLook * 1.9 * dt;
+          walk.pitch = clampPitch(walk.pitch + kbPitch * 1.3 * dt);
+          if (mag > 0.001) {
+            const sprint = mag > 0.92 || keys['shift'];
+            const speed = (sprint ? 4.6 : 2.5) * mag * dt;
+            const fx = -Math.sin(walk.yaw), fz = -Math.cos(walk.yaw);
+            const rx = Math.cos(walk.yaw), rz = -Math.sin(walk.yaw);
+            mx = fx * iy + rx * ix; mz = fz * iy + rz * ix;
+            const ml = Math.hypot(mx, mz) || 1;
+            mx = mx / ml * speed; mz = mz / ml * speed;
+          }
+        }
+
+        if (mx || mz) {
+          const px = walk.x, pz = walk.z;
           if (walkable(walk.x + mx, walk.z, walk.level)) walk.x += mx;
           if (walkable(walk.x, walk.z + mz, walk.level)) walk.z += mz;
+          // Jika tur tersangkut lebih dari 1 detik, lompat ke titik berikutnya
+          if (tour.on) {
+            if (Math.hypot(walk.x - px, walk.z - pz) < Math.hypot(mx, mz) * 0.3) {
+              tour.stuck += dt;
+              if (tour.stuck > 1) { tour.stuck = 0; tour.i = (tour.i + 1) % TOUR_POINTS.length || 1; }
+            } else tour.stuck = 0;
+          }
         }
 
         // Ganti lantai lewat tangga Reunyeun
